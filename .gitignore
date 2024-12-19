@@ -29,6 +29,11 @@ retro_planner/test
 retro_planner/building_block_dataset/zinc_stock_2021_10_3_canonical_smiles_total_10312151.md
 *.png
 *.jpg
+!webapp/static/figure/*.png
+!webapp/static/figure/*.svg
+!webapp/static/figure/*.png
+!webapp/static/figure/*.jpg
+!images/*
 .VSCodeCounter
 retro_planner/nohup.out
 !retro_planner/test_data/uspto_190_route_target_mol.csv
