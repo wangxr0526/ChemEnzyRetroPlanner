@@ -1,10 +1,10 @@
 #!/bin/bash
-export ENV_PACK_FOLDER="/home/xiaoruiwang/software/miniconda3/envs"
-export POJECT_ROOT='/home/xiaoruiwang/data/ubuntu_work_beta/multi_step_work/retro_planner'
-export EASIFA_CKPT1='/home/xiaoruiwang/data/ubuntu_work_beta/single_step_work/ec_site_prediction/checkpoints'
-export EASIFA_CKPT2='/home/xiaoruiwang/data/ubuntu_work_beta/single_step_work/EasIFA_v2/checkpoints'
-export TEMPLATE_RELEVANCE_ROOT='/home/xiaoruiwang/data/ubuntu_work_beta/multi_step_work/retro_planner/retro_planner/packages/template_relevance'
-export PARROT_ROOT='/home/xiaoruiwang/data/ubuntu_work_beta/multi_step_work/retro_planner/retro_planner/packages/parrot'
+export ENV_PACK_FOLDER=$(conda info --base)/envs
+CURRENT_DIR=$(pwd)
+PROJECT_ROOT=$(dirname "$CURRENT_DIR")
+export PROJECT_ROOT="$PROJECT_ROOT"
+export TEMPLATE_RELEVANCE_ROOT=${PROJECT_ROOT}/retro_planner/packages/template_relevance
+export PARROT_ROOT=${PROJECT_ROOT}/retro_planner/packages/parrot
 
 # 设置默认的镜像仓库，如果没有指定环境变量则使用此默认值
 ASKCOS_REGISTRY=${ASKCOS_REGISTRY:-registry.gitlab.com/mlpds_mit/askcosv2/askcos2_core}
@@ -48,8 +48,6 @@ singularity instance start \
   --bind "${POJECT_ROOT}:/retro_planner" \
   --bind "${POJECT_ROOT}/retro_planner/packages/organic_enzyme_rxn_classifier/organic_enzyme_rxn_classifier:/retro_planner/retro_planner/packages/organic_enzyme_rxn_classifier/organic_enzyme_rxn_classifier" \
   --bind "$HOME/.cache/torch/hub/checkpoints:/home/retro_planner/.cache/torch/hub/checkpoints" \
-  --bind "${EASIFA_CKPT1}:${EASIFA_CKPT1}" \
-  --bind "${EASIFA_CKPT2}:${EASIFA_CKPT2}" \
   ./singularity_images/retroplanner_image.sif \
   retroplanner_container
 
