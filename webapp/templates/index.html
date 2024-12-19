@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChemEnzyRetroPlanner</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='figure/favicon.ico') }}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+    <!-- Your custom styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-shadow" style="z-index: 1000;">
+            <div class="container">
+                <a class="navbar-brand" href="/">ChemEnzyRetroPlanner</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/"><i class="fas fa-home"></i> Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-cogs"></i> Services
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" href="/services"><i class="fas fa-vial"></i><span>Planner</span></a>
+                                <a class="dropdown-item" href="/agent"><i class="fas fa-robot"></i><span>Agent</span></a>
+                            </div>
+                        </li>
+                                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="/queue"><i class="fas fa-stream"></i> Queue</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/help"><i class="fas fa-question-circle"></i> Help</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/contact"><i class="fas fa-envelope"></i> Contact</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div id="hero">
+        <h1>Welcome to Use <span style='font-family: "Poetsen One", sans-serif;'>ChemEnzyRetroPlanner</span></h1>
+        <p style="max-width: 60%; font-size:large">Utilize our hybrid synthetic planning platform, which leverages mixed organic enzyme catalysis, to achieve more efficient and environmentally friendly synthesis planning.</p>
+        <a id="startButton" href="/services">Let's start</a>
+    </div>
+
+    <!-- <main>
+        <!== Additional content here ==>
+        <div class="main-container">
+            <div class="main-row top-row">
+                <div style="height: 500px;"></div>
+            </div>
+            <div class="main-row middle-row">
+                <div style="height: 500px;"></div>
+            </div>
+            <div class="main-row bottom-row">
+                <div style="height: 500px;"></div>
+            </div>
+        </div>
+
+
+    </main> -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+</body>
+</html>

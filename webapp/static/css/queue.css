@@ -1,0 +1,242 @@
+.main-container {
+    margin-top: 90px;
+    margin-bottom: 11px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    /* 确保内容为一列 */
+    align-items: center;
+    /* 水平居中对齐 */
+    justify-content: center;
+    /* 垂直居中对齐 */
+    width: 80%;
+    max-width: 1200px;
+    position: relative;
+    height: 85vh;
+    background-color: rgb(255, 255, 255);
+    overflow: hidden;
+    flex: 1;
+}
+
+table#queueTable {
+    width: 100%;
+    border-collapse: separate;
+    /* 取消边框合并以应用圆角 */
+    border-spacing: 0;
+    /* 移除单元格之间的间距 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    /* 轻微阴影效果 */
+}
+
+th,
+td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ccc;
+    /* 底部边框 */
+    background-color: #fff;
+    /* 背景色 */
+    text-align: center;
+    /* 文字居中 */
+    font-size: 16px;
+    /* 增大文字大小 */
+}
+
+th:first-child,
+td:first-child {
+    border-top-left-radius: 10px;
+    /* 左上角圆角 */
+    border-bottom-left-radius: 10px;
+    /* 左下角圆角 */
+}
+
+th:last-child,
+td:last-child {
+    border-top-right-radius: 10px;
+    /* 右上角圆角 */
+    border-bottom-right-radius: 10px;
+    /* 右下角圆角 */
+}
+
+th {
+    background-color: #f8f8f8;
+    /* 表头背景色，浅灰色 */
+}
+
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.text-head {
+    font-family: 'Poetsen One', sans-serif;
+    font-size: 2.0rem;
+}
+
+.text-main {
+    font-family: "EB Garamond", serif;
+    font-size: 1.25rem;
+}
+
+
+#pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#pagination button {
+    background-color: #f8f8f8;
+    /* Light blue background */
+    border: none;
+    color: rgb(0, 0, 0);
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 20px;
+    /* Rounded corners */
+    transition: background-color 0.3s ease;
+    border: none;
+    outline: none;
+    /* 移除轮廓 */
+}
+
+#pagination button:hover {
+    background-color: #8b8b8b;
+    /* Darker blue when hovered */
+}
+
+#pagination button:active {
+    outline: none;
+    /* Remove any default browser outline styles */
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    /* Optional: adds a subtle inset shadow for a pressed effect */
+}
+
+
+#pagination span {
+    font-size: 16px;
+    padding: 5px 10px;
+    color: #333;
+}
+
+/* Styling for the button */
+.rounded-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+    text-decoration: none;
+    border-radius: 15px;
+    /* Rounded corners */
+    font-size: 16px;
+    transition: background-color 0.3s;
+    font-family: 'Poetsen One', sans-serif;
+}
+
+.rounded-button:hover {
+    background-color: black;
+    /* Slightly lighter black when hovered */
+    color: white;
+    /* Keeps the color white */
+    text-decoration: none;
+    /* No underline */
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15);
+}
+
+.mymodal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.4); /* Black with opacity */
+    display: flex; /* Use flexbox to center */
+    align-items: center; /* Vertical centering */
+    justify-content: center; /* Horizontal centering */
+}
+
+.modal-content {
+    background-color: #fff; /* White background */
+    padding: 20px;
+    border: 1px solid #ccc;
+    width: 600px; /* Maximum width */
+    max-width: 90%; /* Adapts to screen size if smaller */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* Shadow for 3D effect */
+    border-radius: 15px; /* Rounded corners */
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center horizontally and vertically */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+.mymodal-button {
+    background-color: #333;
+    color: #fff; /* White text */
+    border: none;
+    padding: 10px 20px;
+    margin: 10px 0;
+    cursor: pointer;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'Poetsen One', sans-serif;
+    transition: background-color 0.3s ease;
+    font-size: 1.0rem;
+    border-radius: 15px;
+}
+
+.mymodal-button:hover {
+    background-color: #333; /* Darker shade for hover effect */
+}
+
+.modal-header {
+    display: flex;
+    justify-content: flex-start; /* Align items to the left */
+    align-items: center; /* Keep items centered vertically */
+    padding: 0%;
+}
+
+.mymodal-text-title {
+    font-size: large;
+    margin-top: 1.5rem;
+    font-family: 'Poetsen One', sans-serif;
+}
+.mymodal-text {
+    font-size: large;
+    margin: 1rem;
+    text-align: center;
+}

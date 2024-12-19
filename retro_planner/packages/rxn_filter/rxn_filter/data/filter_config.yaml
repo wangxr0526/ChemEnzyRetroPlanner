@@ -1,0 +1,23 @@
+data_root: 'data'
+raw_data_fname: 'random_gen_aizynth_filter_dataset.csv'
+split_index_fname: 'random_gen_aizynth_filter_dataset_split_index.pkl'
+model_save_path: 'model'
+fp_function_name: 'drfp'           # rxnfp or morganfp or drfp
+filter_model_name: 'DRFPFilter'    # InScopeFilter or RXNFPFilter or DRFPFilter
+model_config:
+  InScopeFilter:
+    fp_dim: 2048
+    h_dim: 1024
+    dropout_rate: 0.4
+  RXNFPFilter:
+    fp_dim: 256
+    h_dim: 1024
+    dropout_rate: 0.4
+  DRFPFilter:
+    fp_dim: 2048
+    h_dim: 1024
+    dropout_rate: 0.4
+batch_size: 1024
+epochs: 100
+gpu: 0
+lr: 0.00001

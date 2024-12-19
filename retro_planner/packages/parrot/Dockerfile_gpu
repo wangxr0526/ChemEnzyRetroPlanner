@@ -1,0 +1,32 @@
+FROM mambaorg/micromamba:1.4.7-bionic-cuda-11.3.1
+
+USER root
+# Keep the base environment activated
+ARG MAMBA_DOCKERFILE_ACTIVATE=1
+RUN apt update && apt -y install git gcc g++ make
+
+
+COPY . /app/parrot
+# Use micromamba with Tsinghua mirror temporarily for conda-forge channel
+RUN useradd -m -s /bin/bash parrot && \
+    echo "parrot ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN mkdir -p /opt/conda/ && \
+    mv /app/parrot/parrot_env.tar.gz /opt/conda/parrot_env.tar.gz && \
+    mkdir -p /opt/conda/parrot_env && \
+    tar -xvf /opt/conda/parrot_env.tar.gz -C /opt/conda/parrot_env && \
+    rm /opt/conda/parrot_env.tar.gz && \
+    echo "export PATH=/opt/conda/parrot_env/bin:$PATH" >> ~/.bashrc
+
+RUN micromamba install -p /opt/conda/parrot_env openjdk=11.0.15 -c https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge -y
+
+ENV PATH=/opt/conda/parrot_env/bin:$PATH
+SHELL ["micromamba", "run", "-p", "/opt/conda/parrot_env", "/bin/bash", "-c"]
+# RUN conda-unpack
+RUN pip install \
+    rdkit-pypi \
+    torch-model-archiver==0.3.1 \
+    torchserve==0.3.1 -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
+USER parrot
+WORKDIR /app/parrot
+
+EXPOSE 9510 9511 9512

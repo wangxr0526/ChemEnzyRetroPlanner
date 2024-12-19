@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <!-- 添加 Font Awesome 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/results.css') }}">
+</head>
+
+
+
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-shadow">
+        <div class="container">
+            <a class="navbar-brand" href="/">ChemEnzyRetroPlanner</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Home <span
+                                class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-cogs"></i> Services
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="/services"><i
+                                    class="fas fa-vial"></i><span>Planner</span></a>
+                            <a class="dropdown-item" href="/agent"><i class="fas fa-robot"></i><span>Agent</span></a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/queue"><i class="fas fa-stream"></i> Queue</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/help"><i class="fas fa-question-circle"></i> Help</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact"><i class="fas fa-envelope"></i> Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <div id="content">
+        <div id="outerContainer">
+            <div id="leftColumn">
+                <select id="routeSelect"></select>
+                <div id="mynetwork"></div>
+                <div id="reactionInfo">Reaction Details</div>
+                <div id="moltip"></div>
+                <div class="button-container">
+                    <button id="resultsDownload" data-results-id="{{ results_id }}">Download Results</button>
+                    <button id="toggleRightColumn">Enzyme Recommend</button>
+                </div>
+
+
+            </div>
+            <div id="rightColumn">
+                <select id="enzymeSelect"></select>
+                <div id="enzymeActiveInfo">
+                    Enzyme Details
+                </div>
+            </div>
+        </div>
+        <div id="loadingModal" class="waittingModal">
+            <div>
+                <p>Enzyme Recommending ...</p>
+            </div>
+        </div>
+        <div id="downloadingModal" class="waittingModal">
+            <div>
+                <p>Preparing your file, please wait...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2024 ChemEnzyRetroPlanner. All rights reserved.
+    </div>
+
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript">
+        var routes = {{ routes_meta | tojson }};
+        var container = document.getElementById('mynetwork');
+        var data = {
+            nodes: new vis.DataSet(),
+            edges: new vis.DataSet()
+        };
+        var options = {
+            interaction: {
+                hover: true,
+                zoomSpeed: 0.5
+            },
+            physics: {
+                enabled: true,
+                iterations: 1000,
+                updateInterval: 100
+            },
+        };
+        var network = new vis.Network(container, data, options);
+        var ctrlHold = false;
+        var reactionClicked = false; // 用于跟踪反应节点是否被点击
+        var lastClickedNodeId = null;  // 初始化为 null
+        var lastClickedNode = null;
+        var currentEnzymeData = null;
+        var isFirstTime = true; // 初始化一个标志变量
+        network.on("afterDrawing", function () {
+            if (isFirstTime) {
+                network.moveTo({
+                    scale: 0.60 // 初始缩放值
+                });
+                isFirstTime = false
+            }
+
+        });
+
+        function updateMoltipPosition(nodeId) {
+            if (nodeId !== null) {
+
+                document.addEventListener('mousemove', function (event) {
+                    var container = document.getElementById('mynetwork');
+                    var rect = container.getBoundingClientRect();
+                    var x = event.clientX;  // 获取鼠标相对于视口的X坐标
+                    var y = event.clientY;  // 获取鼠标相对于视口的Y坐标
+                    // 如果您需要相对于整个文档的位置
+                    var pageX = event.pageX; // 获取鼠标相对于整个文档的X坐标
+                    var pageY = event.pageY; // 获取鼠标相对于整个文档的Y坐标
+                    moltip.style.left = (event.pageX) + 'px';
+                    moltip.style.top = (event.pageY) + 'px';
+                });
+                moltip.style.display = 'block';
+
+            };
+        }
+
+
+        network.on("hoverNode", function (params) {
+            var node = data.nodes.get(params.node);
+            var moltip = document.getElementById('moltip');
+
+            if (node && node.type == 'mol') {
+                moltip.innerHTML = '<img src="' + node.image + '" width="150" height="150"><br>' +
+                    '<strong>SMILES:</strong> ' + node.title + '<br><strong>Buyable:</strong> ' + node.in_stock;
+                moltip.style.display = 'block';
+
+                updateMoltipPosition(params.node)
+            } else if (node && node.type == 'reaction') {
+                var canvas = network.canvas.frame.canvas;
+                canvas.style.cursor = 'pointer';
+            }
+        });
+
+        network.on("click", function (params) {
+            var node = data.nodes.get(params.nodes[0]);
+            var reactionInfo = document.getElementById('reactionInfo');
+            var toggleRightColumn = document.getElementById('toggleRightColumn');
+
+
+            if (node && node.type == 'reaction') {
+
+                if (node.id !== lastClickedNodeId) {
+                    reactionClicked = true;
+                    if (node.reaction_attribute.empty) {
+                        toggleRightColumn.style.color = '#CCCCCC';
+                        toggleRightColumn.classList.add('disabled');
+                        toggleRightColumn.disabled = true;
+                        reactionInfo.innerHTML = '<img src="' + node.image + '" width="450" height="150"><br>' +
+                            '<strong>Reaction Smiles:</strong> ' + node.reaction_smiles;
+
+
+                    } else {
+                        if (node.reaction_attribute.organic_enzyme_rxn_classification.enzyme_recommend) {
+                            toggleRightColumn.style.color = '#000000';
+                            toggleRightColumn.classList.remove('disabled');
+                            toggleRightColumn.disabled = false;
+                            reactionInfo.innerHTML = '<img src="' + node.image + '" width="450" height="150"><br>' +
+                                '<strong>Reaction Smiles:</strong> ' + node.reaction_smiles + '<br><br>' +
+                                node.reaction_attribute.condition.table + '<br>' +
+                                node.reaction_attribute.organic_enzyme_rxn_classification.table + '<br>' +
+                                node.reaction_attribute.enzyme_assign.table;
+                        } else {
+                            toggleRightColumn.style.color = '#CCCCCC';
+                            toggleRightColumn.classList.add('disabled');
+                            toggleRightColumn.disabled = true;
+                            reactionInfo.innerHTML = '<img src="' + node.image + '" width="450" height="150"><br>' +
+                                '<strong>Reaction Smiles:</strong> ' + node.reaction_smiles + '<br><br>' +
+                                node.reaction_attribute.condition.table + '<br>' +
+                                node.reaction_attribute.organic_enzyme_rxn_classification.table
+
+                        }
+
+                    }
+
+                    // reactionInfo.innerHTML = node.reaction_attribute.condition;
+
+                    reactionInfo.style.display = 'block';
+                    reactionInfo.style.color = '#000000';
+                    reactionInfo.style.lineHeight = 'normal';
+                    reactionInfo.style.fontSize = '10px';
+                    transformAndHide();
+                    lastClickedNodeId = node.id;  // 更新最后点击的节点 ID
+                    lastClickedNode = node;
+                } else {
+                    reactionClicked = false;
+                }
+            }
+        }
+        );
+
+        network.on("blurNode", function (params) {
+            var canvas = network.canvas.frame.canvas;
+            canvas.style.cursor = 'default';
+            if (!ctrlHold) {
+                resetMolTip();
+            } else if (!reactionClicked) {
+                resetReactionDetails();
+            }
+        });
+        document.addEventListener('keydown', function (event) {
+            if (event.key === "Control") {
+                ctrlHold = true;
+            }
+        });
+
+        document.addEventListener('keyup', function (event) {
+            if (event.key === "Control") {
+                ctrlHold = false;
+                resetMolTip();
+            }
+        });
+
+        document.getElementById('toggleRightColumn').onclick = function () {
+            var node = lastClickedNode;
+
+            if (node.reaction_attribute.organic_enzyme_rxn_classification.enzyme_recommend) {
+                var loadingModal = document.getElementById('loadingModal');
+                loadingModal.style.display = 'block'; // 显示模态框
+
+                // 发送 POST 请求到 Flask 后端
+                fetch('/process_node', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(node)  // 将节点数据转换为 JSON 字符串
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        loadingModal.style.display = 'none'; // 请求成功，隐藏模态框
+                        enzyme_data = data.enzyme_data;
+                        if (currentEnzymeData == null) {
+                            currentEnzymeData = enzyme_data;
+                        }
+                        transformAndShow();
+                    })
+                    .catch((error) => {
+                        loadingModal.style.display = 'none'; // 请求失败，隐藏模态框
+                        console.error('Error:', error);
+                    });
+            }
+        };
+
+
+        document.getElementById('resultsDownload').onclick = function () {
+            var downloadingModal = document.getElementById('downloadingModal');
+            downloadingModal.style.display = 'block';
+            var resultsId = this.getAttribute('data-results-id'); // 获取结果ID
+
+            // 发送请求到Flask后端
+            fetch(`/downloads/${resultsId}`)
+                .then(response => response.blob()) // 假设服务器返回文件的Blob
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = `${resultsId}.zip`; // 下载文件名
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+
+                    downloadingModal.style.display = 'none'; // 隐藏模态框
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    downloadingModal.style.display = 'none'; // 也在出错时隐藏模态框
+                    alert('An error occurred while preparing the file.');
+                });
+        };
+
+        function updateNetwork(routeId) {
+            var route = routes.find(p => p.id === parseInt(routeId));
+            data.nodes.clear();
+            data.edges.clear();
+            data.nodes.add(route.nodes);
+            data.edges.add(route.edges);
+            isFirstTime = true;
+
+            // 重置反应信息显示
+            resetReactionDetails();
+            // 隐藏moltip
+            resetMolTip();
+
+        }
+
+        function resetReactionDetails() {
+            // 重置反应信息显示
+            var reactionInfo = document.getElementById('reactionInfo');
+            var toggleRightColumn = document.getElementById('toggleRightColumn');
+            reactionInfo.innerHTML = "Reaction Details";
+            reactionInfo.style.color = '#CCCCCC';
+            reactionInfo.style.lineHeight = '170px';
+            reactionInfo.style.fontSize = '30px';
+            reactionClicked = false; // 重置点击状态，防止旧状态影响新路径
+            currentEnzymeData = null;
+
+            // 使用classList添加disabled类来处理样式
+            toggleRightColumn.classList.add('disabled');
+            // 确保按钮的disabled属性被设置为true，禁用按钮功能
+            toggleRightColumn.disabled = true;
+            toggleRightColumn.style.color = '#CCCCCC';
+
+        }
+
+        function resetMolTip() {
+            // 隐藏moltip
+            var moltip = document.getElementById('moltip');
+            moltip.style.display = 'none';
+        }
+
+        function populateRouteSelect() {
+            var select = document.getElementById('routeSelect');
+            var totalRoutes = routes.length;
+            routes.forEach(route => {
+                var option = document.createElement('option');
+                option.value = route.id;
+                option.text = 'Route ' + route.id + ' / ' + totalRoutes;
+                select.appendChild(option);
+            });
+            select.onchange = function () {
+                updateNetwork(this.value);
+                transformAndHide();
+            };
+        }
+
+        function enzymeTryAgain() {
+            populateEnzymeActiveSelect(currentEnzymeData)
+            if (currentEnzymeData) {
+                if (currentEnzymeData.length > 0) {
+                    updateEnzymeDetails(currentEnzymeData[0].id); // 默认加载第一个路径
+                }
+            } else {
+                // 当 currentEnzymeData 为 null 时，创建并显示 'Try Again' 按钮
+                var enzymeActiveInfo = document.getElementById('enzymeActiveInfo');
+                enzymeActiveInfo.innerHTML = 'Get Meta Data Error<br>'
+                var tryAgainButton = document.createElement('button');
+                tryAgainButton.id = 'tryAgainButton';
+                tryAgainButton.textContent = 'Try Again';
+                tryAgainButton.onclick = function () {
+
+                    var node = lastClickedNode;
+
+                    if (node.reaction_attribute.organic_enzyme_rxn_classification.enzyme_recommend) {
+                        var modal = document.getElementById('loadingModal');
+                        modal.style.display = 'block'; // 显示模态框
+
+                        // 发送 POST 请求到 Flask 后端
+                        fetch('/process_node', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(node)  // 将节点数据转换为 JSON 字符串
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                modal.style.display = 'none'; // 请求成功，隐藏模态框
+                                enzyme_data = data.enzyme_data;
+                                if (currentEnzymeData == null) {
+                                    currentEnzymeData = enzyme_data;
+                                }
+                                enzymeTryAgain();
+                            })
+                            .catch((error) => {
+                                modal.style.display = 'none'; // 请求失败，隐藏模态框
+                                console.error('Error:', error);
+                            });
+                    }
+
+                };
+                tryAgainButton.style.padding = "10px 20px";
+                tryAgainButton.style.marginTop = "20px";
+                tryAgainButton.style.borderRadius = "5px";
+                tryAgainButton.style.border = "none";
+                tryAgainButton.style.background = "#007BFF";
+                tryAgainButton.style.color = "white";
+                tryAgainButton.style.cursor = "pointer";
+                var existingButton = document.getElementById('tryAgainButton');
+                if (!existingButton) {
+                    enzymeActiveInfo.appendChild(tryAgainButton);
+                }
+
+            }
+
+
+        }
+
+        function transformAndShow() {
+            var rightColumn = document.getElementById('rightColumn');
+            var leftColumn = document.getElementById('leftColumn');
+            // console.log('currentEnzymeData:', currentEnzymeData)
+
+
+
+            if (rightColumn.style.width === "0px" || rightColumn.style.width === "") {
+                rightColumn.style.display = "block"
+                rightColumn.style.width = "auto"; // 设置右侧列的宽度，使其显示
+                // leftColumn.style.transform = "translateX(-100px)"; // 将左侧列向左移动
+
+                // rightColumn.style.transform = "translateX(-100px)"
+                // leftColumn.style.transform = "translateX(+20px)"
+                // rightColumn.style.transform = "translateX(+20px)"
+
+                enzymeTryAgain();
+
+            }
+        }
+
+        function transformAndHide() {
+            var rightColumn = document.getElementById('rightColumn');
+            var leftColumn = document.getElementById('leftColumn');
+            if (rightColumn.style.display === "block") {
+                rightColumn.style.width = "0"; // 隐藏右侧列
+                // leftColumn.style.transform = "translateX(0px)"; // 将左侧列移回原位
+                rightColumn.style.display = "none"
+                // rightColumn.style.transform = "translateX(0px)"
+            }
+        }
+
+        populateRouteSelect();
+        if (routes.length > 0) {
+            updateNetwork(routes[0].id); // 默认加载第一个路径
+        }
+
+        function updateEnzymeDetails(enzymeId) {
+            var enzymeActiveInfo = document.getElementById('enzymeActiveInfo');
+            var enzyme = currentEnzymeData.find(e => e.id === parseInt(enzymeId));
+            var htmlContent = enzyme.structure_html;
+            enzymeActiveInfo.innerHTML = '<h1>UniProt ID:' + enzyme.alphafolddb_id + '</h1>' + '<h2>EC Number:' + enzyme.ec + '</h2>' + htmlContent + enzyme.active_data
+            // enzymeActiveInfo.style.color = '#1e1e1e'
+            var scripts = enzymeActiveInfo.getElementsByTagName('script');
+            for (var i = 0; i < scripts.length; i++) {
+                eval(scripts[i].innerText);
+            }
+            // console.log('enzymeActiveInfo.innerHTML:', enzyme_d)
+            // console.log('structure_html:', structure_html)
+
+
+
+        }
+        function populateEnzymeActiveSelect(currentEnzymeData) {
+            var select = document.getElementById('enzymeSelect');
+            if (!currentEnzymeData || !Array.isArray(currentEnzymeData)) {
+                console.error('Invalid or empty enzyme data provided');
+                return;
+            }
+            select.innerHTML = '';  // 清空现有的选项
+
+            var fragment = document.createDocumentFragment();
+            currentEnzymeData.forEach(enzyme_d => {
+                var option = document.createElement('option');
+                option.value = enzyme_d.id;
+                option.text = 'Enzyme ' + enzyme_d.id + ' / ' + currentEnzymeData.length;
+                fragment.appendChild(option);
+            });
+            select.appendChild(fragment);
+
+            // 移除旧的事件处理器并添加新的
+            select.onchange = null;
+            select.onchange = function () {
+                updateEnzymeDetails(this.value);
+            };
+        }
+
+
+    </script>
+
+
+
+</body>

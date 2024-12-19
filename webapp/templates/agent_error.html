@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    .center-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 80vh; /* 使内容居中 */
+        text-align: center;
+        font-size: 1.5em; /* 放大字体 */
+    }
+    h1 {
+        font-size: 2em; /* 标题字体更大 */
+    }
+    p {
+        margin: 1em 0;
+    }
+    a {
+        margin-top: 1.5em;
+        text-decoration: none;
+        color: #007bff;
+        font-size: 1.2em;
+    }
+</style>
+
+<div class="center-content">
+    <h1>An Error Occurred</h1>
+    <p>It seems that the Agent service has not started.</p>
+    <a href="/">Return Home</a>
+</div>
+
+{% endblock %}

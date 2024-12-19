@@ -1,0 +1,11 @@
+__pycache__/*.pyc
+.vscode
+data/synthesis_routes/*
+data/download/intereaction_routes/*
+test_template/*
+logs/run.log
+dump.rdb
+jobs.db
+nohup.out
+data/enzyme_structures/*
+keys/*

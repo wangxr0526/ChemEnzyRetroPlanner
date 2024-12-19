@@ -1,0 +1,102 @@
+# search
+gpu: -1
+expansion_topk: 10
+iterations: 10
+max_depth: 6
+stocks: 
+  Zinc_Fix-stock: "building_block_dataset/zinc_stock_2021_10_3_canonical_smiles_total_10312151_add_8546.csv"
+  RetroStar-stock: "building_block_dataset/origin_dict.csv"
+  PaRotes_n1-stock: "building_block_dataset/n1-stock.csv"
+  PaRotes_n5-stock: "building_block_dataset/n5-stock.csv"
+  BioNav-stock: "building_block_dataset/bionav_all_building_block.csv"
+exclude_target: true
+search_strategy: "MCTS_STAR"
+keep_search: true
+# single step
+one_step_model_configs:
+  # mlp
+  # mlp_models:
+  #   retro_star_one_step:
+  #     mlp_templates: "packages/single_step_datasets/train_test_dataset/train_val_template_rules_1_corrected.dat"
+  #     mlp_model_dump: "packages/mlp_retrosyn/mlp_retrosyn/model/saved_rollout_state_1_2048_2021-11-14_21_22_09.ckpt"
+  # graphfp
+  graphfp_models:
+    USPTO-full_remapped:
+      graph_model_dumb: "packages/graph_retrosyn/graph_retrosyn/model/train_all_model/saved_graph_rollout_state_1_DMPNNFP_init_lr_0.001_batch_size_1024_fp_lindim_512_graph_lindim_512_use_gru_False_massage_depth_3.ckpt"
+      graph_dataset_root: "packages/graph_retrosyn/graph_retrosyn/data/raw"
+    # PaRoutes_benchmark_set-n1:
+    #   graph_model_dumb: "packages/graph_retrosyn/graph_retrosyn/model_benchmark/download/saved_graph_rollout_state_1_DMPNNFP_init_lr_0.001_batch_size_1024_fp_lindim_512_graph_lindim_512_use_gru_False_massage_depth_3_data_set-n1.ckpt"
+    #   graph_dataset_root: "packages/graph_retrosyn/graph_retrosyn/data_set-n1/raw"
+    # PaRoutes_benchmark_set-n5:
+    #   graph_model_dumb: "packages/graph_retrosyn/graph_retrosyn/model_benchmark/download/saved_graph_rollout_state_1_DMPNNFP_init_lr_0.001_batch_size_1024_fp_lindim_512_graph_lindim_512_use_gru_False_massage_depth_3_data_set-n5.ckpt"
+    #   graph_dataset_root: "packages/graph_retrosyn/graph_retrosyn/data_set-n5/raw"
+  ## onmt transformer enzyme rxn one step
+  onmt_models:
+    bionav_one_step:
+      model_path:
+      - packages/onmt/checkpoints/np-like/model_step_30000.pt
+      - packages/onmt/checkpoints/np-like/model_step_50000.pt
+      - packages/onmt/checkpoints/np-like/model_step_80000.pt
+      - packages/onmt/checkpoints/np-like/model_step_100000.pt
+      beam_size: 20
+  ## MIT template relevance one step
+  template_relevance:
+    pistachio:
+      state_name: pistachio
+    pistachio_ringbreaker:
+      state_name: pistachio_ringbreaker
+    reaxys:
+      state_name: reaxys
+    bkms_metabolic:
+      state_name: bkms_metabolic
+    reaxys_biocatalysis:
+      state_name: reaxys_biocatalysis
+
+
+# rxn filter
+use_filter: false
+filter_path: "packages/rxn_filter/rxn_filter/model/filter_train_data_random_gen_aizynth_filter_dataset_2021-12-22_12h-15m-45s.pkl"
+keep_score: true
+# value function
+use_value_fn: false
+n_layers: 1
+fp_dim: 2048
+latent_dim: 128
+value_fn_save_folder: "packages/value_function/value_function/depth_model_save_folder/download_model"
+value_model: "filter_train_data_maxDepth_data_dic_2022-01-15_18h-56m-34s.pkl"
+## depth value function
+use_depth_value_fn: true
+depth_value_latent_dim: 256
+depth_output_dim: 10
+# condition prediction
+pred_condition: true
+condition_config:
+  rcr:
+    info_path: "packages/condition_predictor/condition_predictor/data"
+    weights_path: "packages/condition_predictor/condition_predictor/data/dict_weights.npy"
+    topk: 3
+    model_name: 'rcr'
+  parrot: 
+    topk: 3
+    model_name: 'parrot'
+
+# organic and enzyme reaction classifer
+organic_enzyme_rxn_classification: true
+organic_enzyme_rxn_classifier_config:
+  checkpoint_path: "packages/organic_enzyme_rxn_classifier/organic_enzyme_rxn_classifier/checkpoints/unbalance_organic_enzyme_classification"
+# enzyme assign
+enzyme_assign: true
+enzyme_rxn_classifier_config:
+  checkpoint_path: "packages/organic_enzyme_rxn_classifier/organic_enzyme_rxn_classifier/checkpoints/ecreact_classification"
+  topk: 3
+
+# rxn_attributes:
+#   - pred_condition
+#   - organic_enzyme_rxn_classification
+#   - enzyme_assign
+easifa_config:
+  checkpoint_path: "packages/easifa/easifa/checkpoints/enzyme_site_type_predition_model/train_in_uniprot_ecreact_cluster_split_merge_dataset_all_limit_3_at_2023-12-19-16-06-42/global_step_284000"
+# viz
+viz: false
+viz_dir: "viz"
+output: "results/api_test"

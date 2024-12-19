@@ -1,0 +1,442 @@
+#content {
+    padding-top: 85px;
+    padding-bottom: 20px;
+    font-family: Arial, sans-serif;
+    flex: 1;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    left: 0;
+    right: 0;
+    position: relative;
+    overflow-y: scroll;
+}
+
+.modal-addition {
+    margin-top: 100px;
+    border-radius: 20px;
+}
+
+#main-container {
+    position: relative;
+    width: 500px;
+    height: 700px;
+    text-align: center;
+    background-color: #fcfcfc;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15);
+    margin: 20px;
+}
+
+
+#jsme_container {
+    /* Ensure the JSME container is not larger than the modal */
+    width: 100%;
+    height: 300px;
+    min-width: 400px;
+}
+
+#smiles-group {
+    height: 36px;
+    width: 80%;
+    display: inline-flex;
+    justify-content: end;
+    text-align: center;
+    margin-bottom: 20px;
+
+    border: 1px solid lightgray;
+    border-radius: 20px;
+    background-color: #FFFFFF;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    /* font-size: 25px; */
+}
+
+#smiles_container {
+    height: 34px;
+    flex-grow: 1;
+    border: none;
+    border-radius: 20px 0 0 20px;
+    padding-left: 10px;
+    font-size: 20px;
+    outline: none;
+    /* 移除聚焦时的轮廓 */
+}
+
+.draw_button {
+    height: 34px;
+    flex-grow: 0;
+    border-radius: 0 20px 20px 0;
+    background-color: #dc3545;
+    /* 维持原有背景颜色 */
+    color: white;
+    /* 维持原有字体颜色 */
+    font-size: 20px;
+    outline: none;
+    border: none;
+    /* 确保没有边框 */
+    transition: all 0.3s ease;
+    /* 添加平滑的过渡效果 */
+}
+
+.draw_button:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    /* 增强鼠标悬停时的阴影效果 */
+    transform: scale(1.05);
+    /* 轻微放大按钮，增加交互感 */
+}
+
+.draw_button:active {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    /* 点击时调整阴影，提供更明显的反馈 */
+    transform: translateY(2px) scale(1.03);
+    /* 点击时轻微下移并稍微放大，模拟按压效果 */
+}
+
+
+
+#submit_button,
+#results_button {
+    padding: 4px 16px;
+    margin: 10px 5px;
+    border-radius: 20px;
+    border: 1px solid lightgray;
+    background-color: #FFFFFF;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    font-size: 20px;
+    /* color: #1e1e1e; */
+    width: 80%;
+    transition: all 0.3s ease;
+    /* 添加平滑的过渡效果 */
+    outline: none;
+}
+
+#submit_button:hover,
+#results_button:hover {
+    background-color: #f2f2f2;
+    /* 鼠标悬停时的背景颜色 */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    /* 增加阴影大小以增强效果 */
+    transform: scale(1.05);
+}
+
+#submit_button:active,
+#results_button:active {
+    background-color: #e6e6e6;
+    /* 鼠标点击时的背景颜色 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* 点击时缩小阴影 */
+    transform: translateY(2px) scale(1.05);
+    /* 轻微下移按钮，模拟按压效果 */
+
+}
+
+#results_button.disabled {
+    color: #CCCCCC;
+    /* 灰色文字显示按钮不可用 */
+    /* cursor: not-allowed; */
+    /* 鼠标样式变为禁用的标志 */
+    box-shadow: none;
+    /* 移除阴影效果 */
+    background-color: #EFEFEF;
+    /* 更浅的背景色表示不可用状态 */
+    pointer-events: none;
+    /* 禁止所有鼠标事件 */
+}
+
+#options_button {
+    padding: 4px 16px;
+    margin: 10px 5px;
+    border-radius: 20px;
+    border: 1px solid lightgray;
+    background-color: #FFFFFF;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    font-size: 20px;
+    color: #1e1e1e;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+#options_button:hover {
+    background-color: #f2f2f2;
+    /* 鼠标悬停时的背景颜色 */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    /* 增加阴影大小以增强效果 */
+    transform: scale(1.05);
+}
+
+#options_button:active {
+    background-color: #e6e6e6;
+    /* 鼠标点击时的背景颜色 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* 点击时缩小阴影 */
+    transform: translateY(2px) scale(1.05);
+    /* 轻微下移按钮，模拟按压效果 */
+
+}
+
+
+#log-group {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    width: 100%;
+    bottom: 40px;
+    left: 0;
+    right: 0;
+    align-items: center;
+}
+
+.input-header {
+    width: 80%;
+    /* Full width to match the parent width */
+    font-size: 20px;
+    font-family: "Poetsen One", sans-serif;
+    font-weight: normal;
+}
+
+#log-group label {
+    text-align: left;
+    /* Align the label to the left */
+}
+
+#log {
+
+    width: 80%;
+    height: 140px;
+    padding: 10px;
+    border: 1px solid lightgray;
+    border-radius: 20px;
+    background-color: #FFFFFF;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    overflow-y: scroll;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    color: #1e1e1e;
+    margin: auto;
+    cursor: auto;
+    /* Added to enable automatic margin calculation */
+}
+
+#log:focus,
+#log:active {
+    border: 1px solid lightgray;
+    outline: none;
+    /* Ensures that no additional outline is applied when the element is clicked or focused */
+}
+
+
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Custom modal size */
+@media (min-width: 1000px) {
+
+    /* Adjusting for large screens */
+    .modal-dialog.modal-custom {
+        max-width: 90%;
+        /* Example for a custom width */
+    }
+}
+
+/* Custom modal body size */
+#jsmeModal .modal-body {
+    width: auto;
+    max-height: 500px;
+    /* Example for a custom height */
+    overflow-y: auto;
+    /* Enable vertical scroll if needed */
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 80%;
+    height: 15px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity .2s;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+.checkbox-group,
+.slider-container {
+    margin: 10px;
+    font-size: 16px;
+}
+
+
+
+#waitingModal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: transform 0.5s ease;
+}
+
+#waitingModal>div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    /* 设置 flex 布局 */
+    justify-content: center;
+    /* 水平居中 */
+    align-items: center;
+    /* 垂直居中 */
+    width: 300px;
+    height: 200px;
+    padding: 20px;
+    border-radius: 20px;
+    background: white;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    color: #333;
+    font-size: larger;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+}
+
+#progress-bar-container {
+    width: 80%;
+    height: 10px;
+    /* 增加高度以更好展示条纹效果 */
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    /* 增加边界半径 */
+    overflow: hidden;
+    margin: 20px auto;
+}
+
+#progress-bar {
+    width: 0%;
+    /* 初始化宽度为100%，因为我们不通过宽度来控制动画 */
+    height: 100%;
+    background: repeating-linear-gradient(-45deg,
+            rgba(76, 175, 80, 0.75),
+            rgba(76, 175, 80, 0.75) 10px,
+            transparent 10px,
+            transparent 20px);
+    animation: shift 1s linear infinite;
+}
+
+@keyframes shift {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: 100px 0;
+    }
+
+    /* 使背景移动100px，产生滚动效果 */
+}
+
+.number-input {
+    width: 80px;
+    padding: 0px;
+    margin: 5px 0;
+    border: 1px solid lightgray;
+    border-radius: 9px;
+    /* background-color: #f9f9f9; */
+    font-size: 16px;
+    color: #333;
+    text-align: center;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+}
+
+.number-input:focus {
+    border-color: lightgray;
+    /* 输入框聚焦时的边框颜色 */
+    outline: none;
+    /* 去除聚焦时的默认轮廓线 */
+    box-shadow: 0 0 5px rgba(0, 102, 255, 0.5);
+    /* 添加蓝色光晕效果 */
+}
+
+.select-custom {
+    width: 80px;
+    /* 调整宽度以匹配Iterations输入框 */
+    padding: 0px;
+    /* 移除内边距 */
+    margin: 5px 0;
+    /* 调整外边距以保持视觉一致性 */
+    border: 1px solid lightgray;
+    /* 维持边框风格 */
+    border-radius: 9px;
+    /* 调整边框半径以匹配Iterations输入框 */
+    background-color: #ffffff;
+    /* 调整背景颜色 */
+    font-size: 16px;
+    /* 维持字体大小 */
+    color: #333;
+    /* 维持字体颜色 */
+    cursor: pointer;
+    /* 维持指针样式 */
+    text-align: center;
+    /* 维持文字居中 */
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    /* 维持阴影样式 */
+    -webkit-appearance: none;
+    /* 移除默认的选择框样式 */
+    -moz-appearance: none;
+    /* 移除默认的选择框样式 */
+    appearance: none;
+    /* 移除默认的选择框样式 */
+}
+
+.select-custom:focus {
+    outline: none;
+    /* 移除焦点时的默认轮廓线 */
+    border-color: lightgray;
+    /* 调整聚焦时的边框颜色 */
+    box-shadow: 0 0 5px rgba(0, 102, 255, 0.5);
+    /* 添加蓝色光晕效果 */
+}

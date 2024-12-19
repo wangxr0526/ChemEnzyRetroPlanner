@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChemEnzyRetroPlanner</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='figure/favicon.ico') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/select2.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/input.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .navbar-expand-lg .navbar-nav .nav-link {
+            padding-right: 1.5rem;
+            padding-left: 1.5rem;
+            font-size: 1.25rem;
+        }
+
+        .navbar-brand {
+            display: inline-block;
+            padding-top: .3125rem;
+            padding-bottom: .3125rem;
+            margin-right: 1rem;
+            font-size: 1.75rem;
+            line-height: inherit;
+            white-space: nowrap;
+            color: rgb(255, 255, 255);
+            font-family: "Poetsen One", sans-serif;
+        }
+
+        nav {
+            background-color: #2b2b2b;
+            border-bottom: none;
+            z-index: 1500;
+        }
+
+        .navbar {
+            position: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: .5rem 1rem;
+        }
+
+        .navbar-shadow {
+            box-shadow: 0px 20px 20px 2px rgba(0, 0, 0, 0.15);
+        }
+
+        .navbar-nav {
+            align-items: center;
+        }
+
+        nav a {
+            color: #ffffff;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #e1e1e1;
+        }
+
+        .footer {
+            background-color: #2b2b2b;
+            color: #ffffff;
+            text-align: center;
+            padding: 10px;
+            width: 100%;
+            box-shadow: 0px -20px 20px 2px rgba(0, 0, 0, 0.15);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 18px;
+            z-index: 100;
+        }
+
+        .btn,
+        .form-control,
+        .select2-container {
+            border-radius: 0;
+        }
+
+        /* 下拉菜单样式调整 */
+        .navbar .dropdown-menu {
+            background-color: #2b2b2b;
+            color: #ffffff;
+            /* 设置文字颜色为白色 */
+            border: none;
+            /* 移除边框 */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            /* 添加阴影，根据需求调整阴影的模糊度和扩散范围 */
+            border-radius: 25px;
+            /* 设置圆角，根据需要调整圆角大小 */
+            min-width: 150px;
+            /* 可以调整最小宽度以更好地控制外观 */
+        }
+
+        .navbar .dropdown-menu .dropdown-item {
+            display: flex;
+            /* 使用flex布局 */
+            align-items: center;
+            /* 垂直居中对齐 */
+            justify-content: center;
+            /* 水平居中对齐 */
+            color: #ffffff;
+            /* 设置下拉菜单项的文字颜色为白色 */
+            transition: color 0.3s;
+            /* 平滑过渡效果仅应用于颜色 */
+        }
+
+        .navbar .dropdown-menu .dropdown-item:hover,
+        .navbar .dropdown-menu .dropdown-item:focus {
+            background-color: #2b2b2b;
+            color: #e1e1e1;
+            /* 悬停或聚焦时文字颜色变亮 */
+            border-radius: 25px;
+        }
+
+        .navbar .dropdown-menu .dropdown-item span {
+            flex-grow: 1;
+            /* 使文本占据所有可用空间 */
+            text-align: center;
+            /* 文本居中 */
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-shadow">
+        <div class="container">
+            <a class="navbar-brand" href="/">ChemEnzyRetroPlanner</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Home <span
+                                class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-cogs"></i> Services
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="/services"><i
+                                    class="fas fa-vial"></i><span>Planner</span></a>
+                            <a class="dropdown-item" href="/agent"><i class="fas fa-robot"></i><span>Agent</span></a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/queue"><i class="fas fa-stream"></i> Queue</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/help"><i class="fas fa-question-circle"></i> Help</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact"><i class="fas fa-envelope"></i> Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="content">
+        <div id="main-container">
+            <!-- Bootstrap Modal -->
+            <div class="modal fade" id="jsmeModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content modal-addition">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalLabel" style='font-family: "Poetsen One", sans-serif;'>Draw
+                                a Target Molecule</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="jsme_container"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                style="border-radius: 20px;">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="get_smiles()" data-dismiss="modal"
+                                style="border-radius: 20px;">Get SMILES</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Options Modal -->
+            <div class="modal fade" id="optionsModal" tabindex="-1" role="dialog" aria-labelledby="optionsModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content modal-addition">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="optionsModalLabel"
+                                style='font-family: "Poetsen One", sans-serif;'>Options</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Slider for integer selection -->
+                            <div class="slider-container">
+                                <label for="optionsRangeSlider">Iterations:</label>
+                                <input type="number" id="optionsSliderValue" value="10" min="5" max="1000"
+                                    class="number-input">
+                                <br>
+                                <input type="range" id="optionsRangeSlider" name="rangeSlider" min="5" max="1000"
+                                    value="10" class="slider">
+                            </div>
+
+                            <!-- Multiple select for model options -->
+                            <label for="modelOptions">Select Models:</label>
+                            <select id="modelOptions" name="modelOptions" multiple="multiple" style="width: 80%">
+                                {% for model in multi_select_data.model_options %}
+                                <option value="{{ model }}">{{ model }}</option>
+                                {% endfor %}
+                            </select>
+
+                            <!-- Multiple select for stock options -->
+                            <label for="stockOptions">Select Stocks:</label>
+                            <select id="stockOptions" name="stockOptions" multiple="multiple" style="width: 80%">
+                                {% for stock in multi_select_data.stock_options %}
+                                <option value="{{ stock }}">{{ stock }}</option>
+                                {% endfor %}
+                            </select>
+
+                            <!-- 新增的反应选项下拉菜单，初始隐藏 -->
+                            <div id="conditionPredictorOptionsContainer">
+                                <label for="conditionPredictorOptions">Select Condition Predictor:</label>
+                                <select id="conditionPredictorOptions" name="conditionPredictorOptions"
+                                    style="width: 80%;">
+                                    <option></option> <!-- 允许Select2显示占位符 -->
+                                    {% for condition_predictor in multi_select_data.condition_predictor_options %}
+                                    <option value="{{ condition_predictor }}">{{ condition_predictor }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <!-- End of 新增部分 -->
+
+                            <!-- Options checkboxes -->
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="keepSearch" name="options"
+                                    value="Keep search after solved one route" checked>
+                                <label for="keepSearch">Keep search after solved one route</label><br>
+                                <input type="checkbox" id="useReactionEvaluator" name="options"
+                                    value="Use reaction plausibility evaluator">
+                                <label for="useReactionEvaluator">Use reaction plausibility evaluator</label><br>
+                                <input type="checkbox" id="useGuidingFunction" name="options"
+                                    value="Use guiding function" checked>
+                                <label for="useGuidingFunction">Use guiding function</label><br>
+                                <input type="checkbox" id="predictReactionCondition" name="options"
+                                    value="Predict reaction condition" checked>
+                                <label for="predictReactionCondition">Predict reaction condition</label><br>
+
+
+                                <input type="checkbox" id="identifyEnzymatic" name="options"
+                                    value="Identify enzymatic reactions" checked>
+                                <label for="identifyEnzymatic">Identify enzymatic reactions</label><br>
+                                <input type="checkbox" id="recommendEnzymes" name="options" value="Recommend enzymes"
+                                    checked>
+                                <label for="recommendEnzymes">Recommend enzymes</label>
+                            </div>
+
+
+                            <!-- Results Limit Select Box -->
+<!--                             <div class="select-container">
+                                <label for="resultsLimit">Results Limit:</label>
+                                <select id="resultsLimit" name="resultsLimit" class="select-custom">
+                                    <option value="50" selected>50</option>
+                                    <option value="100">100</option>
+                                    <option value="200">200</option>
+                                    <option value="300">300</option>
+                                    <option value="500">500</option>
+                                    <option value="all">All</option>
+                                </select>
+                            </div> -->
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                style="border-radius: 20px;">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="saveOptions()" data-dismiss="modal"
+                                style="border-radius: 20px;">Confirm Options</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div>
+                <label class="input-header">Target SMILES: </label>
+                <div id="smiles-group">
+                    <input id="smiles_container" name="drawn_smiles">
+                    <button type="button" class="draw_button" data-toggle="modal" data-target="#jsmeModal">Draw</button>
+                </div>
+                <div>
+                    <button id="options_button" data-toggle="modal" data-target="#optionsModal">Options</button>
+                    <!-- 其他内容保持不变 -->
+                </div>
+
+                <button id="submit_button"
+                    style="background-color: #28a745; border-color: #28a745 ; color: white;">Submit</button>
+                <br>
+                <button id="results_button">Show Results</button>
+            </div>
+
+            <div id="log-group">
+                <div id="progress-bar-container">
+                    <div id="progress-bar"></div>
+                </div>
+
+                <label class="input-header">Logs:</label>
+                <textarea id="log" readonly style="resize: none;"></textarea>
+            </div>
+        </div>
+
+
+        <div id="waitingModal">
+            <div>
+                <p>Processing ...</p>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        &copy; 2024 ChemEnzyRetroPlanner. All rights reserved.
+    </div>
+    <script type="text/javascript" language="javascript"
+        src="{{ url_for('static', filename='jsme/jsme.nocache.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script>
+        disableResultButton()
+        function jsmeOnLoad() {
+            jsmeApplet = new JSApplet.JSME("jsme_container", "450px", "300px", {
+                "options": "oldlook,star,nocanonize"
+            });
+            // jsmeApplet.setNotifyStructuralChangeJSfunction("show_smiles");
+        }
+
+        function get_smiles() {
+            jsmeApplet.options("canonize");
+            var smiles = jsmeApplet.smiles();
+            document.getElementById("smiles_container").value = smiles;
+        }
+
+        let savedOptions = {}; // Object to store selected options
+
+        const optionsSlider = document.getElementById('optionsRangeSlider');
+        const optionsOutput = document.getElementById('optionsSliderValue');
+        optionsSlider.oninput = function () {
+            optionsOutput.textContent = this.value;
+        }
+
+        function saveOptions() {
+            savedOptions = {};
+            savedOptions.iterationNumber = optionsOutput.value; // Save the slider value
+            savedOptions.selectedModels = $('#modelOptions').val(); // 添加模型选项
+            savedOptions.selectedStocks = $('#stockOptions').val(); // 添加库存选项
+            var resultsLimit = document.getElementById("resultsLimit").value;
+            savedOptions.resultsLimit = resultsLimit;
+
+            document.querySelectorAll('.checkbox-group input[type=checkbox]').forEach((checkbox) => {
+                savedOptions[checkbox.value] = false;
+            });
+            document.querySelectorAll('.checkbox-group input[type=checkbox]:checked').forEach((checkbox) => {
+                savedOptions[checkbox.value] = true; // Save the checkbox value
+            });
+
+            // 新增部分：保存反应选项
+            if (savedOptions["Predict reaction condition"]) {
+                savedOptions.selectedConditionPredictor = $('#conditionPredictorOptions').val();
+            }
+            // End of 新增部分
+        }
+
+        document.getElementById("results_button").addEventListener("click", function () {
+            // 显示等待 modal
+            var modal = document.getElementById('waitingModal');
+            modal.style.display = 'block'; // 显示模态框
+        });
+
+        document.getElementById("submit_button").addEventListener("click", function () {
+            var progressBar = document.getElementById("progress-bar");
+            progressBar.style.width = "100%"; // 确保在动画开始前进度条是可见的
+
+            var smiles = document.getElementById("smiles_container").value;
+            var fromData = {};
+            fromData.savedOptions = savedOptions;
+            fromData.smiles = smiles; // 将smiles添加到已保存的选项中
+
+
+            fetch("/calculation", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(fromData)
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error("Submission failed:", data.error);
+                        document.getElementById("log").value += "Submission failed: " + data.error + "\n";
+                        progressBar.style.width = "0%";
+                    } else {
+                        console.log("Data submitted:", data);
+                        document.getElementById("log").value += "Submission successful.\n";
+                        document.getElementById("log").value += "Results ID:" + data.results_id + "\n";
+
+
+                        checkTaskStatus(data.results_id, data.resultsLimit)
+
+                        // 隐藏进度条
+                        progressBar.style.width = "0%";
+
+                        const downloadLink = document.createElement('a');
+                        downloadLink.href = data.private_key_path;
+                        downloadLink.download = ''; // 可选，设置下载的文件名。浏览器会默认使用文件的原始名称
+                        downloadLink.style.display = 'none';
+                        document.body.appendChild(downloadLink);
+                        downloadLink.click();
+                        document.body.removeChild(downloadLink);
+                        
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById("log").value += "Error submitting data: " + error.message + "\n";
+
+                    // 隐藏进度条
+                    progressBar.style.width = "0%";
+                });
+        });
+        const slider = document.getElementById('optionsRangeSlider');
+        const numberInput = document.getElementById('optionsSliderValue');
+
+        // 更新输入框时同步滑块
+        numberInput.oninput = function () {
+            // 检查输入值是否超出范围
+            const max = parseInt(slider.max, 10); // 获取最大值
+            const min = parseInt(slider.min, 10); // 获取最小值
+            let inputValue = parseInt(this.value, 10); // 获取输入值并转为整数
+
+            // 如果输入值超出范围，将其限制在最大值或最小值
+            if (inputValue > max) {
+                inputValue = max;
+                this.value = max; // 更新输入框值为最大值
+            } else if (inputValue < min) {
+                inputValue = min;
+                this.value = min; // 更新输入框值为最小值
+            }
+
+            // 更新滑块的位置
+            slider.value = inputValue;
+        };
+
+        // 更新滑块时同步输入框
+        slider.oninput = function () {
+            numberInput.value = this.value;
+        };
+
+
+        function disableResultButton() {
+            var showResultButton = document.getElementById('results_button')
+            showResultButton.classList.add('disabled')
+            showResultButton.disabled = true
+            showResultButton.style.color = '#CCCCCC'
+        }
+        function enableResultButton(results_id, show_top_k) {
+            var showResultButton = document.getElementById('results_button')
+            showResultButton.classList.remove('disabled')
+            showResultButton.disabled = false
+            showResultButton.style.color = '#1e1e1e'
+            showResultButton.onclick = function () {
+                window.location.href = '/queue';
+            };
+        }
+
+        $(document).ready(function () {
+            // 初始化Select2组件
+            $('#modelOptions').select2({
+                width: '80%',
+                placeholder: "Select models...",
+                allowClear: true,
+                maximumSelectionLength: 2,  // 用户最多可以选择两个选项
+            });
+            $('#stockOptions').select2({
+                width: '80%',
+                placeholder: "Select stocks...",
+                allowClear: true,
+            });
+            // 初始化新的反应选项Select2组件
+            $('#conditionPredictorOptions').select2({
+                width: '80%',
+                placeholder: "Reaction Condition Recommander",
+            });
+        });
+
+        // 新增部分：监听predictReaction复选框的变化
+        $('#predictReactionCondition').change(function () {
+            if (this.checked) {
+                $('#conditionPredictorOptionsContainer').slideDown();
+            } else {
+                $('#conditionPredictorOptionsContainer').slideUp();
+                $('#conditionPredictorOptions').val(null).trigger('change'); // 重置选择
+            }
+        });
+        // End of 新增部分
+
+        function checkTaskStatus(taskId, resultsLimit) {
+            // 设置定期查询任务状态的间隔为1000毫秒（即1秒）
+            const intervalId = setInterval(function () {
+                fetch(`/status/${taskId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Checking task status:', data);
+
+                        // 检查任务状态是否为'SUCCESS'
+                        if (data.state === 'SUCCESS') {
+                            clearInterval(intervalId); // 停止定期查询
+                            enableResultButton(taskId, resultsLimit); // 调用enableResultButton函数
+                            document.getElementById("log").value += "Done!" + "\n";
+                            console.log('Task completed successfully.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching task status:', error);
+                        clearInterval(intervalId); // 出现错误时停止定期查询
+                        document.getElementById("log").value += "Erro!" + "\n";
+                    });
+            }, 5000);
+        }
+
+
+    </script>
+</body>
+
+</html>

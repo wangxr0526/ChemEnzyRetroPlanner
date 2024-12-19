@@ -1,0 +1,147 @@
+{
+    "smiles": "CC(C)c1ccc(-n2nc(O)c3c(=O)c4ccc(Cl)cc4[nH]c3c2=O)cc1",
+    "type": "mol",
+    "in_stock": false,
+    "values": 13.60475514684601,
+    "children": [
+        {
+            "type": "reaction",
+            "smiles": "",
+            "template": null,
+            "children": [
+                {
+                    "smiles": "NN",
+                    "type": "mol",
+                    "in_stock": true,
+                    "values": 0
+                },
+                {
+                    "smiles": "CCOC(=O)c1nn(-c2ccc(C(C)C)cc2)c(=O)c2ccc(C)cc2c1=O",
+                    "type": "mol",
+                    "in_stock": false,
+                    "values": 11.969306286639206,
+                    "children": [
+                        {
+                            "type": "reaction",
+                            "smiles": "",
+                            "template": null,
+                            "children": [
+                                {
+                                    "smiles": "CC(C)c1ccc(N)cc1",
+                                    "type": "mol",
+                                    "in_stock": true,
+                                    "values": 0
+                                },
+                                {
+                                    "smiles": "CCOC(=O)C(=O)C(=O)c1cc(C)ccc1C(=O)OC",
+                                    "type": "mol",
+                                    "in_stock": false,
+                                    "values": 7.371558327208736,
+                                    "children": [
+                                        {
+                                            "type": "reaction",
+                                            "smiles": "",
+                                            "template": "([C;D1;H3:2]-[C:3]-[#8:4]-[C:5](=[O;D1;H0:6])-[C;H0;D3;+0:7](=[O;H0;D1;+0:1])-[C:8]=[O;D1;H0:9])>>(O=S(-[O-])-O-[OH;D1;+0:1]).([C;D1;H3:2]-[C:3]-[#8:4]-[C:5](=[O;D1;H0:6])-[C;H0;D3;+0:7](-[C:8]=[O;D1;H0:9])=P(-c1:c:c:c:c:c:1)(-c1:c:c:c:c:c:1)-c1:c:c:c:c:c:1)",
+                                            "children": [
+                                                {
+                                                    "smiles": "CCOC(=O)C(C(=O)c1cc(C)ccc1C(=O)OC)=P(c1ccccc1)(c1ccccc1)c1ccccc1",
+                                                    "type": "mol",
+                                                    "in_stock": false,
+                                                    "values": 6.950563957165756,
+                                                    "children": [
+                                                        {
+                                                            "type": "reaction",
+                                                            "smiles": "",
+                                                            "template": null,
+                                                            "children": [
+                                                                {
+                                                                    "smiles": "c1ccc(P(c2ccccc2)c2ccccc2)cc1",
+                                                                    "type": "mol",
+                                                                    "in_stock": true,
+                                                                    "values": 0
+                                                                },
+                                                                {
+                                                                    "smiles": "CCOC(=O)CC(=O)c1cc(C)ccc1C(=O)OC",
+                                                                    "type": "mol",
+                                                                    "in_stock": false,
+                                                                    "values": 6.907755278982137,
+                                                                    "children": [
+                                                                        {
+                                                                            "type": "reaction",
+                                                                            "smiles": "",
+                                                                            "template": null,
+                                                                            "children": [
+                                                                                {
+                                                                                    "smiles": "Cc1ccc(C(=O)O)c(C)c1",
+                                                                                    "type": "mol",
+                                                                                    "in_stock": true,
+                                                                                    "values": 0
+                                                                                },
+                                                                                {
+                                                                                    "smiles": "CCO",
+                                                                                    "type": "mol",
+                                                                                    "in_stock": true,
+                                                                                    "values": 0
+                                                                                },
+                                                                                {
+                                                                                    "smiles": "COC(=O)CC(=O)OC",
+                                                                                    "type": "mol",
+                                                                                    "in_stock": true,
+                                                                                    "values": 0
+                                                                                }
+                                                                            ],
+                                                                            "rxn_smiles": "Cc1ccc(C(=O)O)c(C)c1.CCO.COC(=O)CC(=O)OC>>CCOC(=O)CC(=O)c1cc(C)ccc1C(=O)OC",
+                                                                            "rxn_attribute": {
+                                                                                "condition": "{\"Temperature\":{\"0\":77.4489822388,\"1\":54.3728599548,\"2\":80.005531311},\"Solvent\":{\"0\":\"\",\"1\":\"\",\"2\":\"\"},\"Reagent\":{\"0\":\"O=S(=O)(O)O\",\"1\":\"O=S(Cl)Cl\",\"2\":\"Cl\"},\"Catalyst\":{\"0\":\"\",\"1\":\"\",\"2\":\"\"},\"null1\":{\"0\":null,\"1\":null,\"2\":null},\"null2\":{\"0\":null,\"1\":null,\"2\":null},\"Score\":{\"0\":\"0.5120\",\"1\":\"0.0794\",\"2\":\"0.0282\"}}",
+                                                                                "organic_enzyme_rxn_classification": "{\"Reaction Type\":{\"0\":\"Organic Reaction\"},\"Confidence\":{\"0\":0.9999957085}}",
+                                                                                "enzyme_assign": "{\"Ranks\":{\"0\":\"Top-1\",\"1\":\"Top-2\",\"2\":\"Top-3\"},\"EC Number\":{\"0\":\"2.7.8.-\",\"1\":\"6.3.2.-\",\"2\":\"2.1.1.11\"},\"Confidence\":{\"0\":0.1158639565,\"1\":0.105462186,\"2\":0.0754676759}}"
+                                                                            }
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ],
+                                                            "rxn_smiles": "c1ccc(P(c2ccccc2)c2ccccc2)cc1.CCOC(=O)CC(=O)c1cc(C)ccc1C(=O)OC>>CCOC(=O)C(C(=O)c1cc(C)ccc1C(=O)OC)=P(c1ccccc1)(c1ccccc1)c1ccccc1",
+                                                            "rxn_attribute": {
+                                                                "condition": "{\"Temperature\":{\"0\":48.8162117004,\"1\":27.8298721313,\"2\":46.8376121521},\"Solvent\":{\"0\":\"CC#N\",\"1\":\"ClCCl\",\"2\":\"ClC(Cl)Cl\"},\"Reagent\":{\"0\":\"\",\"1\":\"\",\"2\":\"\"},\"Catalyst\":{\"0\":\"\",\"1\":\"\",\"2\":\"\"},\"null1\":{\"0\":null,\"1\":null,\"2\":null},\"null2\":{\"0\":null,\"1\":null,\"2\":null},\"Score\":{\"0\":\"0.7341\",\"1\":\"0.0448\",\"2\":\"0.0301\"}}",
+                                                                "organic_enzyme_rxn_classification": "{\"Reaction Type\":{\"0\":\"Organic Reaction\"},\"Confidence\":{\"0\":0.9999617338}}",
+                                                                "enzyme_assign": "{\"Ranks\":{\"0\":\"Top-1\",\"1\":\"Top-2\",\"2\":\"Top-3\"},\"EC Number\":{\"0\":\"1.14.19.70\",\"1\":\"4.2.3.19\",\"2\":\"2.5.1.-\"},\"Confidence\":{\"0\":0.1403130591,\"1\":0.1271201968,\"2\":0.1027218625}}"
+                                                            }
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "smiles": "O=S([O-])OO",
+                                                    "type": "mol",
+                                                    "in_stock": true,
+                                                    "values": 0
+                                                }
+                                            ],
+                                            "rxn_smiles": "CCOC(=O)C(C(=O)c1cc(C)ccc1C(=O)OC)=P(c1ccccc1)(c1ccccc1)c1ccccc1.O=S([O-])OO>>CCOC(=O)C(=O)C(=O)c1cc(C)ccc1C(=O)OC",
+                                            "rxn_attribute": {
+                                                "condition": "{\"Temperature\":{\"0\":28.3481330872,\"1\":55.9688110352,\"2\":22.7751407623},\"Solvent\":{\"0\":\"\",\"1\":\"\",\"2\":\"\"},\"Reagent\":{\"0\":\"\",\"1\":\"O=C1OI(=O)(O)C2=CC=CC=C12\",\"2\":\"O=[Mn](=O)(=O)[O-].[K+]\"},\"Catalyst\":{\"0\":\"CC(=O)O[Pb](OC(C)=O)(OC(C)=O)OC(C)=O\",\"1\":\"\",\"2\":\"\"},\"null1\":{\"0\":null,\"1\":null,\"2\":null},\"null2\":{\"0\":null,\"1\":null,\"2\":null},\"Score\":{\"0\":\"0.0526\",\"1\":\"0.0324\",\"2\":\"0.0230\"}}",
+                                                "organic_enzyme_rxn_classification": "{\"Reaction Type\":{\"0\":\"Organic Reaction\"},\"Confidence\":{\"0\":0.9995526671}}",
+                                                "enzyme_assign": "{\"Ranks\":{\"0\":\"Top-1\",\"1\":\"Top-2\",\"2\":\"Top-3\"},\"EC Number\":{\"0\":\"2.5.1.-\",\"1\":\"2.7.7.7\",\"2\":\"1.13.12.-\"},\"Confidence\":{\"0\":0.0511262827,\"1\":0.023085665,\"2\":0.0202955548}}"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ],
+                            "rxn_smiles": "CC(C)c1ccc(N)cc1.CCOC(=O)C(=O)C(=O)c1cc(C)ccc1C(=O)OC>>CCOC(=O)c1nn(-c2ccc(C(C)C)cc2)c(=O)c2ccc(C)cc2c1=O",
+                            "rxn_attribute": {
+                                "condition": "{\"Temperature\":{\"0\":39.2678756714,\"1\":37.7831954956,\"2\":40.8882865906},\"Solvent\":{\"0\":\"CCO\",\"1\":\"CCO\",\"2\":\"\"},\"Reagent\":{\"0\":\"\",\"1\":\"CC(=O)O\",\"2\":\"CCO\"},\"Catalyst\":{\"0\":\"\",\"1\":\"\",\"2\":\"\"},\"null1\":{\"0\":null,\"1\":null,\"2\":null},\"null2\":{\"0\":null,\"1\":null,\"2\":null},\"Score\":{\"0\":\"0.2715\",\"1\":\"0.0350\",\"2\":\"0.0301\"}}",
+                                "organic_enzyme_rxn_classification": "{\"Reaction Type\":{\"0\":\"Organic Reaction\"},\"Confidence\":{\"0\":0.9999953508}}",
+                                "enzyme_assign": "{\"Ranks\":{\"0\":\"Top-1\",\"1\":\"Top-2\",\"2\":\"Top-3\"},\"EC Number\":{\"0\":\"2.4.2.4\",\"1\":\"2.4.1.-\",\"2\":\"2.7.1.161\"},\"Confidence\":{\"0\":0.0883058682,\"1\":0.0521703586,\"2\":0.0215615034}}"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "rxn_smiles": "NN.CCOC(=O)c1nn(-c2ccc(C(C)C)cc2)c(=O)c2ccc(C)cc2c1=O>>CC(C)c1ccc(-n2nc(O)c3c(=O)c4ccc(Cl)cc4[nH]c3c2=O)cc1",
+            "rxn_attribute": {
+                "condition": "{\"Temperature\":{\"0\":65.8411331177,\"1\":26.9908542633,\"2\":67.8781967163},\"Solvent\":{\"0\":\"CO\",\"1\":\"C1CCOC1\",\"2\":\"CO\"},\"Reagent\":{\"0\":\"C[O-].[Na+]\",\"1\":\"C[Mg]Br\",\"2\":\"Cl\"},\"Catalyst\":{\"0\":\"\",\"1\":\"\",\"2\":\"\"},\"null1\":{\"0\":null,\"1\":null,\"2\":null},\"null2\":{\"0\":null,\"1\":null,\"2\":null},\"Score\":{\"0\":\"0.0355\",\"1\":\"0.0244\",\"2\":\"0.0225\"}}",
+                "organic_enzyme_rxn_classification": "{\"Reaction Type\":{\"0\":\"Organic Reaction\"},\"Confidence\":{\"0\":0.9999965429}}",
+                "enzyme_assign": "{\"Ranks\":{\"0\":\"Top-1\",\"1\":\"Top-2\",\"2\":\"Top-3\"},\"EC Number\":{\"0\":\"3.1.1.73\",\"1\":\"3.1.1.1\",\"2\":\"3.1.1.2\"},\"Confidence\":{\"0\":0.2898235321,\"1\":0.2250851393,\"2\":0.0451611429}}"
+            }
+        }
+    ]
+}

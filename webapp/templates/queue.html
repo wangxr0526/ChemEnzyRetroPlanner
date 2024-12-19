@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block head %}
+
+<head>
+    {% block title %}Queue{% endblock %}
+    {% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/queue.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+    {% endblock %}
+</head>
+{% endblock %}
+
+{% block content %}
+
+<body>
+    <div class="main-container">
+        <h1 class="text-head">Job Queue</h1>
+        <table id="queueTable">
+            <thead>
+                <tr>
+                    <th>Job ID</th>
+                    <th>Job Status</th>
+                    <th>Result Details</th>
+                    <th>Submitted Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Jobs will be listed here -->
+            </tbody>
+        </table>
+        <div id="pagination">
+            <button onclick="previousPage()" class="text-head">Previous</button>
+            <span class="text-head">Page <span id="page_number" class="text-head">1</span> of <span id="total_pages"
+                    class="text-head">1</span></span>
+            <button onclick="nextPage()" class="text-head">Next</button>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div id="privateKeyModal" class="mymodal" style="display: none;">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2 style="font-family: 'Poetsen One', sans-serif;">Upload Private Key</h2>
+                <span class="close">&times;</span>
+                
+            </div>
+            <a class="mymodal-text-title">Job ID:</a>
+            <a id="taskIdShow" class="mymodal-text"></a>
+
+            <form id="privateKeyForm">
+
+                <button type="button" id="uploadBtn" class="mymodal-button">Choose File</button>
+                <input type="file" id="privateKeyFile" required style="display: none;">
+
+                <button type="submit" class="mymodal-button">Upload</button>
+            </form>
+        </div>
+    </div>
+    
+
+</body>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.onload = function() {
+        listJobs();  // Initial call to display current job statuses
+    };
+    
+    var current_page = 1;
+    var records_per_page = 8;
+    var objJson = []; // Initialized as empty and will be populated dynamically
+    
+    function initPaginationButtons() {
+        var btn_next = document.querySelector("#btn_next");
+        var btn_prev = document.querySelector("#btn_prev");
+    
+        btn_next.addEventListener('click', nextPage);
+        btn_prev.addEventListener('click', previousPage);
+    
+        updatePaginationButtons();
+    }
+    
+    function updatePaginationButtons() {
+        var total_pages = Math.ceil(objJson.length / records_per_page);
+        var btn_next = document.querySelector("#btn_next");
+        var btn_prev = document.querySelector("#btn_prev");
+    
+        btn_prev.style.visibility = current_page === 1 ? "hidden" : "visible";
+        btn_next.style.visibility = current_page === total_pages ? "hidden" : "visible";
+    }
+    
+    function changePage(page) {
+        var total_pages = Math.ceil(objJson.length / records_per_page);
+    
+        if (page < 1) page = 1;
+        if (page > total_pages) page = total_pages;
+    
+        current_page = page; // Update the current page
+    
+        document.querySelector("#queueTable tbody").innerHTML = "";
+    
+        for (var i = (page - 1) * records_per_page; i < (page * records_per_page) && i < objJson.length; i++) {
+            document.querySelector("#queueTable tbody").appendChild(objJson[i].cloneNode(true)); // Clone nodes to re-append without removing
+        }
+    
+        document.getElementById("page_number").innerText = page;
+        document.getElementById("total_pages").innerText = total_pages;
+    
+        updatePaginationButtons();
+    }
+    
+    function nextPage() {
+        if (current_page < Math.ceil(objJson.length / records_per_page)) {
+            current_page++;
+            changePage(current_page);
+        }
+    }
+    
+    function previousPage() {
+        if (current_page > 1) {
+            current_page--;
+            changePage(current_page);
+        }
+    }
+    
+    function listJobs() {
+        fetch('/jobs')
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.getElementById('queueTable').getElementsByTagName('tbody')[0];
+                tbody.innerHTML = ''; // Clear existing rows
+                data.forEach((job) => {
+                    let row = tbody.insertRow();
+                    let cell1 = row.insertCell(0);
+                    let cell2 = row.insertCell(1);
+                    let cell3 = row.insertCell(2);
+                    let cell4 = row.insertCell(3);
+    
+                    cell1.textContent = job[0];  // job_id
+                    cell2.textContent = job[1];  // status
+    
+                    if (job[1] === 'SUCCESS') {
+                        var link = document.createElement('a');
+                        link.href = '#';
+                        link.textContent = job[2];
+                        link.className = 'rounded-button';
+                        link.addEventListener("click", function() {
+                            openModal(job[0]);
+                        });
+                        cell3.appendChild(link);
+                    } else if (job[1] === 'Submitted') {
+                        let img = document.createElement('img');
+                        img.src = '/static/gif/icons8-waiting.gif';
+                        img.alt = 'Waiting...';
+                        cell3.appendChild(img);
+                    } else {
+                        cell3.textContent = job[2];
+                    }
+                    cell4.textContent = job[3];
+                });
+    
+                objJson = Array.from(document.querySelectorAll('#queueTable tbody tr'));
+                initPaginationButtons();  // Initialize the pagination buttons and their functionality
+                changePage(current_page); // Ensure correct page is displayed
+            });
+        setTimeout(listJobs, 60000);  // Update the job list every 60 seconds
+    }
+
+    // Function to open the modal and set up for the specific job
+    function openModal(jobId) {
+        var modal = document.getElementById('privateKeyModal');
+        modal.style.display = 'block';
+
+        var taskIdShow = document.getElementById('taskIdShow');
+        taskIdShow.innerHTML = jobId;
+
+        // Set up form submission handler within modal context
+        document.getElementById('privateKeyForm').onsubmit = function(event) {
+            event.preventDefault();
+            var formData = new FormData();
+            formData.append('privateKey', document.getElementById('privateKeyFile').files[0]);
+            formData.append('jobId', jobId);  // Pass the jobId along with the key
+
+            fetch('/validate-key', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/locked_results/' + jobId + '&resultsLimit-50'; // Redirect to the results page if key is valid
+                } else {
+                    alert('Invalid private key');
+                    modal.style.display = 'none';  // Close the modal on failure
+                }
+            });
+        };
+    }
+
+    // Close modal logic if needed (similar to earlier implementation)
+    var span = document.getElementsByClassName('close')[0];
+    span.onclick = function() {
+        var modal = document.getElementById('privateKeyModal');
+        modal.style.display = 'none';
+    }
+    window.onclick = function(event) {
+        var modal = document.getElementById('privateKeyModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+    document.getElementById('uploadBtn').addEventListener('click', function() {
+        document.getElementById('privateKeyFile').click();  // 触发真正的文件选择框
+    });
+    document.getElementById('privateKeyFile').addEventListener('change', function() {
+        var file = this.files[0];
+        if (file) {
+            document.getElementById('uploadBtn').textContent = file.name;  // 更新文件名显示
+        } else {
+            document.getElementById('uploadBtn').textContent = 'Choose File';  // 如果没有文件选择，显示默认文本
+        }
+    });
+    
+
+    </script>
+    
+
+{% endblock %}

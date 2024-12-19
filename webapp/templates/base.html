@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ChemEnzyRetroPlanner{% endblock %}</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='figure/favicon.ico') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <!-- 添加 Font Awesome 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet"> -->
+
+    {% block extra_js %}{% endblock %}
+    {% block extra_css %}{% endblock %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .navbar-expand-lg .navbar-nav .nav-link {
+            padding-right: 1.5rem;
+            padding-left: 1.5rem;
+            font-size: 1.25rem;
+        }
+        .navbar-brand {
+            display: inline-block;
+            padding-top: .3125rem;
+            padding-bottom: .3125rem;
+            margin-right: 1rem;
+            font-size: 1.75rem;
+            line-height: inherit;
+            white-space: nowrap;
+            color: rgb(255, 255, 255);
+            /* font-family: "Lobster", sans-serif; */
+            font-family: "Poetsen One", sans-serif;
+        }
+
+        nav {
+            background-color: #2b2b2b;
+            /* 银灰色背景 */
+            border-bottom: none;
+            /* 移除底边框实现扁平化 */
+            z-index: 1500;
+
+        }
+        .navbar {
+            position: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: .5rem 1rem;
+        }
+        .navbar-shadow {
+            box-shadow: 0px 20px 20px 2px rgba(0, 0, 0, 0.15);
+        }
+        .navbar-nav {
+            align-items: center;
+        }
+        nav a {
+            color: #ffffff;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: #e1e1e1;
+        }
+        .footer {
+            background-color: #2b2b2b;
+            color: #ffffff;
+            text-align: center;
+            padding: 10px;
+            width: 100%;
+            box-shadow: 0px -20px 20px 2px rgba(0, 0, 0, 0.15);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 18px;
+            z-index: 100;
+        }
+        .btn, .form-control, .select2-container {
+            border-radius: 0;
+        }
+
+        /* 下拉菜单样式调整 */
+        .navbar .dropdown-menu {
+            background-color: #2b2b2b;
+            color: #ffffff; /* 设置文字颜色为白色 */
+            border: none; /* 移除边框 */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 添加阴影，根据需求调整阴影的模糊度和扩散范围 */
+            border-radius: 25px; /* 设置圆角，根据需要调整圆角大小 */
+            min-width: 150px; /* 可以调整最小宽度以更好地控制外观 */
+        }
+
+        .navbar .dropdown-menu .dropdown-item {
+            display: flex; /* 使用flex布局 */
+            align-items: center; /* 垂直居中对齐 */
+            justify-content: center; /* 水平居中对齐 */
+            color: #ffffff; /* 设置下拉菜单项的文字颜色为白色 */
+            transition: color 0.3s; /* 平滑过渡效果仅应用于颜色 */
+        }
+
+        .navbar .dropdown-menu .dropdown-item:hover,
+        .navbar .dropdown-menu .dropdown-item:focus {
+            background-color: #2b2b2b;
+            color: #e1e1e1; /* 悬停或聚焦时文字颜色变亮 */
+            border-radius: 25px;
+        }
+        .navbar .dropdown-menu .dropdown-item span {
+            flex-grow: 1; /* 使文本占据所有可用空间 */
+            text-align: center; /* 文本居中 */
+        }
+        
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-shadow">
+        <div class="container">
+            <a class="navbar-brand" href="/">ChemEnzyRetroPlanner</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Home <span
+                                class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-cogs"></i> Services
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="/services"><i class="fas fa-vial"></i><span>Planner</span></a>
+                            <a class="dropdown-item" href="/agent"><i class="fas fa-robot"></i><span>Agent</span></a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/queue"><i class="fas fa-stream"></i> Queue</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/help"><i class="fas fa-question-circle"></i> Help</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact"><i class="fas fa-envelope"></i> Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+
+    <div class="footer">
+        &copy; 2024 ChemEnzyRetroPlanner. All rights reserved.
+    </div>
+
+    {% block scripts %}
+    {% endblock %}
+
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+</body>
+
+     
+</body>
+
+</html>

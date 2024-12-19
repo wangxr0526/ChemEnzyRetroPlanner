@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+<head>
+    {% block title %}Agent Deploy{% endblock %}
+    {% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/help.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-okaidia.min.css" />
+    {% endblock %}
+</head>
+
+<body>
+    {% block content %}
+    <div class="main-container">
+        <div class="nav-column">
+            <ul>
+                <li><a href="#section1" class="nav-link text-head">Introduction</a></li>
+                <li><a href="#section2" class="nav-link text-head">Agent Interface Deploy</a></li>
+            </ul>
+        </div>
+        <div class="content-column">
+            <div id="section1" class="section-main">
+                <p class="section-head">
+                    Introduction
+                </p>
+                <img class="img" src="/static/figure/agent_intro.svg">
+                <p class="img-legend">
+                    <strong>
+                        Figure 1.
+                    </strong>
+                    ChemEnzyRetroPlanner Agent introduction.
+                </p>
+            </div>
+            <div id="section2" class="section-main">
+                <p class="section-head">
+                    Agent Interface Deploy
+                </p>
+                <p class="text-main">The ChemEnzyRetroPlanner Agent is a fully open-source service powered by llama3.1.
+                    Due to the high computational requirements, we have not directly integrated this service into the
+                    ChemEnzyRetroPlanner website. Instead, we encourage users to deploy llama3.1 via Ollama. The
+                    ChemEnzyRetroPlanner Agent can utilize a self-deployed Ollama service along with
+                    ChemEnzyRetroPlanner's free API for inference. Before using this Agent service, you need to deploy
+                    it on your personal computer. The deployment steps are as follows:</p>
+                <pre><code class="language-bash">git clone https://gitee.com/xiaoruiwang_1_0/retro_planner_agent.git
+cd retro_planner_agent
+conda env create -f envs.yml
+conda activate retro_planner_agent_env
+pip install chemprice
+pip install -e .
+git clone https://gitee.com/xiaoruiwang_1_0/retro_planner_streamlit_app.git
+cd retro_planner_streamlit_app
+streamlit run app.py</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
+                <p class="text-main">Deploying Ollama is straightforward. If your local computer can support running
+                    llama3.1:70b, you can follow the steps below to deploy it directly:</p>
+                <pre><code class="language-bash"># Ubuntu 20.04:
+curl -fsSL https://ollama.com/install.sh | sh
+ollama pull llama3.1:70b
+# Ollama Base URL: http://localhost:11434
+# ChemEnzyRetroPlanner Base URL: http://c2400755y0.goho.co:57669</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
+                <p class="text-main">If your Ollama service is running on another server, you need to enable external
+                    access for the Ollama API and map the port (e.g., bind a domain name). The simplest approach is to
+                    forward port 11434 on the server running Ollama to localhost:11434. You can use the following SSH
+                    command to forward the port to the computer where the Agent is running:</p>
+                <pre><code class="language-bash">ssh -L 11434:localhost:11434 user@ip
+# Ollama Base URL: http://localhost:11434</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
+
+                <p class="text-main">Then, specify the base URL for Ollama and the base URL for ChemEnzyRetroPlanner,
+                    and you can run the Agent. If everything is done, click <a style="font-size: larger; font-family: 'Poetsen One', sans-serif; font-weight: bolder;" href="http://localhost:8501" target="_blank">here</a>.</p>
+            </div>
+        </div>
+    </div>
+    <button id="topBtn" title="Go to top">Top</button>
+
+    {% endblock %}
+
+    {% block scripts %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const links = document.querySelectorAll('.nav-link');
+            links.forEach(link => {
+                link.addEventListener('click', function () {
+                    document.querySelector('.nav-link.active')?.classList.remove('active');
+                    link.classList.add('active');
+                });
+            });
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-bash.min.js"></script>
+    <script>
+        function copyToClipboard(button) {
+            // 获取包含代码的<code>标签
+            const code = button.parentNode.querySelector('code');
+            // 创建一个临时的textarea元素
+            const textarea = document.createElement('textarea');
+            // 设置textarea的内容为代码内容
+            textarea.textContent = code.textContent;
+            // 将textarea添加到页面中
+            document.body.appendChild(textarea);
+            // 选中textarea中的内容
+            textarea.select();
+            // 执行复制命令
+            document.execCommand('copy');
+            // 移除页面中的textarea元素
+            document.body.removeChild(textarea);
+
+            // 更改按钮文本为对勾，显示复制成功
+            button.textContent = '✔️';
+            // 一秒后恢复按钮原始状态
+            setTimeout(() => {
+                button.textContent = 'Copy';
+            }, 1000);
+        }
+
+        // 当用户滚动页面时触发
+        window.onscroll = function() {scrollFunction()};
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                document.getElementById("topBtn").style.display = "block";
+            } else {
+                document.getElementById("topBtn").style.display = "none";
+            }
+        }
+
+        // 点击按钮时，回到页面顶部
+        document.getElementById("topBtn").onclick = function() {
+            document.body.scrollTop = 0; // For Safari
+            document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+        }
+    </script>
+
+
+
+    {% endblock %}
+</body>

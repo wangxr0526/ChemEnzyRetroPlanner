@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/queue.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="main-container">
+<h1>An Error Occurred</h1>
+<p>Sorry, an error occurred while processing your request:</p>
+<p>Results ID: [ <strong>{{ results_id }}</strong> ] is not valid or not recorded!</p>
+<a href="/">Return Home</a>
+</div>
+{% endblock %}

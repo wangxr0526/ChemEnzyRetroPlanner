@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  retro_template_relevance:
+    image: "${ASKCOS_REGISTRY:-registry.gitlab.com/mlpds_mit/askcosv2/askcos2_core}/retro/template_relevance:1.0-gpu"
+    container_name: retro_template_relevance
+    command: >
+      torchserve --start --foreground --ncs --model-store=/app/template_relevance/mars
+      --models bkms_metabolic=bkms_metabolic.mar cas=cas.mar pistachio=pistachio.mar
+      pistachio_ringbreaker=pistachio_ringbreaker.mar reaxys=reaxys.mar
+      reaxys_biocatalysis=reaxys_biocatalysis.mar --ts-config ./config.properties
+    volumes:
+      - "${TEMPLATE_RELEVANCE_ROOT}/mars:/app/template_relevance/mars"
+    ports:
+      - "9410-9412:9410-9412"
+    environment:
+      - ASKCOS_REGISTRY=${ASKCOS_REGISTRY:-registry.gitlab.com/mlpds_mit/askcosv2/askcos2_core}
+    networks:
+      - retroplanner_network
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ['0']
+  parrot_serve_container:
+    image: parrot_image:latest
+    container_name: parrot_serve_container
+    command: >
+      torchserve --start --foreground --ncs --model-store=/app/parrot/mars
+      --models USPTO_condition=USPTO_condition.mar --ts-config ./config.properties
+    ports:
+      - "9510-9512:9510-9512"
+    volumes:
+      - "${PARROT_ROOT}/mars:/app/parrot/mars"
+      - "${PARROT_ROOT}:/app/parrot"
+    networks:
+      - retroplanner_network
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ['0']
+
+  retroplanner_container:
+    image: retroplanner_image:latest
+    container_name: retroplanner_container
+    command: /bin/bash
+    volumes:
+      - "${PROJECT_ROOT}:/retro_planner"
+      - "${PROJECT_ROOT}/retro_planner/packages/organic_enzyme_rxn_classifier/organic_enzyme_rxn_classifier:/retro_planner/retro_planner/packages/organic_enzyme_rxn_classifier/organic_enzyme_rxn_classifier"
+      - "$HOME/.cache/torch/hub/checkpoints:/home/retro_planner/.cache/torch/hub/checkpoints"
+    ports:
+      - "8001:8000"
+    networks:
+      - retroplanner_network
+    stdin_open: true
+    tty: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ['0']
+
+networks:
+  retroplanner_network:
+    name: retroplanner_network
+    driver: bridge

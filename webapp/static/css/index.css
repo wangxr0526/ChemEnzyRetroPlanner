@@ -1,0 +1,196 @@
+body,
+html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.navbar {
+    position: fixed;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -ms-flex-align: center;
+    align-items: center;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: .5rem 1rem;
+    transition: background-color 0.3s;
+    width: 100%;
+    padding: 10px 20px;
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+}
+
+.navbar ul li a {
+    color: black;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+.navbar ul li a:hover {
+    color: rgb(203, 203, 203);
+}
+.navbar-expand-lg .navbar-nav .nav-link {
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
+    font-size: 1.25rem;
+
+}
+.navbar-brand {
+    display: inline-block;
+    padding-top: .3125rem;
+    padding-bottom: .3125rem;
+    margin-right: 1rem;
+    font-size: 1.75rem;
+    line-height: inherit;
+    white-space: nowrap;
+
+    /* font-family: "Lobster", sans-serif; */
+    font-family: "Poetsen One", sans-serif;
+    color: black;
+    transition: color 0.3s;
+}
+.navbar-brand:hover {
+    color: rgb(203, 203, 203);
+}
+
+.navbar-shadow {
+    box-shadow: 0px 20px 20px 2px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-expand-lg {
+    -ms-flex-flow: row nowrap;
+    flex-flow: row nowrap;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+}
+/* 设置下拉菜单中链接的样式 */
+.navbar .dropdown-menu .dropdown-item {
+    color: black; /* 保持文字颜色为黑色 */
+    padding: 8px 20px; /* 调整内边距，确保足够空间 */
+    display: flex; /* 使用flexbox布局 */
+    transition: color 0.3s; /* 平滑的颜色过渡效果 */
+    align-items: center; /* 垂直居中对齐所有内容 */
+}
+
+.navbar .dropdown-menu .dropdown-item:hover,
+.navbar .dropdown-menu .dropdown-item:focus {
+    background-color: transparent;
+    color: rgb(203, 203, 203); /* 与顶部导航栏链接的悬停效果一致 */
+    border-radius: 25px;
+}
+
+/* 为下拉菜单添加阴影，并设置背景为灰色透明 */
+.navbar .dropdown-menu {
+    background-color: rgba(128, 128, 128, 0.6); /* 设置为灰色透明，透明度调整为60% */
+    border: none; /* 移除边框 */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 添加阴影，根据需求调整阴影的模糊度和扩散范围 */
+    text-align: center; /* 文本居中 */
+    min-width: 150px; /* 可以调整最小宽度以更好地控制外观 */
+    border-radius: 25px; /* 设置圆角，根据需要调整圆角大小 */
+}
+
+/* 设置图标样式 */
+.navbar .dropdown-menu .dropdown-item i {
+    width: 30px; /* 给图标分配固定宽度 */
+    text-align: center; /* 图标居中显示 */
+}
+
+/* 设置文本样式 */
+.navbar .dropdown-menu .dropdown-item span {
+    flex-grow: 1; /* 使文本占据所有可用空间 */
+    text-align: center; /* 文本居中 */
+}
+
+
+#hero {
+    position: relative; /* 设置相对定位，伪元素使用绝对定位 */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    overflow: hidden; /* 防止伪元素溢出容器 */
+}
+
+#hero:before {
+    content: ""; /* 必须设置，否则伪元素不会显示 */
+    position: absolute;
+    top: -10px; /* 扩展边界以补偿模糊效果 */
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../figure/hero.webp') center/cover no-repeat; /* 设置背景图像 */
+   /*  filter: blur(2px); /* 应用模糊滤镜 */
+    z-index: -1; /* 确保伪元素位于内容下方 */
+}
+
+
+
+
+#startButton {
+    border: none;
+    padding: 10px 20px;
+    background-color: silver;
+    color: black;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-family: "Poetsen One", sans-serif;
+    font-weight: bold;
+    box-shadow: 0px 0px 20px 10px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+    
+}
+
+#startButton:hover {
+    background-color: rgb(232, 232, 232);
+    box-shadow: 0px 0px 20px 15px rgba(0, 0, 0, 0.15);
+}
+
+main {
+    padding: 20px;
+    text-align: center;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 垂直居中容器内的内容 */
+    align-items: center; /* 水平居中容器内的内容 */
+    width: 80%; /* 容器宽度为视窗的80% */
+    margin: auto; /* 水平居中整个容器 */
+
+    position: relative; /* 为伪元素定位提供基准 */
+}
+
+.main-row {
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+    padding: 20px;
+    width: 100%; /* 行宽度占满容器宽度 */
+    position: relative; /* 为伪元素定位提供基准 */
+}
+
+.main-row::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%; /* 从行的中间开始 */
+    height: 2px; /* 线的初始高度 */
+    width: 100%; /* 初始宽度为行的100% */
+    background: linear-gradient(to left, rgba(192,192,192,0), silver, rgba(192,192,192,0));
+    transform: translateX(-50%); /* 确保渐变中心对齐行的中心 */
+}
+
+.top-row, .middle-row, .bottom-row {
+    background-color: transparent; /* 行无背景色 */
+}
+

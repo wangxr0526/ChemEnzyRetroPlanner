@@ -1,0 +1,523 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.navbar-expand-lg .navbar-nav .nav-link {
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
+    font-size: 1.25rem;
+}
+
+.navbar-brand {
+    display: inline-block;
+    padding-top: .3125rem;
+    padding-bottom: .3125rem;
+    margin-right: 1rem;
+    font-size: 1.75rem;
+    line-height: inherit;
+    white-space: nowrap;
+    color: rgb(255, 255, 255);
+    font-family: "Poetsen One", sans-serif;
+}
+
+nav {
+    background-color: #2b2b2b;
+    border-bottom: none;
+    z-index: 1500;
+}
+
+.navbar {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: .5rem 1rem;
+}
+
+.navbar-shadow {
+    box-shadow: 0px 20px 20px 2px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-nav {
+    align-items: center;
+}
+
+nav a {
+    color: #ffffff;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: #e1e1e1;
+}
+
+.footer {
+    background-color: #2b2b2b;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px;
+    width: 100%;
+    box-shadow: 0px -20px 20px 2px rgba(0, 0, 0, 0.15);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 18px;
+    z-index: 100;
+}
+
+.btn,
+.form-control,
+.select2-container {
+    border-radius: 0;
+}
+
+/* 下拉菜单样式调整 */
+.navbar .dropdown-menu {
+    background-color: #2b2b2b;
+    color: #ffffff;
+    /* 设置文字颜色为白色 */
+    border: none;
+    /* 移除边框 */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    /* 添加阴影，根据需求调整阴影的模糊度和扩散范围 */
+    border-radius: 25px;
+    /* 设置圆角，根据需要调整圆角大小 */
+    min-width: 150px;
+    /* 可以调整最小宽度以更好地控制外观 */
+}
+
+.navbar .dropdown-menu .dropdown-item {
+    display: flex;
+    /* 使用flex布局 */
+    align-items: center;
+    /* 垂直居中对齐 */
+    justify-content: center;
+    /* 水平居中对齐 */
+    color: #ffffff;
+    /* 设置下拉菜单项的文字颜色为白色 */
+    transition: color 0.3s;
+    /* 平滑过渡效果仅应用于颜色 */
+}
+
+.navbar .dropdown-menu .dropdown-item:hover,
+.navbar .dropdown-menu .dropdown-item:focus {
+    background-color: #2b2b2b;
+    color: #e1e1e1;
+    /* 悬停或聚焦时文字颜色变亮 */
+    border-radius: 25px;
+}
+
+.navbar .dropdown-menu .dropdown-item span {
+    flex-grow: 1;
+    /* 使文本占据所有可用空间 */
+    text-align: center;
+    /* 文本居中 */
+}
+
+
+#content {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    height: 100vh;
+    padding-top: 85px;
+    flex: 1;
+}
+
+.waittingModal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: transform 0.5s ease;
+}
+
+.waittingModal>div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    /* 设置 flex 布局 */
+    justify-content: center;
+    /* 水平居中 */
+    align-items: center;
+    /* 垂直居中 */
+    width: 300px;
+    height: 200px;
+    padding: 20px;
+    border-radius: 20px;
+    background: white;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    color: #333;
+    font-size: larger;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+}
+
+
+h1 {
+    display: block;
+    font-size: 1em;
+    margin-block-start: 0.67em;
+    margin-block-end: 0.67em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+    color: #1e1e1e;
+    unicode-bidi: isolate;
+    font-family: Arial, sans-serif;
+}
+
+h2 {
+    display: block;
+    font-size: 0.75em;
+    margin-block-start: 0.67em;
+    margin-block-end: 0.67em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+    color: #1e1e1e;
+    unicode-bidi: isolate;
+    font-family: Arial, sans-serif;
+}
+
+#outerContainer {
+    margin-top: 16px;
+    display: flex;
+    width: auto;
+    justify-content: center;
+    /* 确保内容水平居中 */
+    transition: transform 0.5s;
+    /* 平移动画 */
+}
+
+#leftColumn {
+    flex: 1;
+    /* 左列占据所有可用空间 */
+    padding-top: 20px;
+    /* 调整以确保与左列顶部对齐 */
+    padding-right: 10px;
+    padding-left: 10px;
+    transition: transform 0.5s;
+    /* 添加过渡效果 */
+}
+
+#rightColumn {
+    width: auto;
+    /* 右列宽度与左列内容一致 */
+    display: none;
+    /* 默认不显示 */
+    /* position: relative; */
+    /* 添加定位属性以便精确控制内部元素 */
+    padding-top: 20px;
+    /* 调整以确保与左列顶部对齐 */
+    padding-right: 10px;
+    padding-left: 10px;
+    /* flex-direction: column; */
+    /* overflow: hidden; */
+    transition: transform 0.5s ease;
+    /* 宽度变化的过渡效果 */
+    /* z-index:-1000; */
+}
+
+#mynetwork {
+    width: 600px;
+    height: 450px;
+    padding: 5px;
+    border: 1px solid lightgray;
+    display: block;
+    margin: 0;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15);
+    border-radius: 20px;
+    position: relative;
+    cursor: pointer;
+}
+
+#routeSelect,
+#enzymeSelect {
+    position: relative;
+    left: 50%;
+    top: -10px;
+    transform: translateX(-50%);
+    z-index: 1000;
+    padding: 4px 8px;
+    border: 1px solid lightgray;
+    border-radius: 20px;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15);
+    background-color: #FFFFFF;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    /* Smooth transitions for visual effects */
+    outline: none;
+}
+
+#routeSelect:hover,
+#enzymeSelect:hover {
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15);
+    /* Enhanced shadow for hover effect */
+    transform: translateX(-50%) scale(1.05);
+    /* Slight scale up to indicate hover */
+}
+
+#routeSelect:active,
+#enzymeSelect:active {
+    background-color: #f2f2f2;
+    /* Change background color on click to give feedback */
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15);
+    /* Reduce shadow for a pressed effect */
+    transform: translateX(-50%) scale(0.95);
+    /* Scale down to simulate a pressing action */
+}
+
+
+#reactionInfo {
+    width: 600px;
+    height: 190px;
+    /* 设置固定高度，略高于图片高度，包含一些额外的padding */
+    margin: 0;
+    margin-top: 10px;
+    padding: 5px;
+    border: 1px solid lightgray;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15);
+    border-radius: 20px;
+    background-color: #FFFF;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    line-height: 170px;
+    /* 这将使文字垂直居中 */
+    color: #CCCCCC;
+    /* 默认颜色 */
+    font-size: 30px;
+    overflow-x: auto;
+    /* 当内容宽度超出容器宽度时，显示滚动条 */
+}
+
+#enzymeActiveInfo {
+    width: 422px;
+    height: 650px;
+    /* margin-top: 36px; */
+    padding: 10px;
+    border: 1px solid lightgray;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15);
+    border-radius: 20px;
+    background-color: #FFFF;
+    /* font-size: 60px; */
+    color: #1e1e1e;
+    text-align: center;
+    overflow-x: auto;
+    align-items: center;
+}
+
+#resultsDownload {
+    display: block;
+    margin: 10px auto;
+    padding: 8px 16px;
+    border: 1px solid;
+    border-radius: 20px;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15);
+    font-size: 16px;
+    background-color: #3c3c3c;
+    border-color: #3c3c3c;
+    color: white;
+    /* 默认颜色 */
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s, transform 0.3s;
+    /* 增加阴影和变换的过渡效果 */
+}
+
+.button-container {
+    display: flex;
+}
+
+#resultsDownload:hover {
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15);
+    /* 增强的阴影效果 */
+    transform: scale(1.05);
+    /* 鼠标悬停时轻微放大 */
+    /* color: #FFFFFF; */
+    /* 鼠标悬停时文字颜色变化，提升对比度 */
+}
+
+#resultsDownload:active {
+    background-color: #626262;
+    /* 点击时背景色变深 */
+    color: white;
+    /* 点击时文字颜色变深 */
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15);
+    /* 点击时减少阴影大小，模拟按压效果 */
+    transform: scale(0.95);
+    /* 点击时轻微缩小，增加按压感 */
+}
+
+#toggleRightColumn {
+    display: block;
+    margin: 10px auto;
+    padding: 8px 16px;
+    border: 1px solid lightgray;
+    border-radius: 20px;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15);
+    background-color: #FFFFFF;
+    font-size: 16px;
+    color: #CCCCCC;
+    /* 默认颜色 */
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s, transform 0.3s;
+    /* 增加阴影和变换的过渡效果 */
+}
+
+#toggleRightColumn.disabled {
+    color: #CCCCCC;
+    /* 灰色文字显示按钮不可用 */
+    /* cursor: not-allowed; */
+    /* 鼠标样式变为禁用的标志 */
+    box-shadow: none;
+    /* 移除阴影效果 */
+    background-color: #EFEFEF;
+    /* 更浅的背景色表示不可用状态 */
+    pointer-events: none;
+    /* 禁止所有鼠标事件 */
+}
+
+
+#toggleRightColumn:hover {
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15);
+    /* 增强的阴影效果 */
+    transform: scale(1.05);
+    /* 鼠标悬停时轻微放大 */
+    color: #FFFFFF;
+    /* 鼠标悬停时文字颜色变化，提升对比度 */
+}
+
+#toggleRightColumn:active {
+    background-color: #EFEFEF;
+    /* 点击时背景色变深 */
+    color: #666666;
+    /* 点击时文字颜色变深 */
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15);
+    /* 点击时减少阴影大小，模拟按压效果 */
+    transform: scale(0.95);
+    /* 点击时轻微缩小，增加按压感 */
+}
+
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+#moltip {
+    display: none;
+    position: fixed;
+    z-index: 5000;
+    padding: 10px;
+    background: #FFFF;
+    border: 1px solid #ddd;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15);
+    border-radius: 20px;
+    color: #333;
+    pointer-events: none;
+    text-align: center;
+    font-size: 14px;
+}
+
+.vis-tooltip {
+    display: none !important;
+}
+
+/* 使用苹果风格的字体和扁平化设计调整表格 */
+table {
+    display: table;
+    width: 90%;
+    margin: 10px auto;
+    border-spacing: 0;
+    font-size: 12px;
+    font-family: 'Arial', sans-serif;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15);
+    /* 添加细微的阴影 */
+    border: none;
+    /* 移除边框 */
+}
+
+th,
+td {
+    padding: 4px;
+    text-align: center;
+    overflow-x: auto;
+    border: none;
+    /* 移除边框 */
+}
+
+/* 针对所有的 th 元素设置加粗 */
+th {
+    background-color: #e9e7e7;
+    /* 更亮的背景颜色 */
+    color: #1e1e1e;
+    font-weight: bold;
+    /* 加粗表头字体 */
+    border-radius: 0;
+    /* 重置其他表头单元格的圆角 */
+}
+
+/* 针对第一个表头单元格设置左上角圆角 */
+th:first-child {
+    border-top-left-radius: 10px;
+}
+
+/* 针对最后一个表头单元格设置右上角圆角 */
+th:last-child {
+    border-top-right-radius: 10px;
+}
+
+tr:hover {
+    background-color: #f0f0f0;
+    /* 更微妙的悬停效果 */
+}
+
+/* 调整标题样式 */
+table caption {
+    display: table-caption;
+    text-align: center;
+    margin: 20px 0 10px;
+    color: #333;
+    /* 统一标题和表头的颜色 */
+    font-size: 16px;
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+    /* 加粗标题字体 */
+}
+
+/* 确保表格单元格中的内容过长时可以滚动 */
+td {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+td:hover {
+    overflow-x: auto;
+    /* 鼠标悬停时显示完整内容 */
+}

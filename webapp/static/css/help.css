@@ -1,0 +1,296 @@
+.main-container {
+    margin-top: 90px;
+    margin-bottom: 11px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 10px;
+    display: flex;
+    width: 80%;
+    max-width: 1200px;
+    position: relative;
+    height: 85vh;
+    background-color: rgb(255, 255, 255);
+    /* border-radius: 15px; */
+    overflow: hidden;
+    border-top: none;
+    /* 移除上边框 */
+    border-bottom: none;
+    /* 移除下边框 */
+    box-shadow: none;
+    /* 移除阴影 */
+    flex: 1;
+}
+
+.main-container::before,
+.main-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    /* 边框的宽度 */
+    background: linear-gradient(to bottom, rgba(192, 192, 192, 0), silver, rgba(192, 192, 192, 0));
+    /* 创建渐变效果 */
+}
+
+.main-container::before {
+    left: 0;
+    /* 左边框位置 */
+    border-radius: 15px 0 0 15px;
+    /* 左边圆角 */
+}
+
+.main-container::after {
+    right: 0;
+    /* 右边框位置 */
+    border-radius: 0 15px 15px 0;
+    /* 右边圆角 */
+}
+
+.nav-column {
+    flex: 1;
+    padding: 20px;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+}
+
+.content-column {
+    flex: 3;
+    /* 右栏占据可用空间的3份 */
+    padding: 20px;
+    /* background-color: #ffffff; 设置背景色 */
+    overflow-y: auto;
+}
+
+.main-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 25%;
+    /* 假定导航栏占整个容器宽度的25% */
+    width: 2px;
+    /* 分割线的初始宽度 */
+    background: linear-gradient(to top, rgba(192, 192, 192, 0), silver, rgba(192, 192, 192, 0));
+    transform: translateX(-50%);
+    /* 确保渐变中心对齐分割线的中心 */
+}
+
+.nav-column ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+    /* 确保ul占满.nav-column的宽度 */
+}
+
+.nav-column li {
+    margin-bottom: 10px;
+}
+
+.nav-column a {
+    font-size: larger;
+    font-weight: bold;
+    /* font-family: "Poetsen One", sans-serif; */
+    text-decoration: none;
+    color: black;
+    /* 默认链接颜色 */
+    display: block;
+    /* 使链接填充整个li */
+    background: #f0f0f0;
+    /* 默认背景色 */
+    padding: 10px 20px;
+    /* 内部填充 */
+    border-radius: 15px 0 0 15px;
+    /* 左侧圆角, 右侧直角 */
+    transition: background-color 0.3s, color 0.3s;
+    /* 平滑过渡效果 */
+}
+
+.nav-column a:hover {
+    background-color: #e0e0e0;
+    /* 鼠标悬停背景色 */
+    color: #333;
+    /* 鼠标悬停时文字颜色 */
+}
+
+.nav-column a.active {
+    background-color: #282828;
+    /* 激活链接背景色 */
+    color: white;
+    /* 激活链接文字颜色 */
+}
+
+.content-column div {
+    margin-top: 20px;
+    /* border: 1px solid #ccc; */
+    padding: 10px;
+    min-height: 500px;
+    /* 确保有足够的内容区域高度 */
+    display: flex;
+    text-align: center;
+
+}
+
+.main-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 25%;
+    /* 假定导航栏占整个容器宽度的25% */
+    width: 2px;
+    /* 分割线的初始宽度 */
+    background: linear-gradient(to top, rgba(192, 192, 192, 0), silver, rgba(192, 192, 192, 0));
+    transform: translateX(-50%);
+    /* 确保渐变中心对齐分割线的中心 */
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* .main-container div ul li a {
+    display: flex;
+    background: #dcdcdc;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 15px;
+    inline-size: 13.5rem;
+    text-align: center;
+    height: 2.0rem;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.main-container div ul li a:active {
+    display: flex;
+    background: #282828;
+    color:white;
+
+} */
+.text-head {
+    font-family: 'Poetsen One', sans-serif;
+    font-size: 2.0rem;
+}
+
+.text-main {
+    /* font-family: "EB Garamond", serif; */
+    font-size: 1.2rem;
+    text-align: justify;
+    margin-top: 0.5rem;
+    margin-bottom: 0.1rem;
+    line-height: 1.5; /* 调整行距为1.5倍 */
+}
+
+
+.text-title {
+    font-family: 'Poetsen One', sans-serif;
+    font-size: 1.30rem;
+    font-weight: bold;
+    text-align: left;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.section-main {
+    display: flex;
+    /* 使用flexbox布局 */
+    flex-direction: column;
+    /* 设置方向为纵向 */
+    /* align-items: center;   /* 水平居中对齐 */
+}
+
+.section-head {
+    font-family: 'Poetsen One', sans-serif;
+    align-items: start;
+    font-size: 2.2rem;
+    /* font-weight: bold; */
+}
+
+.img {
+    /* box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); */
+    margin: 5px auto;
+    max-width: 1000px;
+    width: 100%;
+    height: auto;
+
+}
+
+.img-legend {
+    /* font-size: 16px;    /* 图例文字大小 */
+    text-align: center;
+    font-size: 1.2rem;
+    /* font-family: Arial, Helvetica, sans-serif; */
+}
+
+body {
+    /* font-family: Arial, sans-serif; */
+    margin: 40px;
+}
+
+pre {
+    position: relative;
+    background-color: #f6f8fa;
+    border-radius: 25px;
+    border: 1px solid #d1d5da;
+    padding: 16px;
+    overflow: auto;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-size: 14px;
+    text-align: left;
+}
+
+code {
+    background-color: transparent;
+    padding: 0;
+
+}
+
+.copy-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    cursor: pointer;
+    background-color: #ddd;
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+#topBtn {
+    position: fixed;
+    bottom: 70px;
+    right: 30px;
+    display: none; /* 默认隐藏按钮 */
+    z-index: 99; /* 确保按钮在最上层 */
+    border: none;
+    outline: none;
+    background-color: #555;
+    color: white;
+    cursor: pointer;
+    border-radius: 50%; /* 使按钮变成圆形 */
+    height: 50px; /* 设置固定高度 */
+    width: 50px; /* 设置固定宽度 */
+    text-align: center; /* 确保文字居中 */
+    line-height: 50px; /* 文字垂直居中 */
+    font-size: 16px; /* 可选：调整文字大小 */
+    box-shadow: 0px 20px 20px 2px rgba(0, 0, 0, 0.15);
+    transition: transform 0.5s ease;
+    font-family: 'Poetsen One', sans-serif;
+}
+
+#topBtn:hover {
+    background-color: #000; /* 鼠标悬停时变色 */
+}

@@ -1,0 +1,364 @@
+{% extends "base.html" %}
+
+<head>
+    {% block title %}Help{% endblock %}
+    {% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/help.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-okaidia.min.css" />
+    {% endblock %}
+</head>
+
+<body>
+    {% block content %}
+    <div class="main-container">
+        <div class="nav-column">
+            <ul>
+                <li><a href="#section1" class="nav-link text-head active" active>Quick Guide</a></li>
+                <li><a href="#section2" class="nav-link text-head">Request API</a></li>
+                <li><a href="#section3" class="nav-link text-head">Agent Interface Deploy</a></li>
+            </ul>
+        </div>
+        <div class="content-column">
+            <div id="section1" class="section-main">
+                <p class="section-head">
+                    1. Quick Guide
+                </p>
+                <img class="img" src="/static/figure/input_interface.png">
+                <p class="img-legend">
+                    <strong>
+                        Figure 1.
+                    </strong>
+                    The ChemEnzyRetroPlanner's input interface, parameter selection interface, and log output interface.
+                </p>
+                <br>
+                <img class="img" src="/static/figure/results_interface.png">
+                <p class="img-legend">
+                    <strong>
+                        Figure 2.
+                    </strong>
+                    The synthesis pathway display interface of the platform (upper). The enzyme active site display
+                    interface of the platform (bottom).
+                </p>
+                <br>
+                <img class="img" src="/static/figure/queue_interface.png">
+                <p class="img-legend">
+                    <strong>
+                        Figure 3.
+                    </strong>
+                    Task queue interface.
+                </p>
+                <br>
+                <img class="img" src="/static/figure/agent_interface.png">
+                <p class="img-legend">
+                    <strong>
+                        Figure 4.
+                    </strong>
+                    ChemEnzyRetroPlanner Agent interface.
+                </p>
+                <br>
+
+            </div>
+
+            <div id="section2" class="section-main">
+                <p class="section-head">
+                    2. Request API
+                <p>
+
+                <p class="text-title">1. Multi-Step Synthesis Planner</p>
+                <pre><code class="language-bash">curl -X POST http://c2400755y0.goho.co:57669/api/retroplanner  \
+    -H "Content-Type: application/json"  \
+    -d '{"smiles": "CCCCOCCCCC", "savedOptions": {
+        "iterationNumber": 50,
+        "selectedModels": ["Reaxys", "BKMS Metabolic"],
+        "selectedStocks": ["eMolecules", "Zinc Buyable + USPTO Substrates"], 
+        "selectedConditionPredictor": "Reaction Condition Recommander"       
+    }}'
+
+# iterationNumber: optinal, default: 10
+# selectedModels: optinal, default: Reaxys
+# selectedStocks: optinal, default: eMolecules
+# selectedConditionPredictor: optinal, default: Reaction Condition Recommander</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
+
+                <p class="text-main">Sample response:</p>
+                <pre><code class="language-json">{
+    "message": "Data received",
+    "results_id": str, Results ID,
+    "routes": List[dict], list of synthesis routes,
+    "status": "success"
+  }</code></pre>
+
+                <p class="text-title">2. Single-Step Predictor</p>
+                <pre><code class="language-bash">curl -X POST http://c2400755y0.goho.co:57669/api/single_step \
+    -H "Content-Type: application/json" \
+    -d '{"smiles": "CCCCOCCCCC", "savedOptions":{
+        "topk":10,                                                           
+        "oneStepModel":["Reaxys"]                                            
+    }}'
+
+# topk: optinal, default: 10
+# oneStepModel: optinal, default: Reaxys</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
+
+                <p class="text-main">Sample response:</p>
+                <pre><code class="language-json">{
+    "message": "Data received",
+    "one_step_results": {
+        "reactants": List[str], list of top k proposed reactants based on the templates,
+        "model_full_name": List[str], list of top k corresponding models,
+        "scores": List[float], list of top k corresponding scores,
+        "template": List[Dict[str]], list of top k templates,
+    },
+    "status": "success"
+}</code></pre>
+
+
+                <p class="text-title">3. Reaction Condition Predictor</p>
+                <pre><code class="language-bash">curl -X POST http://c2400755y0.goho.co:57669/api/condition_predictor \
+    -H "Content-Type: application/json" \
+    -d '{"reaction":"CCCCCO.CCC(=O)O>>CCC(=O)OCCCCC"}'</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
+
+                <p class="text-main">Sample response:</p>
+                <pre><code class="language-json">{
+    "message": "Data received",
+    "results": {
+        "conditions": {
+        "Catalyst": List[str], List of catalysts,
+        "Reagent": List[str], List of reagents,
+        "Solvent": List[str], List of solvents,
+        "Temperature": List[float], List of Temperatures,
+        "Score": List[float], List of scores,
+        }
+    }
+    "status": "success"
+}</code></pre>
+
+
+
+                <p class="text-title">4. Reaction Rater</p>
+                <pre><code class="language-bash">curl -X POST http://c2400755y0.goho.co:57669/api/reaction_rater \
+    -H "Content-Type: application/json" \
+    -d '{"reaction":"CCCCCO.CCC(=O)O>>CCC(=O)OCCCCC"}'</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
+
+                <p class="text-main">Sample response:</p>
+                <pre><code class="language-json">{
+    "message": "Data received",
+    "results": {
+        "confidence": 0.9746649861335754,
+        "reaction_is_feasible": true
+    },
+    "status": "success"
+}</code></pre>
+
+
+                <p class="text-title">5. Enzymatic Reaction Identifier</p>
+                <pre><code class="language-bash">curl -X POST http://c2400755y0.goho.co:57669/api/enzymatic_rxn_identifier \
+    -H "Content-Type: application/json" \
+    -d '{"reaction":"N[C@@H](CO)C(=O)O>>N[C@H](CO)C(=O)O"}'</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
+
+                <p class="text-main">Sample response:</p>
+                <pre><code class="language-json">{
+    "message": "Data received",
+    "results": {
+        "confidence": 0.9996044039726257,
+        "reaction type": "Enzymatic Reaction"
+    },
+    "status": "success"
+}</code></pre>
+
+                <p class="text-title">6. Enzyme Recommender</p>
+                <pre><code class="language-bash">curl -X POST http://c2400755y0.goho.co:57669/api/enzyme_recommender \
+    -H "Content-Type: application/json" \
+    -d '{"reaction":"N[C@@H](CO)C(=O)O>>N[C@H](CO)C(=O)O"}'</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
+
+                <p class="text-main">Sample response:</p>
+                <pre><code class="language-json">{
+    "message": "Data received",
+    "results": {
+        "confidence": [
+        [
+            0.20319443941116333,
+            0.10102162510156631,
+            0.07491966336965561,
+            0.0706150159239769,
+            0.037439312785863876
+        ]
+        ],
+        "recommended enzyme type": [
+        [
+            "5.1.1.1",
+            "5.1.1.12",
+            "5.1.1.18",
+            "5.1.1.10",
+            "4.3.1.18"
+        ]
+        ]
+    },
+    "status": "success"
+}</code></pre>
+
+                <p class="text-title">7. Enzyme Active Site Annotator</p>
+                <pre><code class="language-bash">curl -X POST http://c2400755y0.goho.co:57669/api/easifa \
+    -H "Content-Type: application/json" \
+    -d '{"reaction": "N[C@@H](CO)C(=O)O>>N[C@H](CO)C(=O)O", "EC number":"5.1.1.18"}'</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
+
+                <p class="text-main">Sample response:</p>
+                <pre><code class="language-json">{
+    "enzyme_data": [
+        {
+        "active_data": {
+                "Active Type": [
+                "Binding Site",
+                "Catalytic Site",
+                "Catalytic Site",
+                "Binding Site",
+                "Binding Site",
+                "Binding Site",
+                "Binding Site",
+                "Binding Site",
+                "Binding Site"
+            ],
+            "Residue Index": [
+                63,
+                68,
+                93,
+                130,
+                144,
+                219,
+                223,
+                225,
+                246
+            ],
+            "Residue Name": [
+                "LYS",
+                "LYS",
+                "SER",
+                "TYR",
+                "ARG",
+                "GLU",
+                "ALA",
+                "ASP",
+                "ASP"
+            ]
+        },
+        "alphafolddb_id": "Q9GZT4",
+        "ec": "5.1.1.18",
+        "id": 1
+        }
+    ],
+    "message": "Data received",
+    "results_id": "easifa_010229d9-5649-4e43-9758-6612d39ee629",
+    "status": "success"
+}</code></pre>
+
+
+            </div>
+
+            <div id="section3" class="section-main">
+                <p class="section-head">
+                    3. Agent Interface Deploy
+                </p>
+                <p class="text-main">The ChemEnzyRetroPlanner Agent is a fully open-source service powered by llama3.1.
+                    Due to the high computational requirements, we have not directly integrated this service into the
+                    ChemEnzyRetroPlanner website. Instead, we encourage users to deploy llama3.1 via Ollama. The
+                    ChemEnzyRetroPlanner Agent can utilize a self-deployed Ollama service along with
+                    ChemEnzyRetroPlanner's free API for inference. Before using this Agent service, you need to deploy
+                    it on your personal computer. The deployment steps are as follows:</p>
+                <pre><code class="language-bash">git clone https://gitee.com/xiaoruiwang_1_0/retro_planner_agent.git
+cd retro_planner_agent
+conda env create -f envs.yml
+conda activate retro_planner_agent_env
+pip install chemprice
+pip install -e .
+git clone https://gitee.com/xiaoruiwang_1_0/retro_planner_streamlit_app.git
+cd retro_planner_streamlit_app
+streamlit run app.py</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
+                <p class="text-main">Deploying Ollama is straightforward. If your local computer can support running
+                    llama3.1:70b, you can follow the steps below to deploy it directly:</p>
+                <pre><code class="language-bash"># Ubuntu 20.04:
+curl -fsSL https://ollama.com/install.sh | sh
+ollama pull llama3.1:70b
+# Ollama Base URL: http://localhost:11434
+# ChemEnzyRetroPlanner Base URL: http://c2400755y0.goho.co:57669</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
+                <p class="text-main">If your Ollama service is running on another server, you need to enable external
+                    access for the Ollama API and map the port (e.g., bind a domain name). The simplest approach is to
+                    forward port 11434 on the server running Ollama to localhost:11434. You can use the following SSH
+                    command to forward the port to the computer where the Agent is running:</p>
+                <pre><code class="language-bash">ssh -L 11434:localhost:11434 user@ip
+# Ollama Base URL: http://localhost:11434</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
+
+                <p class="text-main">Then, specify the base URL for Ollama and the base URL for ChemEnzyRetroPlanner,
+                    and you can run the Agent.</p>
+            </div>
+        </div>
+    </div>
+    <button id="topBtn" title="Go to top">Top</button>
+
+
+    {% endblock %}
+
+    {% block scripts %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const links = document.querySelectorAll('.nav-link');
+            links.forEach(link => {
+                link.addEventListener('click', function () {
+                    document.querySelector('.nav-link.active')?.classList.remove('active');
+                    link.classList.add('active');
+                });
+            });
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-bash.min.js"></script>
+    <script>
+        function copyToClipboard(button) {
+            // 获取包含代码的<code>标签
+            const code = button.parentNode.querySelector('code');
+            // 创建一个临时的textarea元素
+            const textarea = document.createElement('textarea');
+            // 设置textarea的内容为代码内容
+            textarea.textContent = code.textContent;
+            // 将textarea添加到页面中
+            document.body.appendChild(textarea);
+            // 选中textarea中的内容
+            textarea.select();
+            // 执行复制命令
+            document.execCommand('copy');
+            // 移除页面中的textarea元素
+            document.body.removeChild(textarea);
+
+            // 更改按钮文本为对勾，显示复制成功
+            button.textContent = '✔️';
+            // 一秒后恢复按钮原始状态
+            setTimeout(() => {
+                button.textContent = 'Copy';
+            }, 1000);
+        }
+
+        // 当用户滚动页面时触发
+        window.onscroll = function() {scrollFunction()};
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                document.getElementById("topBtn").style.display = "block";
+            } else {
+                document.getElementById("topBtn").style.display = "none";
+            }
+        }
+
+        // 点击按钮时，回到页面顶部
+        document.getElementById("topBtn").onclick = function() {
+            document.body.scrollTop = 0; // For Safari
+            document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+        }
+
+    </script>
+
+
+
+    {% endblock %}
+</body>
