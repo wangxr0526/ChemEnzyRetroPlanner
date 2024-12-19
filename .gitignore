@@ -60,5 +60,5 @@ retro_planner/packages/organic_enzyme_rxn_classifier/organic_enzyme_rxn_classifi
 retro_planner/packages/organic_enzyme_rxn_classifier/organic_enzyme_rxn_classifier/dataset_preprocess
 */nohup.out
 metadata
-singularity
+singularity/singularity_images
 retro_planner/packages/mlp_retrosyn
