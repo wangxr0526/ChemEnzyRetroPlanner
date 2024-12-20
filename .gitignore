@@ -23,7 +23,6 @@ retro_planner/packages/rxn_filter/rxn_filter/train_filter_benchmark.py
 classic_retrosyn
 results
 results copy
-retro_planner/packages/rxn_filter/rxn_filter/filter_dataset.py
 retro_planner/test.pdf
 retro_planner/test
 retro_planner/building_block_dataset/zinc_stock_2021_10_3_canonical_smiles_total_10312151.md
@@ -66,4 +65,3 @@ retro_planner/packages/organic_enzyme_rxn_classifier/organic_enzyme_rxn_classifi
 */nohup.out
 metadata
 singularity/singularity_images
-retro_planner/packages/mlp_retrosyn
