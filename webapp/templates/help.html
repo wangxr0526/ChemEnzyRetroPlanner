@@ -266,14 +266,13 @@
                     ChemEnzyRetroPlanner Agent can utilize a self-deployed Ollama service along with
                     ChemEnzyRetroPlanner's free API for inference. Before using this Agent service, you need to deploy
                     it on your personal computer. The deployment steps are as follows:</p>
-                <pre><code class="language-bash">git clone https://gitee.com/xiaoruiwang_1_0/retro_planner_agent.git
-cd retro_planner_agent
+                <pre><code class="language-bash">git clone https://github.com/wangxr0526/ChemEnzyRetroPlanner_agent.git
+cd ChemEnzyRetroPlanner_agent
 conda env create -f envs.yml
 conda activate retro_planner_agent_env
 pip install chemprice
-pip install -e .
-git clone https://gitee.com/xiaoruiwang_1_0/retro_planner_streamlit_app.git
-cd retro_planner_streamlit_app
+pip install -e ./agent
+cd ../streamlit_app
 streamlit run app.py</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
                 <p class="text-main">Deploying Ollama is straightforward. If your local computer can support running
                     llama3.1:70b, you can follow the steps below to deploy it directly:</p>

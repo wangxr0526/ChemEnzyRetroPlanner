@@ -24,6 +24,7 @@
   - [OS Requirements](#os-requirements)
   - [Python Dependencies](#python-dependencies)
   - [Installation Guide](#installation-guide)
+  - [Agent Installation](#agent-installation)
   - [Cite Us](#cite-us)
  
 
@@ -32,7 +33,7 @@ ChemEnzRretroPlanner: An Integrated Automation Platform for Hybrid Organic-Enzym
 
 ## Web Server
 
-We have developed a [WebServer](http://easifa.iddd.group) for ChemEnzyRetroPlanner, which allows you Utilize our hybrid synthetic planning platform, which leverages mixed organic enzyme catalysis, to achieve more efficient and environmentally friendly synthesis planning.<br>
+We have developed a [WebServer](http://cadd.zju.edu.cn/retroplanner) for ChemEnzyRetroPlanner, which allows you Utilize our hybrid synthetic planning platform, which leverages mixed organic enzyme catalysis, to achieve more efficient and environmentally friendly synthesis planning.<br>
 
 <div id="top" align="center">
 
@@ -72,7 +73,6 @@ git clone https://github.com/wangxr0526/ChemEnzyRetroPlanner.git
 cd ChemEnzyRetroPlanner
 chmod +x ./setup_ChemEnzyRetroPlanner.sh
 ./setup_ChemEnzyRetroPlanner.sh
-
 ```
 Build the Parrot service image
 ```
@@ -81,21 +81,24 @@ chmod +x ./build_parrot_in_docker.sh
 ./build_parrot_in_docker.sh
 ```
 Start ChemEnzyRetroPlanner services
-
 ```
 cd ChemEnzyRetroPlanner/docker
 chmod +x ./run_container.sh
 ./run_container.sh
 ```
-The ChemEnzyRetroPlanner server is deployed at http://localhost:8001
+The ChemEnzyRetroPlanner server is deployed at http://localhost:8001/retroplanner
 
 
-
-
-
-
+## Agent Installation
 ```
-
+git clone https://github.com/wangxr0526/ChemEnzyRetroPlanner_agent.git
+cd ChemEnzyRetroPlanner_agent
+conda env create -f envs.yml
+conda activate retro_planner_agent_env
+pip install chemprice
+pip install -e ./agent
+cd ../streamlit_app
+streamlit run app.py
 ```
 ## Cite Us
 
