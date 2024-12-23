@@ -395,7 +395,7 @@ def calculation():
         "message": "Data received",
         "results_id": task.id,
         "resultsLimit": inputed_data["savedOptions"].get("resultsLimit", 50),
-        "private_key_path": f'/key_downloads/{task.id}'  # 下载链接
+        "private_key_path": f'/retroplanner/key_downloads/{task.id}'  # 下载链接
     }
     return jsonify(log_data), 202
 
