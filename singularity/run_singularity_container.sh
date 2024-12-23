@@ -45,8 +45,7 @@ nohup singularity exec --nv --env PATH=/opt/conda/parrot_env/bin:$PATH instance:
 echo "Starting instance: retroplanner_container"
 singularity instance start \
   --nv \
-  --bind "${POJECT_ROOT}:/retro_planner" \
-  --bind "${POJECT_ROOT}/retro_planner/packages/organic_enzyme_rxn_classifier/organic_enzyme_rxn_classifier:/retro_planner/retro_planner/packages/organic_enzyme_rxn_classifier/organic_enzyme_rxn_classifier" \
+  --bind "${PROJECT_ROOT}:/retro_planner" \
   --bind "$HOME/.cache/torch/hub/checkpoints:/home/retro_planner/.cache/torch/hub/checkpoints" \
   ./singularity_images/retroplanner_image.sif \
   retroplanner_container
