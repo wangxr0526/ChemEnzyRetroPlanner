@@ -62,7 +62,10 @@ from easifa.interface.utils import (
 )
 os.environ['CRYPTOGRAPHY_OPENSSL_NO_LEGACY'] = '1'
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
-app = Flask(__name__)
+app = Flask(__name__, 
+            static_url_path='/retroplanner/static',  # 设置静态文件路径前缀
+            static_folder='static'  # 静态文件的物理路径
+            )
 app.secret_key = "supersecretkey"  # 设置一个密钥，用于Flash消息
 
 CORS(app)
@@ -203,27 +206,27 @@ def first_request():
     )
 
 
-@app.route("/")
+@app.route("/retroplanner/")
 def index():
     return render_template("index.html")
 
 
-@app.route("/contact")
+@app.route("/retroplanner/contact")
 def contact():
     return render_template("contact.html")
 
 
-@app.route("/help")
+@app.route("/retroplanner/help")
 def help():
     return render_template("help.html")
 
 
-@app.route("/queue")
+@app.route("/retroplanner/queue")
 def queue():
     return render_template("queue.html")
 
 
-@app.route("/services")
+@app.route("/retroplanner/services")
 def retrosynthesis_planner():
     all_model_names = []
     for model_type in app.planner_configs["one_step_model_configs"]:
@@ -360,7 +363,7 @@ def background_task(self, inputed_data, config:dict):
     return reture_result
 
 
-@app.route("/calculation", methods=["POST"])
+@app.route("/retroplanner/calculation", methods=["POST"])
 def calculation():
     if not request.is_json:
         return jsonify({"error": "Missing JSON in request"}), 400
@@ -397,7 +400,7 @@ def calculation():
     return jsonify(log_data), 202
 
 
-@app.route("/status/<task_id>")
+@app.route("/retroplanner/status/<task_id>")
 def task_status(task_id):
     task = background_task.AsyncResult(task_id)
     conn = sqlite3.connect("jobs.db")
@@ -411,7 +414,7 @@ def task_status(task_id):
 
 
 # Update job listing to sort by submission time
-@app.route("/jobs")
+@app.route("/retroplanner/jobs")
 def list_jobs():
     conn = sqlite3.connect("jobs.db")
     c = conn.cursor()
@@ -427,7 +430,7 @@ def list_jobs():
     return jsonify(jobs)
 
 
-@app.route("/validate-key", methods=["POST"])
+@app.route("/retroplanner/validate-key", methods=["POST"])
 def validate_key():
     # 提取formData中的数据，例如你可能需要提取一个私钥
     private_key_file = request.files.get('privateKey')
@@ -451,7 +454,7 @@ def validate_key():
             return jsonify(success=False, message="Invalid private key"), 400
     
 
-@app.route("/locked_results/<results_id>&resultsLimit-<resultsLimit>")
+@app.route("/retroplanner/locked_results/<results_id>&resultsLimit-<resultsLimit>")
 def locked_results(results_id, resultsLimit=None):
     if resultsLimit == None:
         resultsLimit = 50
@@ -476,7 +479,7 @@ def locked_results(results_id, resultsLimit=None):
             "error.html", error_message=str(e), results_id=results_id
         )
         
-@app.route("/results/<results_id>&resultsLimit-<resultsLimit>")
+@app.route("/retroplanner/results/<results_id>&resultsLimit-<resultsLimit>")
 def results(results_id, resultsLimit=None):
     if resultsLimit == None:
         resultsLimit = 50
@@ -502,18 +505,18 @@ def results(results_id, resultsLimit=None):
 
 
 
-@app.route("/downloads/<results_id>")
+@app.route("/retroplanner/downloads/<results_id>")
 def results_download(results_id):
     results_packer = RouteResultsPacker(results_id=results_id)
     results_packer.pack_route_results()
     return send_from_directory(app.synth_route, f"{results_id}.zip", as_attachment=True)
 
-@app.route("/key_downloads/<task_id>")
+@app.route("/retroplanner/key_downloads/<task_id>")
 def key_download(task_id):
     return send_from_directory(KEY_FOLDER, f"{task_id}.pem", as_attachment=True)
 
 
-@app.route("/process_node", methods=["POST"])
+@app.route("/retroplanner/process_node", methods=["POST"])
 def process_node():
     if not request.is_json:
         return jsonify({"error": "Missing JSON in request"}), 400
@@ -578,7 +581,7 @@ def process_node():
     )
 
 
-@app.route("/api/retroplanner", methods=["POST"])
+@app.route("/retroplanner/api/retroplanner", methods=["POST"])
 def retroplanner_api():
     if not request.is_json:
         return jsonify({"error": "Missing JSON in request"}), 400
@@ -721,7 +724,7 @@ def retroplanner_api():
         )
 
 
-@app.route("/api/single_step", methods=["POST"])
+@app.route("/retroplanner/api/single_step", methods=["POST"])
 def single_step_api():
     if not request.is_json:
         return jsonify({"error": "Missing JSON in request"}), 400
@@ -770,7 +773,7 @@ def single_step_api():
     return jsonify(log_data), 200
 
 
-@app.route("/api/condition_predictor", methods=["POST"])
+@app.route("/retroplanner/api/condition_predictor", methods=["POST"])
 def condition_predictor_api():
     if not request.is_json:
         return jsonify({"error": "Missing JSON in request"}), 400
@@ -828,7 +831,7 @@ def condition_predictor_api():
     return jsonify(log_data), 200
 
 
-@app.route("/api/reaction_rater", methods=["POST"])
+@app.route("/retroplanner/api/reaction_rater", methods=["POST"])
 def reaction_rater_api():
     if not request.is_json:
         return jsonify({"error": "Missing JSON in request"}), 400
@@ -857,7 +860,7 @@ def reaction_rater_api():
     return jsonify(log_data), 200
 
 
-@app.route("/api/enzymatic_rxn_identifier", methods=["POST"])
+@app.route("/retroplanner/api/enzymatic_rxn_identifier", methods=["POST"])
 def enzymatic_rxn_identifier_api():
     if not request.is_json:
         return jsonify({"error": "Missing JSON in request"}), 400
@@ -884,7 +887,7 @@ def enzymatic_rxn_identifier_api():
     return jsonify(log_data), 200
 
 
-@app.route("/api/enzyme_recommender", methods=["POST"])
+@app.route("/retroplanner/api/enzyme_recommender", methods=["POST"])
 def enzyme_recommender_api():
     if not request.is_json:
         return jsonify({"error": "Missing JSON in request"}), 400
@@ -911,7 +914,7 @@ def enzyme_recommender_api():
     return jsonify(log_data), 200
 
 
-@app.route("/api/easifa", methods=["POST"])
+@app.route("/retroplanner/api/easifa", methods=["POST"])
 def easifa_api():
     if not request.is_json:
         return jsonify({"error": "Missing JSON in request"}), 400
@@ -1007,7 +1010,7 @@ def easifa_api():
         )
 
 
-@app.route("/api/enzyme_show/<results_id>&&&&<structure_id>")
+@app.route("/retroplanner/api/enzyme_show/<results_id>&&&&<structure_id>")
 def enzyem_show(results_id, structure_id):
     results_save_path = os.path.join(app.enzyme_structure_path, f"{results_id}.json")
     try:
@@ -1018,7 +1021,7 @@ def enzyem_show(results_id, structure_id):
     return render_template_string(structure_htmls[structure_id])
 
 
-@app.route("/agent")
+@app.route("/retroplanner/agent")
 def agent_interface():
     return render_template("agent.html")
 

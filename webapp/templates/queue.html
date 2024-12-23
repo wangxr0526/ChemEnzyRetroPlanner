@@ -129,7 +129,7 @@
     }
     
     function listJobs() {
-        fetch('/jobs')
+        fetch('/retroplanner/jobs')
             .then(response => response.json())
             .then(data => {
                 const tbody = document.getElementById('queueTable').getElementsByTagName('tbody')[0];
@@ -155,7 +155,7 @@
                         cell3.appendChild(link);
                     } else if (job[1] === 'Submitted') {
                         let img = document.createElement('img');
-                        img.src = '/static/gif/icons8-waiting.gif';
+                        img.src = '/retroplanner/static/gif/icons8-waiting.gif';
                         img.alt = 'Waiting...';
                         cell3.appendChild(img);
                     } else {
@@ -186,14 +186,14 @@
             formData.append('privateKey', document.getElementById('privateKeyFile').files[0]);
             formData.append('jobId', jobId);  // Pass the jobId along with the key
 
-            fetch('/validate-key', {
+            fetch('/retroplanner/validate-key', {
                 method: 'POST',
                 body: formData
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    window.location.href = '/locked_results/' + jobId + '&resultsLimit-50'; // Redirect to the results page if key is valid
+                    window.location.href = '/retroplanner/locked_results/' + jobId + '&resultsLimit-50'; // Redirect to the results page if key is valid
                 } else {
                     alert('Invalid private key');
                     modal.style.display = 'none';  // Close the modal on failure

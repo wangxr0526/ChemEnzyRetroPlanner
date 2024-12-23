@@ -138,7 +138,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-shadow">
         <div class="container">
-            <a class="navbar-brand" href="/">ChemEnzyRetroPlanner</a>
+            <a class="navbar-brand" href="/retroplanner/">ChemEnzyRetroPlanner</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -146,7 +146,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item active">
-                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Home <span
+                        <a class="nav-link" href="/retroplanner/"><i class="fas fa-home"></i> Home <span
                                 class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item dropdown">
@@ -155,19 +155,19 @@
                             <i class="fas fa-cogs"></i> Services
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="/services"><i
+                            <a class="dropdown-item" href="/retroplanner/services"><i
                                     class="fas fa-vial"></i><span>Planner</span></a>
-                            <a class="dropdown-item" href="/agent"><i class="fas fa-robot"></i><span>Agent</span></a>
+                            <a class="dropdown-item" href="/retroplanner/agent"><i class="fas fa-robot"></i><span>Agent</span></a>
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/queue"><i class="fas fa-stream"></i> Queue</a>
+                        <a class="nav-link" href="/retroplanner/queue"><i class="fas fa-stream"></i> Queue</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/help"><i class="fas fa-question-circle"></i> Help</a>
+                        <a class="nav-link" href="/retroplanner/help"><i class="fas fa-question-circle"></i> Help</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/contact"><i class="fas fa-envelope"></i> Contact</a>
+                        <a class="nav-link" href="/retroplanner/contact"><i class="fas fa-envelope"></i> Contact</a>
                     </li>
                 </ul>
             </div>
@@ -406,7 +406,7 @@
             fromData.smiles = smiles; // 将smiles添加到已保存的选项中
 
 
-            fetch("/calculation", {
+            fetch("/retroplanner/calculation", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'
