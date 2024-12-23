@@ -5,7 +5,7 @@
   <h3>ChemEnzRretroPlanner: An Integrated Automation Platform for Hybrid Organic-Enzymatic Synthesis Planning</h3>
   
   [![GitHub Repo stars](https://img.shields.io/github/stars/wangxr0526/ChemEnzyRetroPlanner?style=social)](https://github.com/wangxr0526/ChemEnzyRetroPlanner/stargazers)
-  [![WebSite](https://img.shields.io/badge/WebSite-blue)](http://easifa.iddd.group/)
+  [![WebSite](https://img.shields.io/badge/WebSite-blue)](http://cadd.zju.edu.cn/retroplanner)
   ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
   <!-- [![DOI](https://zenodo.org/badge/745387829.svg)](https://zenodo.org/doi/10.5281/zenodo.12819439) -->
 
