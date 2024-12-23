@@ -25,6 +25,7 @@
   - [Python Dependencies](#python-dependencies)
   - [Installation Guide](#installation-guide)
   - [Agent Installation](#agent-installation)
+  - [Related repository](#related-repository)
   - [Cite Us](#cite-us)
  
 
@@ -100,6 +101,8 @@ pip install -e ./agent
 cd ../streamlit_app
 streamlit run app.py
 ```
+## Related repository
+[ChemEnzyRetroPlanner Agent](https://github.com/wangxr0526/ChemEnzyRetroPlanner_agent.git)
 ## Cite Us
 
 ```
