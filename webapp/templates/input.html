@@ -526,7 +526,7 @@
         function checkTaskStatus(taskId, resultsLimit) {
             // 设置定期查询任务状态的间隔为1000毫秒（即1秒）
             const intervalId = setInterval(function () {
-                fetch(`/status/${taskId}`)
+                fetch(`/retroplanner/status/${taskId}`)
                     .then(response => response.json())
                     .then(data => {
                         console.log('Checking task status:', data);
