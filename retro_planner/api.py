@@ -578,7 +578,7 @@ class RSPlanner:
     def _calculate_rxns_steps(self, succ_routes):
 
         return [max_reaction_depth(route.route_to_dict()) for route in succ_routes]
-        pass
+
 
     def plan(self, target_mol):
         # target_mol = canonicalize_smiles(target_mol)

@@ -532,7 +532,7 @@
                         console.log('Checking task status:', data);
 
                         // 检查任务状态是否为'SUCCESS'
-                        if (data.state === 'SUCCESS') {
+                        if (data.status === 'SUCCESS') {
                             clearInterval(intervalId); // 停止定期查询
                             enableResultButton(taskId, resultsLimit); // 调用enableResultButton函数
                             document.getElementById("log").value += "Done!" + "\n";

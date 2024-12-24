@@ -139,6 +139,7 @@ def init_db():
             job_id TEXT PRIMARY KEY,
             status TEXT,
             result TEXT,
+            input_method TEXT,
             public_key BLOB,
             submitted_at DATETIME
         )
@@ -258,7 +259,7 @@ def retrosynthesis_planner():
 
 
 @celery.task(bind=True)
-def background_task(self, inputed_data, config:dict):
+def background_task(self, inputed_data, config:dict, input_method:str="WEB"):
 
     conn = sqlite3.connect("jobs.db")
     c = conn.cursor()
@@ -266,14 +267,14 @@ def background_task(self, inputed_data, config:dict):
 
     target_smiles = canonicalize_smiles(smi=inputed_data["smiles"], clear_map=False)
     if target_smiles == "":
-        reture_result = "Smiles is Not Valid!"
+        return_result = "Smiles is Not Valid!"
         c.execute(
             "UPDATE jobs SET result = ?, status = 'FAILED' WHERE job_id = ?",
-            (reture_result, self.request.id),
+            (return_result, self.request.id),
         )
         conn.commit()
         conn.close()
-        return reture_result
+        return return_result
 
     inputed_configs:dict = inputed_data["savedOptions"]
 
@@ -339,28 +340,34 @@ def background_task(self, inputed_data, config:dict):
         dict_routes = [route.dict_route for route in result["all_succ_routes"]]
 
         results_id = self.request.id
-        with open(os.path.join(app.synth_route, f"locked_{results_id}.json"), "w") as f:
-            json.dump(dict_routes, f)
+        if input_method == "WEB":
+            with open(os.path.join(app.synth_route, f"locked_{results_id}.json"), "w") as f:
+                json.dump(dict_routes, f)
+        elif input_method == "API":
+            with open(os.path.join(app.synth_route, f"{results_id}.json"), "w") as f:
+                json.dump(dict_routes, f)
+        else:
+            raise ValueError()
 
     if succ == True:
 
-        reture_result = "See Results"
+        return_result = "See Results"
         c.execute(
             "UPDATE jobs SET result = ?, status = 'SUCCESS' WHERE job_id = ?",
-            (reture_result, self.request.id),
+            (return_result, self.request.id),
         )
         conn.commit()
     else:
         # 如果有错误，更新任务为失败状态，并记录错误信息
-        reture_result = "Search Failed! Please increase the number of iterations."
+        return_result = "Search Failed! Please increase the number of iterations."
         c.execute(
             "UPDATE jobs SET result = ?, status = 'FAILED' WHERE job_id = ?",
-            (reture_result, self.request.id),
+            (return_result, self.request.id),
         )
         conn.commit()
 
     conn.close()
-    return reture_result
+    return return_result
 
 
 @app.route("/retroplanner/calculation", methods=["POST"])
@@ -383,8 +390,8 @@ def calculation():
     
     
     c.execute(
-        "INSERT INTO jobs (job_id, status, public_key, submitted_at) VALUES (?, ?, ?, ?)",
-        (task.id, "Submitted", public_key, now),
+        "INSERT INTO jobs (job_id, status, public_key, submitted_at, input_method) VALUES (?, ?, ?, ?, ?)",
+        (task.id, "Submitted", public_key, now, "WEB"),
     )
     conn.commit()
     conn.close()
@@ -405,11 +412,11 @@ def task_status(task_id):
     task = background_task.AsyncResult(task_id)
     conn = sqlite3.connect("jobs.db")
     c = conn.cursor()
-    c.execute("SELECT status, result FROM jobs WHERE job_id = ?", (task_id,))
+    c.execute("SELECT status, result, input_method FROM jobs WHERE job_id = ?", (task_id,))
     job = c.fetchone()
     conn.close()
     return jsonify(
-        {"task_id": task_id, "state": task.state, "status": job[0], "result": job[1]}
+        {"results_id": task_id, "status": job[0], "result": job[1], "input_method": job[2]}
     )
 
 
@@ -419,12 +426,12 @@ def list_jobs():
     conn = sqlite3.connect("jobs.db")
     c = conn.cursor()
     c.execute(
-        "SELECT job_id, status, result, submitted_at FROM jobs ORDER BY submitted_at DESC"
+        "SELECT job_id, status, result, submitted_at, input_method FROM jobs ORDER BY submitted_at DESC"
     )
     # jobs = {job_id: {'status': status, 'result': result, 'submitted_at':datetime.split('.')[0]} for job_id, status, result, datetime in c.fetchall()}
     jobs = [
         [job_id, status, result, datetime.split(".")[0]]
-        for job_id, status, result, datetime in c.fetchall()
+        for job_id, status, result, datetime, input_method in c.fetchall() if input_method == 'WEB'
     ]
     conn.close()
     return jsonify(jobs)
@@ -581,6 +588,148 @@ def process_node():
     )
 
 
+# @app.route("/retroplanner/api/retroplanner", methods=["POST"])
+# def retroplanner_api():
+#     if not request.is_json:
+#         return jsonify({"error": "Missing JSON in request"}), 400
+
+#     log_data = {
+#         "status": "success",
+#         "message": "Data received",
+#     }
+#     inputed_data = {k: v for k, v in request.get_json().items()}
+
+#     target_smiles = canonicalize_smiles(
+#         smi=inputed_data.get("smiles", ""), clear_map=False
+#     )
+#     if target_smiles == "":
+#         return jsonify({"error": "Smiles is Not Valid!"}), 400
+
+
+
+#     print(inputed_data)
+
+#     valid, message = check_api_input(
+#         inputed_data, 
+#         single_step_opt=list(app.models_name_to_model_registor_name.keys()),
+#         stock_opt=list(app.stocks_name_to_stocks_registor_name.keys()),
+#         condition_opt=list(app.condition_predictor_name_to_condition_predictor_registor_name.keys()),
+#         )
+#     if not valid:
+#         return (
+#             jsonify(
+#                 {
+#                     "error": message,
+#                 }
+#             ),
+#             400,
+#         )
+#     inputed_configs = inputed_data["savedOptions"]
+#     setup_logger()
+#     config: dict = app.planner_configs
+#     print("Init configs:")
+#     print(config)
+#     if inputed_configs:
+#         update_config = {
+#             "iterations": inputed_configs.get(
+#                 "iterationNumber", int(config["iterations"])
+#             ),
+#             "keep_search": inputed_configs.get(
+#                 "Keep search after solved one route", config["keep_search"]
+#             ),
+#             "use_filter": inputed_configs.get(
+#                 "Use reaction plausibility evaluator", config["use_filter"]
+#             ),
+#             "use_depth_value_fn": inputed_configs.get(
+#                 "Use guiding function", config["use_depth_value_fn"]
+#             ),
+#             "pred_condition": inputed_configs.get(
+#                 "Predict reaction condition",
+#                 #   config["pred_condition"],
+#                 False,
+#             ),
+#             "organic_enzyme_rxn_classification": inputed_configs.get(
+#                 "Identify enzymatic reactions",
+#                 #  config["organic_enzyme_rxn_classification"],
+#                 False,
+#             ),
+#             "enzyme_assign": inputed_configs.get(
+#                 "Recommend enzymes",
+#                 #  config["enzyme_assign"],
+#                 False,
+#             ),
+#         }
+
+#         config.update(update_config)
+#     else:
+#         config.update({"iterations": 10})
+#     if not inputed_configs.get("selectedStocks", []):
+#         inputed_configs["selectedStocks"] = ["Zinc Buyable + USPTO Substrates"]
+#     if not inputed_configs.get("selectedModels", []):
+#         inputed_configs["selectedModels"] = ["Reaxys"]
+#     if not inputed_configs.get("selectedConditionPredictor", []):
+#         inputed_configs["selectedConditionPredictor"] = "Reaction Condition Recommander"
+
+#     inputed_configs["selectedStocks"] = [
+#         app.stocks_name_to_stocks_registor_name[x]
+#         for x in inputed_configs.get("selectedStocks", ["Zinc Buyable + USPTO Substrates"])
+#     ]
+#     inputed_configs["selectedModels"] = [
+#         app.models_name_to_model_registor_name[x]
+#         for x in inputed_configs.get(
+#             "selectedModels", ["Reaxys"]
+#         )
+#     ]
+
+#     inputed_configs["selectedConditionPredictor"] = (
+#         app.condition_predictor_name_to_condition_predictor_registor_name[
+#             inputed_configs["selectedConditionPredictor"]
+#         ]
+#     )
+
+
+    
+
+
+#     planner = RSPlanner(config)
+#     planner.select_stocks(inputed_configs["selectedStocks"])
+#     planner.select_one_step_model(inputed_configs["selectedModels"])
+#     planner.select_condition_predictor(inputed_configs["selectedConditionPredictor"])
+#     planner.prepare_plan(prepare_easifa=False)
+
+#     result = planner.plan(target_smiles)
+#     if result:
+#         # succ = True
+#         # print(result)
+#         # route_with_condition = planner.predict_condition()
+#         # print(route_with_condition)
+
+#         planner.predict_rxn_attributes()
+
+#         dict_routes = [route.dict_route for route in result["all_succ_routes"]]
+
+#         results_id = str(uuid.uuid4())
+#         with open(os.path.join(app.synth_route, f"{results_id}.json"), "w") as f:
+#             json.dump(dict_routes, f)
+
+#         log_data.update(
+#             {
+#                 "results_id": results_id,
+#                 # "resultsLimit": inputed_configs.get("resultsLimit", 50),
+#                 "routes": dict_routes,
+#             }
+#         )
+#         return jsonify(log_data), 200
+#     else:
+#         return (
+#             jsonify(
+#                 {
+#                     "error": "Failure to search for the synthetic path, please expand the number of iterations!"
+#                 }
+#             ),
+#             400,
+#         )
+
 @app.route("/retroplanner/api/retroplanner", methods=["POST"])
 def retroplanner_api():
     if not request.is_json:
@@ -591,7 +740,10 @@ def retroplanner_api():
         "message": "Data received",
     }
     inputed_data = {k: v for k, v in request.get_json().items()}
+    config: dict = app.planner_configs
+    config['input_method'] = "API"
 
+    
     target_smiles = canonicalize_smiles(
         smi=inputed_data.get("smiles", ""), clear_map=False
     )
@@ -617,111 +769,68 @@ def retroplanner_api():
             ),
             400,
         )
-    inputed_configs = inputed_data["savedOptions"]
-    setup_logger()
-    config: dict = app.planner_configs
-    print("Init configs:")
-    print(config)
-    if inputed_configs:
-        update_config = {
-            "iterations": inputed_configs.get(
-                "iterationNumber", int(config["iterations"])
-            ),
-            "keep_search": inputed_configs.get(
-                "Keep search after solved one route", config["keep_search"]
-            ),
-            "use_filter": inputed_configs.get(
-                "Use reaction plausibility evaluator", config["use_filter"]
-            ),
-            "use_depth_value_fn": inputed_configs.get(
-                "Use guiding function", config["use_depth_value_fn"]
-            ),
-            "pred_condition": inputed_configs.get(
-                "Predict reaction condition",
-                #   config["pred_condition"],
-                False,
-            ),
-            "organic_enzyme_rxn_classification": inputed_configs.get(
-                "Identify enzymatic reactions",
-                #  config["organic_enzyme_rxn_classification"],
-                False,
-            ),
-            "enzyme_assign": inputed_configs.get(
-                "Recommend enzymes",
-                #  config["enzyme_assign"],
-                False,
-            ),
-        }
-
-        config.update(update_config)
-    else:
-        config.update({"iterations": 10})
-    if not inputed_configs.get("selectedStocks", []):
-        inputed_configs["selectedStocks"] = ["Zinc Buyable + USPTO Substrates"]
-    if not inputed_configs.get("selectedModels", []):
-        inputed_configs["selectedModels"] = ["Reaxys"]
-    if not inputed_configs.get("selectedConditionPredictor", []):
-        inputed_configs["selectedConditionPredictor"] = "Reaction Condition Recommander"
-
-    inputed_configs["selectedStocks"] = [
-        app.stocks_name_to_stocks_registor_name[x]
-        for x in inputed_configs.get("selectedStocks", ["Zinc Buyable + USPTO Substrates"])
-    ]
-    inputed_configs["selectedModels"] = [
-        app.models_name_to_model_registor_name[x]
-        for x in inputed_configs.get(
-            "selectedModels", ["Reaxys"]
-        )
-    ]
-
-    inputed_configs["selectedConditionPredictor"] = (
-        app.condition_predictor_name_to_condition_predictor_registor_name[
-            inputed_configs["selectedConditionPredictor"]
-        ]
+        
+    task = background_task.delay(inputed_data, config, input_method="API")
+    conn = sqlite3.connect("jobs.db")
+    c = conn.cursor()
+    now = datetime.datetime.now(pytz.utc).astimezone(eastern_eight_zone)
+    c.execute(
+        "INSERT INTO jobs (job_id, status, public_key, submitted_at, input_method) VALUES (?, ?, ?, ?, ?)",
+        (task.id, "Submitted", None, now, "API"),
     )
+    conn.commit()
+    conn.close()
+    log_data.update(
+        {
+            "results_id": task.id,
+        }
+    )
+    return jsonify(log_data), 200
 
+@app.route("/retroplanner/api/retroplanner_results", methods=["POST"])
+def retroplanner_api_results():
+    if not request.is_json:
+        return jsonify({"error": "Missing JSON in request"}), 400
 
+    log_data = {}
+    inputed_data = {k: v for k, v in request.get_json().items()}
+    results_id = inputed_data.get('results_id', None)
     
 
+    
+    if results_id:
+        conn = sqlite3.connect("jobs.db")
+        c = conn.cursor()
+        c.execute("SELECT status, result, input_method FROM jobs WHERE job_id = ?", (results_id,))
+        job = c.fetchone()
+        conn.close()
+        try:
+            with open(os.path.join(app.synth_route, f"{results_id}.json"), "r") as f:
+                dict_routes = json.load(f)
 
-    planner = RSPlanner(config)
-    planner.select_stocks(inputed_configs["selectedStocks"])
-    planner.select_one_step_model(inputed_configs["selectedModels"])
-    planner.select_condition_predictor(inputed_configs["selectedConditionPredictor"])
-    planner.prepare_plan(prepare_easifa=False)
-
-    result = planner.plan(target_smiles)
-    if result:
-        # succ = True
-        # print(result)
-        # route_with_condition = planner.predict_condition()
-        # print(route_with_condition)
-
-        planner.predict_rxn_attributes()
-
-        dict_routes = [route.dict_route for route in result["all_succ_routes"]]
-
-        results_id = str(uuid.uuid4())
-        with open(os.path.join(app.synth_route, f"{results_id}.json"), "w") as f:
-            json.dump(dict_routes, f)
-
+            log_data.update(
+                {
+                    "routes": dict_routes,
+                    "results_id": results_id,
+                    "status": job[0]
+                }
+            )
+        except:
+            log_data.update(
+                {
+                    "results_id": results_id,
+                    "status": job[0]
+                }
+            )
+    else:
         log_data.update(
             {
                 "results_id": results_id,
-                # "resultsLimit": inputed_configs.get("resultsLimit", 50),
-                "routes": dict_routes,
+                "status": "FAILED"
             }
         )
-        return jsonify(log_data), 200
-    else:
-        return (
-            jsonify(
-                {
-                    "error": "Failure to search for the synthetic path, please expand the number of iterations!"
-                }
-            ),
-            400,
-        )
+    return jsonify(log_data), 200
+
 
 
 @app.route("/retroplanner/api/single_step", methods=["POST"])
