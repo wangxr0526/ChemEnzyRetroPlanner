@@ -93,11 +93,11 @@
                 <pre><code class="language-bash"> curl -X GET "http://cadd.zju.edu.cn/retroplanner/status/4fa68bf7-d59d-43e6-acbe-6967e41bc674"</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
                 <p class="text-main">Query response:</p>
                 <pre><code class="language-json"> {
-"input_method": "API",
-"result": "See Results",
-"state": "SUCCESS",
-"status": "SUCCESS",
-"results_id": "Results ID"
+    "input_method": "API",
+    "result": "See Results",
+    "state": "SUCCESS",
+    "status": "SUCCESS",
+    "results_id": "Results ID"
 }</code></pre>
                 <p class="text-main">Get Results:</p>
                 <pre><code class="language-bash">curl -X POST http://cadd.zju.edu.cn/retroplanner/api/retroplanner_results \
@@ -105,9 +105,9 @@
     -d '{"results_id": "4fa68bf7-d59d-43e6-acbe-6967e41bc674"}'</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
                 <p class="text-main">Sample response:</p>
                 <pre><code class="language-json">{
-"results_id": str, Results ID,
-"routes": List[dict], list of synthesis routes,
-"status": "success"
+    "results_id": str, Results ID,
+    "routes": List[dict], list of synthesis routes,
+    "status": "success"
 }</code></pre>
 
                 <p class="text-title">2. Single-Step Predictor</p>
