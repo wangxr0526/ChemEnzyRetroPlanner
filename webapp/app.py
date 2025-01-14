@@ -102,6 +102,7 @@ app.models_name_to_model_registor_name = {
 app.stocks_registor_name_to_stocks_name = {
     "Zinc_Fix-stock": "Zinc Buyable + USPTO Substrates",
     "RetroStar-stock": "eMolecules",
+    "BioNav-stock": "BioNav stock (benchmark)",
     # "PaRotes_n1-stock": "PaRoutes-Set-n1-stock",
     # "PaRotes_n5-stock": "PaRoutes-Set-n5-stock",
 }
@@ -819,14 +820,16 @@ def retroplanner_api_results():
             log_data.update(
                 {
                     "results_id": results_id,
-                    "status": job[0]
+                    "status": job[0],
+                    "error": "Search Failed! Please increase the number of iterations."
                 }
             )
     else:
         log_data.update(
             {
                 "results_id": results_id,
-                "status": "FAILED"
+                "status": "FAILED",
+                "error": "Search Failed! Please increase the number of iterations."
             }
         )
     return jsonify(log_data), 200
