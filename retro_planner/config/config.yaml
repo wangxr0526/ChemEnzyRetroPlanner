@@ -1,6 +1,6 @@
 # search
 gpu: -1
-expansion_topk: 10
+expansion_topk: 50
 iterations: 10
 max_depth: 6
 stocks: 
@@ -96,6 +96,11 @@ enzyme_rxn_classifier_config:
 #   - enzyme_assign
 easifa_config:
   checkpoint_path: "packages/easifa/easifa/checkpoints/enzyme_site_type_predition_model/train_in_uniprot_ecreact_cluster_split_merge_dataset_all_limit_3_at_2023-12-19-16-06-42/global_step_284000"
+
+pathway_ranking_config:
+  depth_based_ranker: "depth_based_ranker"
+  tree_lstm_ranker: "tree_lstm_ranker"
+
 # viz
 viz: false
 viz_dir: "viz"
