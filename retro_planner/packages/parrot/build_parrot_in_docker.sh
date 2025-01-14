@@ -19,5 +19,5 @@ else
 fi
 
 # 构建 Docker 镜像
-docker build -t parrot_image:latest -f Dockerfile_gpu .
+docker build -t wangxiaorui/parrot_image:latest -f Dockerfile_gpu .
 rm parrot_env.tar.gz

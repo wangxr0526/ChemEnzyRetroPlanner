@@ -31,7 +31,7 @@ ASKCOS_REGISTRY=${ASKCOS_REGISTRY:-registry.gitlab.com/mlpds_mit/askcosv2/askcos
 if ! docker images | grep -q "retroplanner_image"; then
     echo "Building retroplanner_image..."
     cp ${ENV_PACK_FOLDER}/retro_planner_env.tar.gz ./retro_planner_env_py38.tar.gz
-    docker build -t retroplanner_image:latest -f ./Dockerfile .
+    docker build -t wangxiaorui/retroplanner_image:latest -f ./Dockerfile .
     rm retro_planner_env_py38.tar.gz
 fi
 

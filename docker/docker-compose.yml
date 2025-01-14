@@ -25,7 +25,7 @@ services:
               capabilities: [gpu]
               device_ids: ['0']
   parrot_serve_container:
-    image: parrot_image:latest
+    image: wangxiaorui/parrot_image:latest
     container_name: parrot_serve_container
     command: >
       torchserve --start --foreground --ncs --model-store=/app/parrot/mars
@@ -46,7 +46,7 @@ services:
               device_ids: ['0']
 
   retroplanner_container:
-    image: retroplanner_image:latest
+    image: wangxiaorui/retroplanner_image:latest
     container_name: retroplanner_container
     command: /bin/bash
     volumes:

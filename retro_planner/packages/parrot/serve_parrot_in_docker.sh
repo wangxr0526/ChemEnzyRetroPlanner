@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ -z "${PARROT_REGISTRY}" ]; then
-  export PARROT_REGISTRY=parrot_image:latest
+  export PARROT_REGISTRY=wangxiaorui/parrot_image:latest
 fi
 
 if [ "$(docker ps -aq -f status=exited -f name=^parrot_serve_container$)" ]; then
