@@ -4,6 +4,7 @@ import json
 import os
 from queue import Queue
 
+import numpy as np
 import pandas as pd
 import requests
 import torch
@@ -26,6 +27,7 @@ from retro_planner.common.prepare_utils import (
     prepare_enzyme_recommender,
     prepare_molstar_planner,
     prepare_multi_single_step,
+    prepare_tree_lstm_pathway_ranker,
     prepare_single_step,
     prepare_starting_molecules,
     prepare_starting_molecules_for_multi_stock,
@@ -148,6 +150,9 @@ class RSPlanner:
         # easifa
         self.easifa_config = self.config["easifa_config"]
 
+        # pathway ranking
+        self.pathway_ranking_config = self.config["pathway_ranking_config"]
+
         # viz
         self.viz = self.config["viz"]
         self.viz_dir = self.config["viz_dir"]
@@ -159,6 +164,14 @@ class RSPlanner:
     def select_stocks(self, stock_names):
         self.starting_molecules = [self.stocks[x] for x in stock_names]
         logging.info(f"Selected Stock: {stock_names}")
+    
+    def select_pathway_ranker(self, ranker_name):
+        self.pathway_ranker_name = self.pathway_ranking_config[ranker_name]
+        if self.pathway_ranker_name == "tree_lstm_ranker":
+            self.pathway_ranker = prepare_tree_lstm_pathway_ranker()
+        elif self.pathway_ranker_name == "depth_based_ranker":
+            pass
+
 
     # def select_one_step_model(self, model_names):
     #     '''
@@ -576,8 +589,36 @@ class RSPlanner:
             return
 
     def _calculate_rxns_steps(self, succ_routes):
-
         return [max_reaction_depth(route.route_to_dict()) for route in succ_routes]
+    
+    def _depth_based_ranker(self, all_succ_routes):
+        all_succ_routes_depth = self._calculate_rxns_steps(all_succ_routes)
+
+        all_succ_routes_depth = np.array(all_succ_routes_depth)
+        sorted_indices = np.argsort(all_succ_routes_depth)
+        sorted_all_succ_routes = np.array(all_succ_routes)[sorted_indices].tolist()
+        return sorted_all_succ_routes
+
+    def _pathway_rank(self, all_succ_routes):
+        if not hasattr(self, "pathway_ranker_name"):
+            return self._depth_based_ranker(all_succ_routes)
+        
+        if self.pathway_ranker_name == 'depth_based_ranker':
+            return self._depth_based_ranker(all_succ_routes)
+
+        elif self.pathway_ranker_name == 'tree_lstm_ranker':
+            try:
+                all_succ_dict_routes = [
+                        route.dict_route for route in all_succ_routes
+                    ]
+                all_succ_routes_scores, _ = self.pathway_ranker.predict_from_list(all_succ_dict_routes)
+                all_succ_routes_scores = np.array(all_succ_routes_scores)
+                sorted_indices = np.argsort(all_succ_routes_scores)[::-1]
+                sorted_all_succ_routes = np.array(all_succ_routes)[sorted_indices].tolist()
+            except:
+                print('Warning tree lstm ranker not available, using depth-based ranker!')
+                sorted_all_succ_routes = self._depth_based_ranker(all_succ_routes)
+            return sorted_all_succ_routes
 
 
     def plan(self, target_mol):
@@ -587,16 +628,7 @@ class RSPlanner:
 
         if succ:
             all_succ_routes = msg[2]
-            all_succ_routes_steps = self._calculate_rxns_steps(msg[2])
-
-            succ_routes_steps = [
-                (route, step)
-                for route, step in zip(all_succ_routes, all_succ_routes_steps)
-            ]
-            sorted_succ_routes_steps = sorted(succ_routes_steps, key=lambda x: x[1])
-
-            sorted_all_succ_routes = [x[0] for x in sorted_succ_routes_steps]
-            sorted_all_succ_routes_steps = [x[1] for x in sorted_succ_routes_steps]
+            sorted_all_succ_routes = self._pathway_rank(all_succ_routes)
             self.result = {
                 "succ": succ,
                 "time": time.time() - t0,
@@ -609,7 +641,6 @@ class RSPlanner:
                     route.dict_route for route in sorted_all_succ_routes
                 ],
                 "first_succ_time": msg[3],
-                "all_succ_routes_steps": sorted_all_succ_routes_steps,
             }
             return self.result
 
@@ -1129,6 +1160,7 @@ if __name__ == "__main__":
         ]
     )
     planner.select_condition_predictor("rcr")
+    planner.select_pathway_ranker('tree_lstm_ranker')
     planner.prepare_plan()
     result = planner.plan(smiles)
     print(result)

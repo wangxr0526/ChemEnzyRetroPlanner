@@ -277,6 +277,154 @@ def prepare_template_relevance_models(state_name, topk):
     # 返回封装类实例
     return TemplateRelevanceWrapper(state_name=state_name, topk=topk)
 
+
+def prepare_tree_lstm_pathway_ranker():
+
+    class PathwayRankerWrapper:
+
+        def __init__(self) -> None:
+            self.url = "http://pathway_ranker:9681/pathway_ranker"  # Main URL for the pathway ranker service
+            self.url_beta = "http://localhost:9681/pathway_ranker"  # Backup URL
+
+            self.headers = {'Content-Type': 'application/json'}
+            self.active_url = self.url  # Default to main URL
+
+            # Check if the service is available, if not initialize it
+            if not self._is_service_available():
+                self._initialize_service()
+
+        def _is_service_available(self):
+            # Try the main URL
+            if self._check_url(self.url):
+                self.active_url = self.url
+                return True
+            # If main URL is unavailable, try the backup URL
+            elif self._check_url(self.url_beta):
+                self.active_url = self.url_beta
+                return True
+            return False
+
+        def _check_url(self, url):
+            """Check if a specific URL is available"""
+            try:
+                response = requests.get(url, timeout=5)
+                return response.status_code == 405
+            except requests.RequestException:
+                return False
+
+        def _initialize_service(self):
+            # Logic to initialize the service
+            try:
+                # Use subprocess to run the initialization script in ../docker
+                subprocess.run(
+                    ["bash", "scripts/serve_cpu_in_docker.sh"],
+                    # cwd="../retro_planner/packages/pathway_ranker",  # Specify script execution path
+                    cwd=os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'packages/pathway_ranker')),
+                    check=True  # Raise exception if script fails
+                )
+                print("Service initialization script executed successfully.")
+
+                # Wait for the service to start
+                time.sleep(10)  # Adjust based on actual startup time
+
+            except subprocess.CalledProcessError as e:
+                print(f"Failed to start the service: {e}")
+                raise RuntimeError("Failed to start the pathway ranker service.")
+
+            # Verify if the service started successfully
+            if not self._is_service_available():
+                raise RuntimeError("Failed to start the pathway ranker service.")
+        def _convert_route_format(self, data):
+            def parse_children(node):
+                # Helper function to recursively parse children
+                new_children = []
+                for child in node.get("children", []):
+                    if child["type"] == "reaction":
+                        reaction_node = {
+                            "plausibility": 0.0,  # Placeholder
+                            "template_score": 0.0,  # Placeholder
+                            "num_examples": 0,  # Placeholder
+                            "necessary_reagent": "",  # Placeholder
+                            "is_reaction": True,
+                            "children": [],
+                            # "smiles": child["rxn_smiles"]
+                        }
+                        reaction_node["children"].extend(parse_children(child))
+                        new_children.append(reaction_node)
+                    elif child["type"] == "mol":
+                        mol_node = {
+                            "smiles": child["smiles"],
+                            "as_reactant": 0,  # Placeholder
+                            "as_product": 0,  # Placeholder
+                            "is_chemical": True,
+                            "children": []
+                        }
+                        mol_node["children"].extend(parse_children(child))
+                        new_children.append(mol_node)
+                return new_children
+
+            # Start parsing from the root node
+            root = {
+                "smiles": data["smiles"],
+                "as_reactant": 0,  # Placeholder
+                "as_product": 0,  # Placeholder
+                "is_chemical": True,
+                "children": []
+            }
+
+            root["children"] = parse_children(data)
+
+            return root
+
+        def _convert_routes_formate(self, dict_routes):
+            routes_for_ranking = {
+                'trees':[self._convert_route_format(route) for route in dict_routes]
+                }
+            return routes_for_ranking
+
+        def _requests_core(self, routes_for_ranking):
+            try:
+                # Use the active URL for the request
+                response = requests.post(self.active_url,
+                                         headers=self.headers,
+                                         json=routes_for_ranking)
+                response.raise_for_status()  # Raise exception if request fails
+            except requests.RequestException:
+                # If request fails, try the backup URL
+                if self.active_url == self.url and self._check_url(self.url_beta):
+                    self.active_url = self.url_beta
+                elif self.active_url == self.url_beta and self._check_url(self.url):
+                    self.active_url = self.url
+                else:
+                    raise RuntimeError(
+                        "Both primary and backup services are unavailable.")
+
+                # Retry the request
+                response = requests.post(self.active_url,
+                                         headers=self.headers,
+                                         json=routes_for_ranking)
+                response.raise_for_status()  # Raise exception if request fails
+
+            return response.json()
+
+        def predict_from_json(self, synthesis_route_path:str):
+            # Read the JSON data from the file
+            with open(synthesis_route_path, 'r') as file:
+                dict_routes = json.load(file)
+            routes_for_ranking = self._convert_routes_formate(dict_routes)
+            response_data = self._requests_core(routes_for_ranking)
+            return response_data['results'][0]['scores'], response_data['results'][0]['encoded_trees'] 
+
+        def predict_from_list(self, dict_routes:list):
+            routes_for_ranking = self._convert_routes_formate(dict_routes)
+            response_data = self._requests_core(routes_for_ranking)
+            return response_data['results'][0]['scores'], response_data['results'][0]['encoded_trees']
+
+            
+
+    # Return an instance of the wrapper class
+    return PathwayRankerWrapper()
+
 def handle_one_step_config(model_names, one_step_model_configs):
     selected_one_step_model_configs = []
     selected_model_subnames = []
@@ -603,3 +751,10 @@ def prepare_enzyme_recommender(enzyme_rxn_classifier_config, device='cpu'):
                 ),
                 device=device)
     return enzyme_recommender
+
+
+if __name__ == "__main__":
+    file_path = "/home/xiaoruiwang/data/ubuntu_work_beta/multi_step_work/ChemEnzyRetroPlanner/retro_planner/packages/pathway_ranker/test_data/biosynthetic_set_gt_pathway.json"
+    pathway_ranker = prepare_tree_lstm_pathway_ranker()
+    result = pathway_ranker.predict_from_json(file_path)
+    print(result)

@@ -242,6 +242,7 @@ class MolTree:
                 cost=best_reaction.cost
             )
         syn_route.succ = True
+        self.best_route = syn_route
 
         return syn_route
 
@@ -381,6 +382,8 @@ class MolTree:
         for route in all_routes:
             if route.check_split_route_succ():
                 all_succ_routes.append(route.convert_succ_route())
+        if len(all_succ_routes) == 0:
+            all_succ_routes = [self.best_route]
         return all_succ_routes
 
     def viz_search_tree(self, viz_file):

@@ -138,6 +138,68 @@ def predict_condition_for_dict_route(predictor, dict_route, topk=10):
             condition_df = predictor(rxn_smiles, topk, return_scores=True)
         rxn2condition_dict[rxn_smiles] = condition_df.round(2)
     return rxn2condition_dict
+
+
+def convert_route_format(data):
+    """
+    Convert JSON from the first format to the second format.
+
+    Args:
+        data (dict): Input JSON data in the first format.
+
+    Returns:
+        dict: Converted JSON data in the second format.
+    """
+    def parse_children(node):
+        # Helper function to recursively parse children
+        new_children = []
+        for child in node.get("children", []):
+            if child["type"] == "reaction":
+                reaction_node = {
+                    "plausibility": 0.0,  # Placeholder
+                    "template_score": 0.0,  # Placeholder
+                    "num_examples": 0,  # Placeholder
+                    "necessary_reagent": "",  # Placeholder
+                    "is_reaction": True,
+                    "children": [],
+                    "smiles": child["rxn_smiles"]
+                }
+                reaction_node["children"].extend(parse_children(child))
+                new_children.append(reaction_node)
+            elif child["type"] == "mol":
+                mol_node = {
+                    "smiles": child["smiles"],
+                    "as_reactant": 0,  # Placeholder
+                    "as_product": 0,  # Placeholder
+                    "is_chemical": True,
+                    "children": []
+                }
+                new_children.append(mol_node)
+        return new_children
+
+    # Start parsing from the root node
+    root = {
+        "smiles": data["smiles"],
+        "as_reactant": 0,  # Placeholder
+        "as_product": 0,  # Placeholder
+        "is_chemical": True,
+        "children": []
+    }
+
+    root["children"] = parse_children(data)
+
+    return root
+
+
+
+def convert_routes_formate(synth_route_json_path):
+    with open(synth_route_json_path, 'r') as f:
+        dict_routes = json.load(f)
+    
+    routes_for_ranking = {
+        'trees':[convert_route_format(route) for route in dict_routes]
+        }
+    return routes_for_ranking
             
 
 
