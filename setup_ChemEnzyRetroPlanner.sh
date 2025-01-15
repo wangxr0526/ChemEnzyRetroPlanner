@@ -41,6 +41,7 @@ for model in "${!models[@]}"; do
 done
 
 cd $PLANNER_ROOT
+mkdir -p metadata
 
 
 # # 安装 gdown 工具
@@ -49,6 +50,7 @@ cd $PLANNER_ROOT
 mkdir -vp $CONDA_HOME/envs
 
 # 检查并下载文件：ESM 模型
+mkdir -vp ~/.cache/torch/hub/checkpoints/
 if [ ! -f ~/.cache/torch/hub/checkpoints/esm2_t33_650M_UR50D.pt ]; then
     echo "Downloading ESM model..."
     wget https://dl.fbaipublicfiles.com/fair-esm/models/esm2_t33_650M_UR50D.pt -O ~/.cache/torch/hub/checkpoints/esm2_t33_650M_UR50D.pt
@@ -99,7 +101,7 @@ else
     echo "easifa_metadata.zip already exists, skipping download."
 fi
 
-# 检查并下载 easifa_metadata.zip
+# 检查并下载 graph_retrosyn_metadata.zip
 if [ ! -f $PLANNER_ROOT/metadata/graph_retrosyn_metadata.zip ]; then
     echo "Downloading graph_retrosyn_metadata.zip ..."
     curl -L -o $PLANNER_ROOT/metadata/graph_retrosyn_metadata.zip "https://huggingface.co/xiaoruiwang/ChemEnzyRetroPlanner_metadata/resolve/main/graph_retrosyn_metadata.zip?download=true"
@@ -107,34 +109,34 @@ else
     echo "graph_retrosyn_metadata.zip already exists, skipping download."
 fi
 
+# 检查并下载 onmt_metadata.zip.zip
+if [ ! -f $PLANNER_ROOT/metadata/onmt_metadata.zip.zip ]; then
+    echo "Downloading onmt_metadata.zip.zip ..."
+    curl -L -o $PLANNER_ROOT/metadata/onmt_metadata.zip "https://huggingface.co/xiaoruiwang/ChemEnzyRetroPlanner_metadata/resolve/main/onmt_metadata.zip?download=true"
+else
+    echo "onmt_metadata.zip already exists, skipping download."
+fi
+
 # 检查并下载 rxn_filter_metadata.zip
 if [ ! -f $PLANNER_ROOT/metadata/rxn_filter_metadata.zip ]; then
     echo "Downloading rxn_filter_metadata.zip ..."
-    curl -L -o $PLANNER_ROOT/metadata/onmt_metadata.zip "https://huggingface.co/xiaoruiwang/ChemEnzyRetroPlanner_metadata/resolve/main/rxn_filter_metadata.zip?download=true"
+    curl -L -o $PLANNER_ROOT/metadata/rxn_filter_metadata.zip "https://huggingface.co/xiaoruiwang/ChemEnzyRetroPlanner_metadata/resolve/main/rxn_filter_metadata.zip?download=true"
 else
     echo "rxn_filter_metadata.zip already exists, skipping download."
 fi
 
-# 检查并下载 rxn_filter_metadata.zip
+# 检查并下载 value_fun_metadata.zip
 if [ ! -f $PLANNER_ROOT/metadata/value_fun_metadata.zip ]; then
     echo "Downloading value_fun_metadata.zip ..."
-    curl -L -o $PLANNER_ROOT/metadata/onmt_metadata.zip "https://huggingface.co/xiaoruiwang/ChemEnzyRetroPlanner_metadata/resolve/main/value_fun_metadata.zip?download=true"
+    curl -L -o $PLANNER_ROOT/metadata/value_fun_metadata.zip "https://huggingface.co/xiaoruiwang/ChemEnzyRetroPlanner_metadata/resolve/main/value_fun_metadata.zip?download=true"
 else
     echo "value_fun_metadata.zip already exists, skipping download."
 fi
 
-# 检查并下载 rxn_filter_metadata.zip
-if [ ! -f $PLANNER_ROOT/metadata/value_fun_metadata.zip ]; then
-    echo "Downloading value_fun_metadata.zip ..."
-    curl -L -o $PLANNER_ROOT/metadata/onmt_metadata.zip "https://huggingface.co/xiaoruiwang/ChemEnzyRetroPlanner_metadata/resolve/main/value_fun_metadata.zip?download=true"
-else
-    echo "value_fun_metadata.zip already exists, skipping download."
-fi
-
-# 检查并下载 easifa_metadata.zip
+# 检查并下载 enzyme_cls_metadata.zip
 if [ ! -f $PLANNER_ROOT/metadata/enzyme_cls_metadata.zip ]; then
     echo "Downloading enzyme_cls_metadata.zip ..."
-    curl -L -o $PLANNER_ROOT/metadata/onmt_metadata.zip "https://huggingface.co/xiaoruiwang/ChemEnzyRetroPlanner_metadata/resolve/main/enzyme_cls_metadata.zip?download=true"
+    curl -L -o $PLANNER_ROOT/metadata/enzyme_cls_metadata.zip "https://huggingface.co/xiaoruiwang/ChemEnzyRetroPlanner_metadata/resolve/main/enzyme_cls_metadata.zip?download=true"
 else
     echo "enzyme_cls_metadata.zip already exists, skipping download."
 fi
@@ -142,6 +144,7 @@ fi
 # 检查并下载 USPTO_condition.mars
 if [ ! -f $PLANNER_ROOT/retro_planner/packages/parrot/mars/USPTO_condition.mar ]; then
     echo "Downloading USPTO_condition.mars ..."
+    mkdir -vp $PLANNER_ROOT/retro_planner/packages/parrot/mars/
     curl -L -o $PLANNER_ROOT/retro_planner/packages/parrot/mars/USPTO_condition.mar "https://huggingface.co/xiaoruiwang/ChemEnzyRetroPlanner_metadata/resolve/main/USPTO_condition.mar?download=true"
 else
     echo "USPTO_condition.zip already exists, skipping download."
