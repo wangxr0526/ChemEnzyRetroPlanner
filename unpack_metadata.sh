@@ -11,6 +11,9 @@ GRAPH_RETROSYN_ZIP="$METADATA_DIR/graph_retrosyn_metadata.zip"
 ONMT_ZIP="$METADATA_DIR/onmt_metadata.zip"
 CONDITION_PREDICTOR_ZIP="$METADATA_DIR/condition_predictor_metadata.zip"
 EASIFA_ZIP="$METADATA_DIR/easifa_metadata.zip"
+RXN_FILTER_ZIP="$METADATA_DIR/rxn_filter_metadata.zip"
+ENZYME_CLS_ZIP="$METADATA_DIR/enzyme_cls_metadata.zip"
+VALUE_FUN_ZIP="$METADATA_DIR/value_fun_metadata.zip"
 
 # 解压 building_block_dataset
 if [ -f "$BUILDING_BLOCK_ZIP" ]; then
@@ -50,6 +53,30 @@ if [ -f "$EASIFA_ZIP" ]; then
     echo "$EASIFA_ZIP 解压完成."
 else
     echo "$EASIFA_ZIP 文件不存在."
+fi
+
+# 解压 rxn_filter_metadata
+if [ -f "$RXN_FILTER_ZIP" ]; then
+    unzip -o "$RXN_FILTER_ZIP"
+    echo "$RXN_FILTER_ZIP 解压完成."
+else
+    echo "$RXN_FILTER_ZIP 文件不存在."
+fi
+
+# 解压 enzyme_cls_metadata
+if [ -f "$ENZYME_CLS_ZIP" ]; then
+    unzip -o "$ENZYME_CLS_ZIP"
+    echo "$ENZYME_CLS_ZIP 解压完成."
+else
+    echo "$ENZYME_CLS_ZIP 文件不存在."
+fi
+
+# 解压 value_fun_metadata
+if [ -f "$VALUE_FUN_ZIP" ]; then
+    unzip -o "$VALUE_FUN_ZIP"
+    echo "$VALUE_FUN_ZIP 解压完成."
+else
+    echo "$VALUE_FUN_ZIP 文件不存在."
 fi
 
 # 输出完成消息

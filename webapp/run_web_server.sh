@@ -1,5 +1,6 @@
 #!/bin/bash
 
+mkdir -p /retro_planner/webapp/logs
 # 启动 Redis 服务器
 nohup redis-server > /retro_planner/webapp/logs/redis.log 2>&1 &
 

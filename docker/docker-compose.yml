@@ -51,8 +51,7 @@ services:
     command: /bin/bash
     volumes:
       - "${PROJECT_ROOT}:/retro_planner"
-      - "${PROJECT_ROOT}/retro_planner/packages/organic_enzyme_rxn_classifier/organic_enzyme_rxn_classifier:/retro_planner/retro_planner/packages/organic_enzyme_rxn_classifier/organic_enzyme_rxn_classifier"
-      - "$HOME/.cache/torch/hub/checkpoints:/home/retro_planner/.cache/torch/hub/checkpoints"
+      - "$HOME/.cache/torch/hub/checkpoints:/root/.cache/torch/hub/checkpoints"
     ports:
       - "8001:8000"
     networks:

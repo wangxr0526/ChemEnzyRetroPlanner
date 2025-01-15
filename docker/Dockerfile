@@ -14,9 +14,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget libxrender
 # # 设置环境变量
 # ENV PATH=/opt/conda/bin:$PATH
 
-# 创建新用户 retro_planner 并添加到 sudo 组
-RUN useradd -m -s /bin/bash retro_planner && \
-    echo "retro_planner ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+# 创建新用户 retro_planner 并添加到 sudo 组   (rootless情况下使用)
+# RUN useradd -m -s /bin/bash retro_planner && \
+#     echo "retro_planner ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # 解压传入的 tar.gz 文件，并删除压缩包
 COPY retro_planner_env_py38.tar.gz /opt/conda/envs/retro_planner_env_py38.tar.gz
@@ -33,9 +33,11 @@ RUN pip install --no-cache-dir flask==2.2.5 flask_cors celery numpy==1.23.5 redi
 # 设置工作目录
 WORKDIR /retro_planner
 
-# 切换默认用户
-USER retro_planner
-RUN mkdir /home/retro_planner/.cache
+# 切换默认用户 (rootless情况下使用)
+# USER retro_planner
+# RUN mkdir /home/retro_planner/.cache
+RUN mkdir /root/.cache
+
 
 # 设置容器启动时默认命令
 CMD ["bash"]
