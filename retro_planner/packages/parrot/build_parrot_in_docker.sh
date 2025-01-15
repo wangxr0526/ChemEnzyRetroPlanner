@@ -5,7 +5,7 @@ export CONDA_HOME=$(conda info --base)
 # 检查并下载 parrot_env.tar.gz
 if [ ! -f $CONDA_HOME/envs/parrot_env.tar.gz ]; then
     echo "Downloading parrot_env.tar.gz..."
-    gdown https://drive.google.com/uc?id=XXX -O $CONDA_HOME/envs/parrot_env.tar.gz
+    curl -L -o $CONDA_HOME/envs/parrot_env.tar.gz "https://huggingface.co/xiaoruiwang/ChemEnzyRetroPlanner_metadata/resolve/main/parrot_env.tar.gz?download=true"
 else
     echo "parrot_env.tar.gz already exists, skipping download."
 fi
