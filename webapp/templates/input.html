@@ -157,7 +157,8 @@
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="/retroplanner/services"><i
                                     class="fas fa-vial"></i><span>Planner</span></a>
-                            <a class="dropdown-item" href="/retroplanner/agent"><i class="fas fa-robot"></i><span>Agent</span></a>
+                            <a class="dropdown-item" href="/retroplanner/agent"><i
+                                    class="fas fa-robot"></i><span>Agent</span></a>
                         </div>
                     </li>
                     <li class="nav-item">
@@ -175,7 +176,7 @@
     </nav>
     <div id="content">
         <div id="main-container">
-            <!-- Bootstrap Modal -->
+            <!-- JSME Modal -->
             <div class="modal fade" id="jsmeModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -195,6 +196,48 @@
                                 style="border-radius: 20px;">Close</button>
                             <button type="button" class="btn btn-primary" onclick="get_smiles()" data-dismiss="modal"
                                 style="border-radius: 20px;">Get SMILES</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Example Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content modal-addition">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalLabel" style="font-family: 'Poetsen One', sans-serif;">
+                                Examples</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- 图片矩阵 -->
+                            <div class="row">
+                                <div class="col-6 text-center">
+                                    <img src="{{ url_for('static', filename='figure/example_mols/mol1.png') }}" alt="Image 1" class="example-image example_mol" name="mol1" />
+                                </div>
+                                <div class="col-6 text-center">
+                                    <img src="{{ url_for('static', filename='figure/example_mols/mol2.png') }}" alt="Image 2" class="example-image example_mol" name="mol2" />
+                                </div>
+                                <div class="col-6 text-center">
+                                    <img src="{{ url_for('static', filename='figure/example_mols/mol3.png') }}" alt="Image 3" class="example-image example_mol" name="mol3" />
+                                </div>
+                                <div class="col-6 text-center">
+                                    <img src="{{ url_for('static', filename='figure/example_mols/mol4.png') }}" alt="Image 4" class="example-image example_mol" name="mol4" />
+                                </div>
+                            </div>
+                            <div id="selected-smiles" class="mt-3 text-center">
+                                <p><strong>Selected SMILES:</strong> <span id="smiles-output">None</span></p>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                style="border-radius: 20px;">Close</button>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal"
+                                style="border-radius: 20px;" onclick="get_example_smiles()">Get Example</button>
                         </div>
                     </div>
                 </div>
@@ -277,7 +320,7 @@
 
 
                             <!-- Results Limit Select Box -->
-<!--                             <div class="select-container">
+                            <!--                             <div class="select-container">
                                 <label for="resultsLimit">Results Limit:</label>
                                 <select id="resultsLimit" name="resultsLimit" class="select-custom">
                                     <option value="50" selected>50</option>
@@ -304,6 +347,13 @@
             <div>
                 <label class="input-header">Target SMILES: </label>
                 <div id="smiles-group">
+                    <button type="button" class="example_button" data-toggle="modal" data-target="#exampleModal"><svg
+                            xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                            fill="#EAC452">
+                            <path
+                                d="M480-80q-26 0-47-12.5T400-126q-33 0-56.5-23.5T320-206v-142q-59-39-94.5-103T190-590q0-121 84.5-205.5T480-880q121 0 205.5 84.5T770-590q0 77-35.5 140T640-348v142q0 33-23.5 56.5T560-126q-12 21-33 33.5T480-80Zm-80-126h160v-36H400v36Zm0-76h160v-38H400v38Zm-8-118h58v-108l-88-88 42-42 76 76 76-76 42 42-88 88v108h58q54-26 88-76.5T690-590q0-88-61-149t-149-61q-88 0-149 61t-61 149q0 63 34 113.5t88 76.5Zm88-162Zm0-38Z">
+                            </path>
+                        </svg></button>
                     <input id="smiles_container" name="drawn_smiles">
                     <button type="button" class="draw_button" data-toggle="modal" data-target="#jsmeModal">Draw</button>
                 </div>
@@ -436,7 +486,7 @@
                         document.body.appendChild(downloadLink);
                         downloadLink.click();
                         document.body.removeChild(downloadLink);
-                        
+
                     }
                 })
                 .catch(error => {
@@ -548,6 +598,26 @@
         }
 
 
+    </script>
+    <script>
+        const smilesDictionary = {
+            mol1: "NCCCCCNO",
+            mol2: "O=C1CC[C@H](C(=O)O)N1",
+            mol3: "N[C@@H]1CCCCNC1=O",
+            mol4: "CC(C)=CCc1c(O)cc(O)c(C(=O)/C=C/c2ccc(O)cc2)c1O"
+        };
+
+        $('.example-image').on('click', function () {
+            var imageName = $(this).attr('name');
+            var smiles = smilesDictionary[imageName];
+            $('#smiles-output').text(smiles);
+
+        });
+
+        function get_example_smiles()  {
+            var selectedSmiles = $('#smiles-output').text();
+            document.getElementById("smiles_container").value = selectedSmiles;
+        };
     </script>
 </body>
 

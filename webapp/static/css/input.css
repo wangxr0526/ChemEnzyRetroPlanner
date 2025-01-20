@@ -42,10 +42,9 @@
     height: 36px;
     width: 80%;
     display: inline-flex;
-    justify-content: end;
+    justify-content: space-between;
     text-align: center;
     margin-bottom: 20px;
-
     border: 1px solid lightgray;
     border-radius: 20px;
     background-color: #FFFFFF;
@@ -55,7 +54,7 @@
 
 #smiles_container {
     height: 34px;
-    flex-grow: 1;
+    width: calc(60% - 10px); /* 每个元素宽度占父容器的三分之一，留出间隙 */
     border: none;
     border-radius: 20px 0 0 20px;
     padding-left: 10px;
@@ -66,7 +65,7 @@
 
 .draw_button {
     height: 34px;
-    flex-grow: 0;
+    width: calc(20% - 10px); /* 与其他元素宽度一致 */
     border-radius: 0 20px 20px 0;
     background-color: #dc3545;
     /* 维持原有背景颜色 */
@@ -94,6 +93,40 @@
     /* 点击时轻微下移并稍微放大，模拟按压效果 */
 }
 
+.example_button {
+    height: 34px;
+    width: calc(20% - 10px); /* 与其他元素宽度一致 */
+    border-radius: 20px 0 0 20px;
+    background-color: #28a745;
+    /* 维持原有背景颜色 */
+    color: white;
+    /* 维持原有字体颜色 */
+    font-size: 20px;
+    outline: none;
+    border: none;
+    /* 确保没有边框 */
+    transition: all 0.3s ease;
+    /* 添加平滑的过渡效果 */
+}
+
+.example_button:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    /* 增强鼠标悬停时的阴影效果 */
+    transform: scale(1.05);
+    /* 轻微放大按钮，增加交互感 */
+}
+
+.example_button:active {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    /* 点击时调整阴影，提供更明显的反馈 */
+    transform: translateY(2px) scale(1.03);
+    /* 点击时轻微下移并稍微放大，模拟按压效果 */
+}
+
+.example_mol {
+    height: 180px;
+     width: 180px;
+}
 
 
 #submit_button,
