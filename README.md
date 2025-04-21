@@ -34,6 +34,12 @@ ChemEnzRretroPlanner: An Integrated Automation Platform for Hybrid Organic-Enzym
 
 ## Web Server
 
+Notice: Website Link Update (2025.04.22)
+Due to a temporary issue with the original website link, we have moved the access point to a new link:
+[WebServer](http://retroplanner.cpolar.cn/retroplanner/)
+Please use the above link to access the website as usual. We will notify you once the original link is restored. We apologize for any inconvenience caused and appreciate your understanding.
+
+
 We have developed a [WebServer](http://cadd.zju.edu.cn/retroplanner) for ChemEnzyRetroPlanner, which allows you Utilize our hybrid synthetic planning platform, which leverages mixed organic enzyme catalysis, to achieve more efficient and environmentally friendly synthesis planning.<br>
 
 <div id="top" align="center">
