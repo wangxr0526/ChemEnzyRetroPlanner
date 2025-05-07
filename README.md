@@ -36,7 +36,7 @@ ChemEnzRretroPlanner: An Integrated Automation Platform for Hybrid Organic-Enzym
 
 <strong>Notice: Website Link Update (2025.05.05)</strong>  
 Due to a temporary issue with the original website link, we have moved the access point to a new link:
-[WebServer](http://retroplanner.cpolar.cn/retroplanner/)
+[WebServer](http://retroplanner.vip.hk.cpolar.io/retroplanner/)
 Please use the above link to access the website as usual. We will notify you once the original link is restored. 
 
 
