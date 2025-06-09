@@ -40,7 +40,8 @@ Due to a temporary issue with the original website link, we have moved the acces
 Please use the above link to access the website as usual. We will notify you once the original link is restored. 
 
 
-We have developed a [WebServer](http://cadd.zju.edu.cn/retroplanner) for ChemEnzyRetroPlanner, which allows you Utilize our hybrid synthetic planning platform, which leverages mixed organic enzyme catalysis, to achieve more efficient and environmentally friendly synthesis planning.<br>
+We have developed a [Web Server (primary domain)](http://cadd.zju.edu.cn/retroplanner) and a [mirror site (backup domain)](http://cadd.iddd.group/retroplanner/) for ChemEnzyRetroPlanner, which enables users to leverage our hybrid synthetic planning platform, integrating organic and enzymatic catalysis, to achieve more efficient and environmentally friendly synthesis planning.
+<br>
 
 <div id="top" align="center">
 
