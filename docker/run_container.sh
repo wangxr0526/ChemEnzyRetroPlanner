@@ -36,7 +36,7 @@ if ! docker images | grep -q "retroplanner_image"; then
 fi
 
 # 启动 Docker Compose 服务
-docker-compose up -d
+(command -v docker-compose &> /dev/null && docker-compose up -d) || docker compose up -d
 
 # 执行最后一步逻辑
 if [ "$RUN_WEB_APP" = true ]; then
