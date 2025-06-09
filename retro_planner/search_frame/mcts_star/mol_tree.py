@@ -113,7 +113,7 @@ class MolTree:
 
         grandchildren_values = []
         grandchildren = []
-        succ_mol_sbiling = []
+        succ_mol_sibling = []
         for child in mol_node.children:
             if child is not None:
                 for grandchild in child.children:
@@ -122,20 +122,20 @@ class MolTree:
                     else:
                         grandchildren_values.append(grandchild.v_target())
                     if grandchild.succ and grandchild.sibling:
-                        succ_mol_sbiling.extend(grandchild.sibling)
+                        succ_mol_sibling.extend(grandchild.sibling)
                     else:
                         pass
                     grandchildren.append(grandchild)
-        succ_mol_sbiling = list(set(succ_mol_sbiling))
-        if succ_mol_sbiling:
-            succ_mol_sbiling_values = []
-            for grandchild in succ_mol_sbiling:
+        succ_mol_sibling = list(set(succ_mol_sibling))
+        if succ_mol_sibling:
+            succ_mol_sibling_values = []
+            for grandchild in succ_mol_sibling:
                 if grandchild.is_terminal():
-                    succ_mol_sbiling_values.append(np.inf)
+                    succ_mol_sibling_values.append(np.inf)
                 else:
-                    succ_mol_sbiling_values.append(grandchild.v_target())
-            succ_mol_sbiling_values = np.array(succ_mol_sbiling_values)
-            rollout_next = succ_mol_sbiling[np.argmin(succ_mol_sbiling_values)]
+                    succ_mol_sibling_values.append(grandchild.v_target())
+            succ_mol_sibling_values = np.array(succ_mol_sibling_values)
+            rollout_next = succ_mol_sibling[np.argmin(succ_mol_sibling_values)]
             return rollout_next
         grandchildren_values = np.array(grandchildren_values)
         rollout_next = grandchildren[np.argmin(grandchildren_values)]
