@@ -30,7 +30,7 @@
                 <img class="img" src="/retroplanner/static/figure/input_interface.png">
                 <p class="img-legend">
                     <strong>
-                        Figure 1.
+                        Figure 1.http://cadd.iddd.group/retroplanner/
                     </strong>
                     The ChemEnzyRetroPlanner's input interface, parameter selection interface, and log output interface.
                 </p>
@@ -69,7 +69,7 @@
                 <p>
 
                 <p class="text-title">1. Multi-Step Synthesis Planner</p>
-                <pre><code class="language-bash"> curl -X POST http://cadd.zju.edu.cn/retroplanner/api/retroplanner  \
+                <pre><code class="language-bash"> curl -X POST http://cadd.iddd.group/retroplanner/api/retroplanner  \
     -H "Content-Type: application/json"  \
     -d '{"smiles": "CCCCOCCCCC", "savedOptions": {
         "iterationNumber": 50,
@@ -90,7 +90,7 @@
     "status": "success"
   }</code></pre>
                 <p class="text-main">Query:</p>
-                <pre><code class="language-bash"> curl -X GET "http://cadd.zju.edu.cn/retroplanner/status/{Results ID}"</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
+                <pre><code class="language-bash"> curl -X GET "http://cadd.iddd.group/retroplanner/status/{Results ID}"</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
                 <p class="text-main">Query response:</p>
                 <pre><code class="language-json"> {
     "input_method": "API",
@@ -100,7 +100,7 @@
     "results_id": "Results ID"
 }</code></pre>
                 <p class="text-main">Get Results:</p>
-                <pre><code class="language-bash">curl -X POST http://cadd.zju.edu.cn/retroplanner/api/retroplanner_results \
+                <pre><code class="language-bash">curl -X POST http://cadd.iddd.group/retroplanner/api/retroplanner_results \
     -H "Content-Type: application/json" \
     -d '{"results_id": "Results ID"}'</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
                 <p class="text-main">Sample response:</p>
@@ -111,7 +111,7 @@
 }</code></pre>
 
                 <p class="text-title">2. Single-Step Predictor</p>
-                <pre><code class="language-bash">curl -X POST http://cadd.zju.edu.cn/retroplanner/api/single_step \
+                <pre><code class="language-bash">curl -X POST http://cadd.iddd.group/retroplanner/api/single_step \
     -H "Content-Type: application/json" \
     -d '{"smiles": "CCCCOCCCCC", "savedOptions":{
         "topk":10,                                                           
@@ -135,7 +135,7 @@
 
 
                 <p class="text-title">3. Reaction Condition Predictor</p>
-                <pre><code class="language-bash">curl -X POST http://cadd.zju.edu.cn/retroplanner/api/condition_predictor \
+                <pre><code class="language-bash">curl -X POST http://cadd.iddd.group/retroplanner/api/condition_predictor \
     -H "Content-Type: application/json" \
     -d '{"reaction":"CCCCCO.CCC(=O)O>>CCC(=O)OCCCCC"}'</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
 
@@ -157,7 +157,7 @@
 
 
                 <p class="text-title">4. Reaction Rater</p>
-                <pre><code class="language-bash">curl -X POST http://cadd.zju.edu.cn/retroplanner/api/reaction_rater \
+                <pre><code class="language-bash">curl -X POST http://cadd.iddd.group/retroplanner/api/reaction_rater \
     -H "Content-Type: application/json" \
     -d '{"reaction":"CCCCCO.CCC(=O)O>>CCC(=O)OCCCCC"}'</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
 
@@ -173,7 +173,7 @@
 
 
                 <p class="text-title">5. Enzymatic Reaction Identifier</p>
-                <pre><code class="language-bash">curl -X POST http://cadd.zju.edu.cn/retroplanner/api/enzymatic_rxn_identifier \
+                <pre><code class="language-bash">curl -X POST http://cadd.iddd.group/retroplanner/api/enzymatic_rxn_identifier \
     -H "Content-Type: application/json" \
     -d '{"reaction":"N[C@@H](CO)C(=O)O>>N[C@H](CO)C(=O)O"}'</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
 
@@ -188,7 +188,7 @@
 }</code></pre>
 
                 <p class="text-title">6. Enzyme Recommender</p>
-                <pre><code class="language-bash">curl -X POST http://cadd.zju.edu.cn/retroplanner/api/enzyme_recommender \
+                <pre><code class="language-bash">curl -X POST http://cadd.iddd.group/retroplanner/api/enzyme_recommender \
     -H "Content-Type: application/json" \
     -d '{"reaction":"N[C@@H](CO)C(=O)O>>N[C@H](CO)C(=O)O"}'</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
 
@@ -219,7 +219,7 @@
 }</code></pre>
 
                 <p class="text-title">7. Enzyme Active Site Annotator</p>
-                <pre><code class="language-bash">curl -X POST http://cadd.zju.edu.cn/retroplanner/api/easifa \
+                <pre><code class="language-bash">curl -X POST http://cadd.iddd.group/retroplanner/api/easifa \
     -H "Content-Type: application/json" \
     -d '{"reaction": "N[C@@H](CO)C(=O)O>>N[C@H](CO)C(=O)O", "EC number":"5.1.1.18"}'</code><button class="copy-button" onclick="copyToClipboard(this)">Copy</button></pre>
 
