@@ -118,7 +118,7 @@ def get_structure_html_and_active_data(
                 x = float(line[30:38])
                 y = float(line[38:46])
                 z = float(line[46:54])
-                view.addLabel(f'{residue_name} {res_idx + 1}', {"fontSize": 8, "position": {"x": x, "y": y, "z": z}, "fontColor": color, "fontOpacity":1.0 ,"backgroundColor": 'white', "bold":True,"backgroundOpacity": 0.1})
+                view.addLabel(f'{residue_name} {res_idx + 1}', {"fontSize": 12, "position": {"x": x, "y": y, "z": z}, "fontColor": 'black', "fontOpacity":1.0 ,"backgroundColor": color, "bold":True,"backgroundOpacity": 0.6})
                 active_data.append((res_idx + 1, residue_name, color, LABEL2ACTIVE_TYPE[site_labels[res_idx]])) # 设置label从1开始#
             
             i += 1
