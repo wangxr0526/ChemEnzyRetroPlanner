@@ -66,7 +66,9 @@ class PrepareStockDatasetUsingFilter:
             self._save_chunked_properties(filename, smiles_list)
 
         dfs = []
-        for i in range(self._count_chunks(filename)):
+        num_chunks = self._count_chunks(filename)   
+        for i in range(num_chunks):
+            logging.info(f"Loading chunk {i} from {filename} with {num_chunks} chunks")
             chunk_path = self._get_chunk_path(filename, i)
             if chunk_path.exists():
                 df = pd.read_json(chunk_path, orient="table")
