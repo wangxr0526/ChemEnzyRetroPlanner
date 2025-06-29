@@ -117,6 +117,7 @@ class PrepareStockDatasetUsingFilter:
         total = len(smiles_list)
         num_chunks = math.ceil(total / self.chunk_size)
         for i in range(num_chunks):
+            logging.info(f"Saving chunk {i} from {filename} with {num_chunks} chunks")
             chunk_smiles = smiles_list[i * self.chunk_size:(i + 1) * self.chunk_size]
             df = pd.DataFrame(chunk_smiles, columns=["smiles"])
             df = self._calculate_building_block_mol_property(df)
