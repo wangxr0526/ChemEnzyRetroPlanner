@@ -46,6 +46,7 @@ from retro_planner.common.prepare_utils import (
     prepare_enzyme_recommender,
     prepare_filter_policy,
     prepare_multi_single_step,
+    PrepareStockDatasetUsingFilter,
 )
 from retro_planner.common.utils import canonicalize_smiles, proprecess_reactions
 from retro_planner.utils.logger import setup_logger
@@ -205,6 +206,9 @@ def first_request():
 
     app.condition_predictor = init_rcr(
         app.planner_configs["condition_config"]["rcr"], dirpath=dirpath
+    )
+    PrepareStockDatasetUsingFilter(
+        stock_config=app.planner_configs["stocks"],
     )
 
 

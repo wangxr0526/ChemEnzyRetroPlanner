@@ -43,7 +43,7 @@ class PrepareStockDatasetUsingFilter:
     cache_memory_path = Path(__file__).resolve().parent.parent / "building_block_dataset" / "cache_memory"
     cache_memory_path.mkdir(parents=True, exist_ok=True)
     atom_types = ['C', 'O', 'N']
-    chunk_size = 100000  # 可调整批次大小
+    chunk_size = 1000000  # 可调整批次大小
 
     def __init__(self, stock_config: dict = None):
         self.stock_config = stock_config or {}
