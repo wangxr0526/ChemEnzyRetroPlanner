@@ -14,6 +14,9 @@ from graph_retrosyn.graph_model import GraphModel, GCN, GCNFP, MPNNFP, DMPNN, DM
 import pandas as pd
 import logging
 from copy import deepcopy
+from pathlib import Path
+from rdkit import Chem
+from pandarallel import pandarallel
 from mlp_retrosyn.mlp_inference import MLPModel
 from onmt.bin.translate import load_model, run
 
@@ -22,9 +25,120 @@ from retro_planner.common.utils import canonicalize_smiles
 
 dirpath = os.path.dirname(os.path.abspath(__file__))
 
+import os
+import math
+import logging
+import gc
+from collections import defaultdict
+from pathlib import Path
+
+import pandas as pd
+from rdkit import Chem
+from pandarallel import pandarallel
+
+pandarallel.initialize(progress_bar=True, nb_workers=max(1, os.cpu_count() - 2))
+
+
+class PrepareStockDatasetUsingFilter:
+    cache_memory_path = Path(__file__).resolve().parent.parent / "building_block_dataset" / "cache_memory"
+    cache_memory_path.mkdir(parents=True, exist_ok=True)
+    atom_types = ['C', 'O', 'N']
+    chunk_size = 100000  # 可调整批次大小
+
+    def __init__(self, stock_config: dict = None):
+        self.stock_config = stock_config or {}
+        self.stock_names = list(self.stock_config.keys())
+
+        for stock_name in self.stock_names:
+            filename = self.stock_config[stock_name]
+            if not self._has_cached_chunks(filename):
+                logging.info(f"Preparing stock dataset from {filename}")
+                smiles_list = list(prepare_starting_molecules(filename))
+                self._save_chunked_properties(filename, smiles_list)
+                del smiles_list
+                gc.collect()
+
+    def __call__(self, filename: str, limit_dict: dict = None) -> set:
+        logging.info(f"Preparing stock dataset from {filename} with limit_dict: {limit_dict}")
+
+        if not self._has_cached_chunks(filename):
+            smiles_list = list(prepare_starting_molecules(filename))
+            self._save_chunked_properties(filename, smiles_list)
+
+        dfs = []
+        for i in range(self._count_chunks(filename)):
+            chunk_path = self._get_chunk_path(filename, i)
+            if chunk_path.exists():
+                df = pd.read_json(chunk_path, orient="table")
+                dfs.append(df)
+        df_all = pd.concat(dfs, ignore_index=True)
+        del dfs
+        gc.collect()
+
+        if limit_dict:
+            def selection(row):
+                for key, (low, high) in limit_dict.items():
+                    if not (low <= row[key] <= high):
+                        return False
+                return True
+            df_all = df_all[df_all.parallel_apply(selection, axis=1)]
+
+        result = set(df_all["smiles"].tolist())
+        del df_all
+        gc.collect()
+
+        logging.info(f"Stock dataset prepared from {filename} with {len(result)} molecules.")
+        return result
+
+    def _calculate_atoms_num(self, df: pd.DataFrame):
+        def calculate_atoms_num(smiles: str):
+            try:
+                atom_counts = defaultdict(int)
+                mol = Chem.MolFromSmiles(smiles)
+                if mol is None:
+                    raise ValueError("Invalid SMILES")
+                for atom in mol.GetAtoms():
+                    atom_counts[atom.GetSymbol()] += 1
+                return {atom: atom_counts.get(atom, 0) for atom in self.atom_types}
+            except Exception:
+                return {atom: 0 for atom in self.atom_types}
+
+        results = df["smiles"].parallel_apply(calculate_atoms_num)
+        for atom in self.atom_types:
+            df[f"num_{atom}"] = results.map(lambda d: d[atom])
+        return df
+
+    def _calculate_building_block_mol_property(self, df: pd.DataFrame):
+        return self._calculate_atoms_num(df)
+
+    def _save_chunked_properties(self, filename: str, smiles_list):
+        total = len(smiles_list)
+        num_chunks = math.ceil(total / self.chunk_size)
+        for i in range(num_chunks):
+            chunk_smiles = smiles_list[i * self.chunk_size:(i + 1) * self.chunk_size]
+            df = pd.DataFrame(chunk_smiles, columns=["smiles"])
+            df = self._calculate_building_block_mol_property(df)
+            df.to_json(self._get_chunk_path(filename, i), orient="table")
+            del df
+            gc.collect()
+
+    def _get_chunk_path(self, filename: str, index: int) -> Path:
+        base = Path(filename).stem
+        return self.cache_memory_path / f"{base}_part{index}.json"
+
+    def _has_cached_chunks(self, filename: str) -> bool:
+        return self._get_chunk_path(filename, 0).exists()
+
+    def _count_chunks(self, filename: str) -> int:
+        base = Path(filename).stem
+        return len(list(self.cache_memory_path.glob(f"{base}_part*.json")))
+
+
+prepare_stock_dataset_using_filter = PrepareStockDatasetUsingFilter()
+
 
 def prepare_starting_molecules(filename):
-    logging.info('Loading starting molecules from %s' % filename)
+    # logging.info('Loading starting molecules from %s' % filename)
 
     if filename[-3:] == 'csv':
         try:
@@ -36,15 +150,15 @@ def prepare_starting_molecules(filename):
         with open(filename, 'rb') as f:
             starting_mols = pickle.load(f)
 
-    logging.info('%d starting molecules loaded' % len(starting_mols))
+    # logging.info('%d starting molecules loaded' % len(starting_mols))
     assert isinstance(starting_mols, set)
     return starting_mols
 
 
-def prepare_starting_molecules_for_multi_stock(filenames: list):
+def prepare_starting_molecules_for_multi_stock(filenames: list, limit_dict: dict = None):
     starting_mols = set()
     for filename in filenames:
-        starting_mols.update(prepare_starting_molecules(filename))
+        starting_mols.update(prepare_stock_dataset_using_filter(filename, limit_dict))
     return starting_mols
 
 

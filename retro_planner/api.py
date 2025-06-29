@@ -19,6 +19,7 @@ import ipywidgets as widgets
 from rdkit import Chem
 from rdkit.Chem import AllChem
 from retro_planner.common.prepare_utils import (
+    PrepareStockDatasetUsingFilter,
     handle_one_step_config,
     handle_one_step_path,
     init_parrot,
@@ -31,6 +32,7 @@ from retro_planner.common.prepare_utils import (
     prepare_single_step,
     prepare_starting_molecules,
     prepare_starting_molecules_for_multi_stock,
+    prepare_stock_dataset_using_filter,
 )
 from retro_planner.common.utils import (
     canonicalize_smiles,
@@ -89,6 +91,8 @@ class RSPlanner:
         self.iterations = self.config["iterations"]
         self.max_depth = self.config["max_depth"]
         self.stocks = self.config["stocks"]
+        self.stock_limit_dict = self.config.get("stock_limit_dict", None)
+
         self.exclude_target = self.config["exclude_target"]
         self.search_strategy = self.config["search_strategy"]
         self.keep_search = self.config["keep_search"]
@@ -156,6 +160,10 @@ class RSPlanner:
         # viz
         self.viz = self.config["viz"]
         self.viz_dir = self.config["viz_dir"]
+        self._calculate_stocks_property()
+
+    def _calculate_stocks_property(self):
+        PrepareStockDatasetUsingFilter(self.stocks)
 
     def select_stock(self, stock_name):
         self.starting_molecules = self.stocks[stock_name]
@@ -269,13 +277,13 @@ class RSPlanner:
         device = torch.device("cuda:%d" % self.gpu if self.gpu >= 0 else "cpu")
         if isinstance(self.starting_molecules, str):
             starting_molecules = os.path.join(dirpath, self.starting_molecules)
-            starting_mols = prepare_starting_molecules(starting_molecules)
+            starting_mols = prepare_stock_dataset_using_filter(starting_molecules, limit_dict=self.stock_limit_dict)
         elif isinstance(self.starting_molecules, list):
             starting_molecules = [
                 os.path.join(dirpath, x) for x in self.starting_molecules
             ]
             starting_mols = prepare_starting_molecules_for_multi_stock(
-                starting_molecules
+                starting_molecules, limit_dict=self.stock_limit_dict
             )
         else:
             raise ValueError("Stock error")
@@ -1150,7 +1158,7 @@ if __name__ == "__main__":
     config = yaml.load(open("config/config.yaml", "r"), Loader=yaml.FullLoader)
     print(config)
     planner = RSPlanner(config)
-    planner.select_stock("RetroStar-stock")
+    planner.select_stock("BioNav-stock")
     planner.select_one_step_model(
         [
             "template_relevance.reaxys",
@@ -1160,7 +1168,7 @@ if __name__ == "__main__":
         ]
     )
     planner.select_condition_predictor("rcr")
-    planner.select_pathway_ranker('tree_lstm_ranker')
+    # planner.select_pathway_ranker('tree_lstm_ranker')
     planner.prepare_plan()
     result = planner.plan(smiles)
     print(result)

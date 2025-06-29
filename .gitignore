@@ -65,3 +65,4 @@ retro_planner/packages/organic_enzyme_rxn_classifier/organic_enzyme_rxn_classifi
 */nohup.out
 metadata
 singularity/singularity_images
+retro_planner/building_block_dataset

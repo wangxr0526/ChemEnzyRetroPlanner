@@ -132,6 +132,61 @@
             text-align: center;
             /* 文本居中 */
         }
+
+        /* Stock Limit Options Styles */
+        .stock-limit-sliders {
+            margin-top: 10px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .stock-limit-sliders .slider-container {
+            margin-bottom: 15px;
+        }
+
+        .stock-limit-sliders .slider-container:last-child {
+            margin-bottom: 0;
+        }
+
+        .stock-limit-sliders label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .range-inputs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .range-inputs .number-input {
+            width: 80px;
+            padding: 6px 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .range-inputs .number-input:focus {
+            outline: none;
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .range-inputs span {
+            font-weight: 500;
+            color: #6c757d;
+        }
+
+        #stockLimitOptionsContainer {
+            margin-top: 10px;
+            display: none;
+        }
     </style>
 </head>
 
@@ -281,6 +336,42 @@
                                 {% endfor %}
                             </select>
 
+                            <!-- Stock Limit Options Container -->
+                            <div id="stockLimitOptionsContainer">
+                                <label for="stockLimitOptions">Stock Limit Options:</label>
+                                <div class="stock-limit-sliders">
+                                    <!-- Carbon (C) Slider -->
+                                    <div class="slider-container">
+                                        <label for="carbonSlider">Carbon (C) Count: <span id="carbonValue">0-999</span></label>
+                                        <div class="range-inputs">
+                                            <input type="number" id="carbonMin" value="0" min="0" max="999" class="number-input" placeholder="Min">
+                                            <span>-</span>
+                                            <input type="number" id="carbonMax" value="999" min="0" max="999" class="number-input" placeholder="Max">
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Oxygen (O) Slider -->
+                                    <div class="slider-container">
+                                        <label for="oxygenSlider">Oxygen (O) Count: <span id="oxygenValue">0-999</span></label>
+                                        <div class="range-inputs">
+                                            <input type="number" id="oxygenMin" value="0" min="0" max="999" class="number-input" placeholder="Min">
+                                            <span>-</span>
+                                            <input type="number" id="oxygenMax" value="999" min="0" max="999" class="number-input" placeholder="Max">
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Nitrogen (N) Slider -->
+                                    <div class="slider-container">
+                                        <label for="nitrogenSlider">Nitrogen (N) Count: <span id="nitrogenValue">0-999</span></label>
+                                        <div class="range-inputs">
+                                            <input type="number" id="nitrogenMin" value="0" min="0" max="999" class="number-input" placeholder="Min">
+                                            <span>-</span>
+                                            <input type="number" id="nitrogenMax" value="999" min="0" max="999" class="number-input" placeholder="Max">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- 新增的反应选项下拉菜单，初始隐藏 -->
                             <div id="conditionPredictorOptionsContainer">
                                 <label for="conditionPredictorOptions">Select Condition Predictor:</label>
@@ -423,8 +514,16 @@
             savedOptions.iterationNumber = optionsOutput.value; // Save the slider value
             savedOptions.selectedModels = $('#modelOptions').val(); // 添加模型选项
             savedOptions.selectedStocks = $('#stockOptions').val(); // 添加库存选项
-            var resultsLimit = document.getElementById("resultsLimit").value;
-            savedOptions.resultsLimit = resultsLimit;
+            // var resultsLimit = document.getElementById("resultsLimit").value;
+            // savedOptions.resultsLimit = resultsLimit;
+
+            // 保存stock limit数据
+            savedOptions.stockLimitDict = {
+                num_C: [parseInt(document.getElementById('carbonMin').value), parseInt(document.getElementById('carbonMax').value)],
+                num_O: [parseInt(document.getElementById('oxygenMin').value), parseInt(document.getElementById('oxygenMax').value)],
+                num_N: [parseInt(document.getElementById('nitrogenMin').value), parseInt(document.getElementById('nitrogenMax').value)]
+            };
+            console.log(savedOptions.stockLimitDict);
 
             document.querySelectorAll('.checkbox-group input[type=checkbox]').forEach((checkbox) => {
                 savedOptions[checkbox.value] = false;
@@ -572,6 +671,42 @@
             }
         });
         // End of 新增部分
+
+        // Stock Limit Options 交互逻辑
+        $('#stockOptions').change(function() {
+            if ($(this).val() && $(this).val().length > 0) {
+                $('#stockLimitOptionsContainer').slideDown();
+            } else {
+                $('#stockLimitOptionsContainer').slideUp();
+            }
+        });
+
+        // 更新显示值的函数
+        function updateDisplayValue(minId, maxId, displayId) {
+            const minVal = document.getElementById(minId).value;
+            const maxVal = document.getElementById(maxId).value;
+            document.getElementById(displayId).textContent = `${minVal}-${maxVal}`;
+        }
+
+        // 为每个元素添加事件监听器
+        document.getElementById('carbonMin').addEventListener('input', function() {
+            updateDisplayValue('carbonMin', 'carbonMax', 'carbonValue');
+        });
+        document.getElementById('carbonMax').addEventListener('input', function() {
+            updateDisplayValue('carbonMin', 'carbonMax', 'carbonValue');
+        });
+        document.getElementById('oxygenMin').addEventListener('input', function() {
+            updateDisplayValue('oxygenMin', 'oxygenMax', 'oxygenValue');
+        });
+        document.getElementById('oxygenMax').addEventListener('input', function() {
+            updateDisplayValue('oxygenMin', 'oxygenMax', 'oxygenValue');
+        });
+        document.getElementById('nitrogenMin').addEventListener('input', function() {
+            updateDisplayValue('nitrogenMin', 'nitrogenMax', 'nitrogenValue');
+        });
+        document.getElementById('nitrogenMax').addEventListener('input', function() {
+            updateDisplayValue('nitrogenMin', 'nitrogenMax', 'nitrogenValue');
+        });
 
         function checkTaskStatus(taskId, resultsLimit) {
             // 设置定期查询任务状态的间隔为1000毫秒（即1秒）

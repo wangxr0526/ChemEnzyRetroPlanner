@@ -293,6 +293,7 @@ def background_task(self, inputed_data, config:dict, input_method:str="WEB"):
             "pred_condition": inputed_configs.get("Predict reaction condition", config["pred_condition"]),
             "organic_enzyme_rxn_classification": inputed_configs.get("Identify enzymatic reactions", config["organic_enzyme_rxn_classification"]),
             "enzyme_assign": inputed_configs.get("Recommend enzymes", config["enzyme_assign"]),
+            "stock_limit_dict": inputed_configs.get("stockLimitDict", config["stock_limit_dict"]),
         }
 
         config.update(update_config)

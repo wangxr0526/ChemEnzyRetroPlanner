@@ -9,6 +9,10 @@ stocks:
   PaRotes_n1-stock: "building_block_dataset/n1-stock.csv"
   PaRotes_n5-stock: "building_block_dataset/n5-stock.csv"
   BioNav-stock: "building_block_dataset/bionav_all_building_block.csv"
+stock_limit_dict:
+  num_C: [0, 999]
+  num_O: [0, 999]
+  num_N: [0, 999]
 exclude_target: true
 search_strategy: "MCTS_STAR"
 keep_search: true

@@ -463,6 +463,30 @@ def check_api_input(
         if not all(item in expected_values for item in option_input):
             return False, f"Invalid value in {option}. Available options are {expected_values}."
     
+    # 验证stockLimitDict格式
+    if 'stockLimitDict' in options:
+        stock_limit_dict = options['stockLimitDict']
+        if not isinstance(stock_limit_dict, dict):
+            return False, "stockLimitDict must be a dictionary."
+        
+        required_atoms = ['num_C', 'num_O', 'num_N']
+        if not all(atom in stock_limit_dict for atom in required_atoms):
+            missing_atoms = [atom for atom in required_atoms if atom not in stock_limit_dict]
+            return False, f"stockLimitDict missing required atoms: {', '.join(missing_atoms)}"
+        
+        for atom, limits in stock_limit_dict.items():
+            if not isinstance(limits, list) or len(limits) != 2:
+                return False, f"stockLimitDict[{atom}] must be a list with exactly 2 elements [min, max]"
+            
+            min_val, max_val = limits
+            if not isinstance(min_val, (int, float)) or not isinstance(max_val, (int, float)):
+                return False, f"stockLimitDict[{atom}] values must be numbers"
+            
+            if min_val < 0 or max_val < 0:
+                return False, f"stockLimitDict[{atom}] values must be non-negative"
+            
+            if min_val > max_val:
+                return False, f"stockLimitDict[{atom}] min value cannot be greater than max value"
 
     return True, "Input is valid."
 

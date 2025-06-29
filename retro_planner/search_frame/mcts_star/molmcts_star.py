@@ -4,12 +4,13 @@ import logging
 from tqdm import tqdm
 import time
 from retro_planner.search_frame.mcts_star.mol_tree import MolTree
-
+from copy import deepcopy
 
 def mol_planner(target_mol, target_mol_id, starting_mols, expand_fn,
                 iterations, max_depth=10, viz=False, exclude_target=True, viz_dir=None, value_fn=lambda x: 0, keep_search=False):
     t0 = time.time()
     exclude_flag = False
+    starting_mols = deepcopy(starting_mols)
     if exclude_target:
         if target_mol in starting_mols:
             exclude_flag = True
