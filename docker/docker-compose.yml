@@ -58,6 +58,7 @@ services:
       - retroplanner_network
     stdin_open: true
     tty: true
+    shm_size: '24g'  # 添加共享内存设置
     deploy:
       resources:
         reservations:
