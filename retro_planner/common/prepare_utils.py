@@ -71,7 +71,7 @@ class PrepareStockDatasetUsingFilter:
             logging.info(f"Loading chunk {i} from {filename} with {num_chunks} chunks")
             chunk_path = self._get_chunk_path(filename, i)
             if chunk_path.exists():
-                df = pd.read_json(chunk_path, orient="table")
+                df = pd.read_pickle(chunk_path)
                 dfs.append(df)
         df_all = pd.concat(dfs, ignore_index=True)
         del dfs
@@ -121,22 +121,20 @@ class PrepareStockDatasetUsingFilter:
             chunk_smiles = smiles_list[i * self.chunk_size:(i + 1) * self.chunk_size]
             df = pd.DataFrame(chunk_smiles, columns=["smiles"])
             df = self._calculate_building_block_mol_property(df)
-            df.to_json(self._get_chunk_path(filename, i), orient="table")
+            df.to_pickle(self._get_chunk_path(filename, i))
             del df
             gc.collect()
 
     def _get_chunk_path(self, filename: str, index: int) -> Path:
         base = Path(filename).stem
-        return self.cache_memory_path / f"{base}_part{index}.json"
+        return self.cache_memory_path / f"{base}_part{index}.pkl"
 
     def _has_cached_chunks(self, filename: str) -> bool:
         return self._get_chunk_path(filename, 0).exists()
 
     def _count_chunks(self, filename: str) -> int:
         base = Path(filename).stem
-        return len(list(self.cache_memory_path.glob(f"{base}_part*.json")))
-
-
+        return len(list(self.cache_memory_path.glob(f"{base}_part*.pkl")))
 prepare_stock_dataset_using_filter = PrepareStockDatasetUsingFilter()
 
 
