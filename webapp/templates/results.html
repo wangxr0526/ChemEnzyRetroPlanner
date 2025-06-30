@@ -289,7 +289,7 @@
             var resultsId = this.getAttribute('data-results-id'); // 获取结果ID
 
             // 发送请求到Flask后端
-            fetch(`/downloads/${resultsId}`)
+            fetch(`/retroplanner/downloads/${resultsId}`)
                 .then(response => response.blob()) // 假设服务器返回文件的Blob
                 .then(blob => {
                     const url = window.URL.createObjectURL(blob);

@@ -81,6 +81,10 @@ app.synth_route = os.path.abspath(
     os.path.join(app.root_path, "data", "synthesis_routes")
 )
 
+app.saved_configs_path = os.path.abspath(
+    os.path.join(app.root_path, "data", "saved_configs")
+)
+
 app.enzyme_structure_path = os.path.abspath(
     os.path.join(app.root_path, "data", "enzyme_structures")
 )
@@ -123,6 +127,7 @@ app.condition_predictor_name_to_condition_predictor_registor_name = {
 
 os.makedirs(app.synth_route, exist_ok=True)
 os.makedirs(app.enzyme_structure_path, exist_ok=True)
+os.makedirs(app.saved_configs_path, exist_ok=True)
 
 
 KEY_FOLDER = os.path.join(os.path.dirname(__file__), 'keys')
@@ -397,6 +402,14 @@ def calculation():
     private_key_path = os.path.join(KEY_FOLDER, f"{task.id}.pem")
     with open(private_key_path, 'wb') as f:
         f.write(private_key)
+
+    saved_configs = {
+        "inputed_configs": inputed_data.get("savedOptions", {}),
+        "planner_configs": config,
+        "target_smiles": inputed_data.get("smiles", ""),
+    }
+    with open(os.path.join(app.saved_configs_path, f"{task.id}.json"), "w") as f:
+        json.dump(saved_configs, f)
     
     
     c.execute(
@@ -412,7 +425,8 @@ def calculation():
         "message": "Data received",
         "results_id": task.id,
         "resultsLimit": inputed_data["savedOptions"].get("resultsLimit", 50),
-        "private_key_path": f'/retroplanner/key_downloads/{task.id}'  # 下载链接
+        "private_key_path": f'/retroplanner/key_downloads/{task.id}',  # 下载链接
+        "configs_path": f'/retroplanner/config_downloads/{task.id}',  # 下载链接
     }
     return jsonify(log_data), 202
 
@@ -564,6 +578,10 @@ def results_download(results_id):
 @app.route("/retroplanner/key_downloads/<task_id>")
 def key_download(task_id):
     return send_from_directory(KEY_FOLDER, f"{task_id}.pem", as_attachment=True)
+
+@app.route("/retroplanner/config_downloads/<task_id>")
+def config_downloads(task_id):
+    return send_from_directory(app.saved_configs_path, f"{task_id}.json", as_attachment=True)
 
 
 @app.route("/retroplanner/process_node", methods=["POST"])

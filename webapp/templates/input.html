@@ -578,13 +578,21 @@
                         // 隐藏进度条
                         progressBar.style.width = "0%";
 
-                        const downloadLink = document.createElement('a');
-                        downloadLink.href = data.private_key_path;
-                        downloadLink.download = ''; // 可选，设置下载的文件名。浏览器会默认使用文件的原始名称
-                        downloadLink.style.display = 'none';
-                        document.body.appendChild(downloadLink);
-                        downloadLink.click();
-                        document.body.removeChild(downloadLink);
+                        const keyDownloadLink = document.createElement('a');
+                        keyDownloadLink.href = data.private_key_path;
+                        keyDownloadLink.download = ''; // 可选，设置下载的文件名。浏览器会默认使用文件的原始名称
+                        keyDownloadLink.style.display = 'none';
+                        document.body.appendChild(keyDownloadLink);
+                        keyDownloadLink.click();
+                        document.body.removeChild(keyDownloadLink);
+
+                        // const configDownloadLink = document.createElement('a');
+                        // configDownloadLink.href = data.configs_path;
+                        // configDownloadLink.download = ''; // 可选，设置下载的文件名。浏览器会默认使用文件的原始名称
+                        // configDownloadLink.style.display = 'none';
+                        // document.body.appendChild(configDownloadLink);
+                        // configDownloadLink.click();
+                        // document.body.removeChild(configDownloadLink);
 
                     }
                 })
