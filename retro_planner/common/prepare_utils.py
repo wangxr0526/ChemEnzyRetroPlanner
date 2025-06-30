@@ -51,6 +51,7 @@ class PrepareStockDatasetUsingFilter:
 
         for stock_name in self.stock_names:
             filename = self.stock_config[stock_name]
+            filename = str(Path(__file__).resolve().parent.parent / filename)
             if not self._has_cached_chunks(filename):
                 logging.info(f"Preparing stock dataset from {filename}")
                 smiles_list = list(prepare_starting_molecules(filename))

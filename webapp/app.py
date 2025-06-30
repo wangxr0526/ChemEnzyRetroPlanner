@@ -326,14 +326,18 @@ def background_task(self, inputed_data, config:dict, input_method:str="WEB"):
             inputed_configs["selectedConditionPredictor"]
         ]
     )
+    try:
 
-    planner = RSPlanner(config)
-    planner.select_stocks(inputed_configs["selectedStocks"])
-    planner.select_one_step_model(inputed_configs["selectedModels"])
-    planner.select_condition_predictor(inputed_configs["selectedConditionPredictor"])
-    planner.prepare_plan(prepare_easifa=False)
+        planner = RSPlanner(config)
+        planner.select_stocks(inputed_configs["selectedStocks"])
+        planner.select_one_step_model(inputed_configs["selectedModels"])
+        planner.select_condition_predictor(inputed_configs["selectedConditionPredictor"])
+        planner.prepare_plan(prepare_easifa=False)
 
-    result = planner.plan(target_smiles)
+        result = planner.plan(target_smiles)
+    except Exception as e:
+        succ = False
+        result = None
     if result:
         succ = True
         # print(result)
@@ -431,14 +435,47 @@ def task_status(task_id):
 def list_jobs():
     conn = sqlite3.connect("jobs.db")
     c = conn.cursor()
-    c.execute(
-        "SELECT job_id, status, result, submitted_at, input_method FROM jobs ORDER BY submitted_at DESC"
-    )
-    # jobs = {job_id: {'status': status, 'result': result, 'submitted_at':datetime.split('.')[0]} for job_id, status, result, datetime in c.fetchall()}
+
+    # 1. 获取所有已提交的 WEB 任务
+    c.execute("""
+        SELECT job_id, submitted_at
+        FROM jobs
+        WHERE status = 'Submitted' AND input_method = 'WEB'
+    """)
+    submitted_jobs = c.fetchall()
+
+    # 2. 找出超过两天的任务，收集其 job_id
+    timeout_ids = []
+    now = datetime.datetime.now(pytz.utc).astimezone(eastern_eight_zone)
+    for job_id, submitted_at_str in submitted_jobs:
+        try:
+            submitted_time = datetime.datetime.fromisoformat(submitted_at_str)
+            if now - submitted_time > datetime.timedelta(days=0.5):
+                timeout_ids.append(job_id)
+        except Exception as e:
+            print(f"⛔ 时间解析失败: {submitted_at_str} ({e})")
+
+    # 3. 更新状态为 'Timeout'
+    if timeout_ids:
+        c.executemany(
+            "UPDATE jobs SET status = 'Timeout' WHERE job_id = ?",
+            [(job_id,) for job_id in timeout_ids]
+        )
+        conn.commit()
+        print(f"✅ 已更新 {len(timeout_ids)} 个超时任务为 'Timeout' 状态")
+
+    # 4. 获取所有 WEB 任务供前端展示
+    c.execute("""
+        SELECT job_id, status, result, submitted_at, input_method
+        FROM jobs
+        ORDER BY submitted_at DESC
+    """)
     jobs = [
-        [job_id, status, result, datetime.split(".")[0]]
-        for job_id, status, result, datetime, input_method in c.fetchall() if input_method == 'WEB'
+        [job_id, status, result, submitted_at.split(".")[0]]
+        for job_id, status, result, submitted_at, input_method in c.fetchall()
+        if input_method == 'WEB'
     ]
+
     conn.close()
     return jsonify(jobs)
 
