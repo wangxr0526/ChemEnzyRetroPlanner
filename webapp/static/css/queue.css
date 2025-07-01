@@ -240,3 +240,61 @@ th {
     margin: 1rem;
     text-align: center;
 }
+
+/* Custom select for pagination */
+.select-custom {
+    min-width: 80px;
+    height: 38px;
+    padding: 0 16px;
+    border-radius: 15px;
+    border: none;
+    background-color: #333;
+    color: #fff;
+    font-size: 16px;
+    font-family: 'Poetsen One', sans-serif;
+    margin: 0 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: background-color 0.3s;
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+    vertical-align: middle;
+    text-align: center;
+}
+.select-custom:focus, .select-custom:hover {
+    background-color: #000;
+    color: #fff;
+}
+
+/* 美化Jump to页码输入框，隐藏number箭头 */
+#jumpToPageInput {
+    min-width: 70px;
+    height: 38px;
+    padding: 0 16px;
+    border-radius: 15px;
+    border: none;
+    background-color: #333;
+    color: #fff;
+    font-size: 16px;
+    font-family: 'Poetsen One', sans-serif;
+    margin: 0 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: background-color 0.3s;
+    outline: none;
+    appearance: textfield;
+    vertical-align: middle;
+}
+#jumpToPageInput:focus, #jumpToPageInput:hover {
+    background-color: #000;
+    color: #fff;
+}
+/* Chrome, Safari, Edge, Opera 隐藏number箭头 */
+#jumpToPageInput::-webkit-outer-spin-button,
+#jumpToPageInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+/* Firefox 隐藏number箭头 */
+#jumpToPageInput[type=number] {
+    -moz-appearance: textfield;
+}

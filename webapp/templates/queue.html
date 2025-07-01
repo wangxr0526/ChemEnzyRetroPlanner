@@ -33,10 +33,22 @@
             </tbody>
         </table>
         <div id="pagination">
-            <button onclick="previousPage()" class="text-head">Previous</button>
+            <button onclick="goToFirstPage()" class="text-head rounded-button">First Page</button>
+            <button onclick="previousPage()" class="text-head rounded-button">Previous</button>
             <span class="text-head">Page <span id="page_number" class="text-head">1</span> of <span id="total_pages"
                     class="text-head">1</span></span>
-            <button onclick="nextPage()" class="text-head">Next</button>
+            <button onclick="nextPage()" class="text-head rounded-button">Next</button>
+            <button onclick="goToLastPage()" class="text-head rounded-button">Last Page</button>
+            <span class="text-head" style="margin-left: 20px;">Items per page</span>
+            <select id="recordsPerPageSelect" class="select-custom" style="margin: 0 5px; min-width: 80px; height: 38px; font-size: 1em;">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+            <span class="text-head" style="margin-left: 20px;">Jump to</span>
+            <input id="jumpToPageInput" class="select-custom" type="number" min="1" style="width: 70px; height: 38px; font-size: 1em; display: inline-block;" />
+            <button onclick="jumpToPage()" class="text-head rounded-button" style="margin-left: 5px;">Go</button>
         </div>
     </div>
     <!-- Modal -->
@@ -87,11 +99,8 @@
     
     function updatePaginationButtons() {
         var total_pages = Math.ceil(objJson.length / records_per_page);
-        var btn_next = document.querySelector("#btn_next");
-        var btn_prev = document.querySelector("#btn_prev");
-    
-        btn_prev.style.visibility = current_page === 1 ? "hidden" : "visible";
-        btn_next.style.visibility = current_page === total_pages ? "hidden" : "visible";
+        document.getElementById("page_number").innerText = current_page;
+        document.getElementById("total_pages").innerText = total_pages;
     }
     
     function changePage(page) {
@@ -107,9 +116,6 @@
         for (var i = (page - 1) * records_per_page; i < (page * records_per_page) && i < objJson.length; i++) {
             document.querySelector("#queueTable tbody").appendChild(objJson[i].cloneNode(true)); // Clone nodes to re-append without removing
         }
-    
-        document.getElementById("page_number").innerText = page;
-        document.getElementById("total_pages").innerText = total_pages;
     
         updatePaginationButtons();
     }
@@ -165,8 +171,7 @@
                 });
     
                 objJson = Array.from(document.querySelectorAll('#queueTable tbody tr'));
-                initPaginationButtons();  // Initialize the pagination buttons and their functionality
-                changePage(current_page); // Ensure correct page is displayed
+                changePage(1);
             });
         setTimeout(listJobs, 60000);  // Update the job list every 60 seconds
     }
@@ -226,6 +231,33 @@
         }
     });
     
+    document.addEventListener('DOMContentLoaded', function() {
+        var select = document.getElementById('recordsPerPageSelect');
+        select.addEventListener('change', function() {
+            records_per_page = parseInt(this.value);
+            current_page = 1;
+            changePage(current_page);
+        });
+    });
+
+    function goToFirstPage() {
+        changePage(1);
+    }
+    function goToLastPage() {
+        var total_pages = Math.ceil(objJson.length / records_per_page);
+        changePage(total_pages);
+    }
+    function jumpToPage() {
+        var input = document.getElementById('jumpToPageInput');
+        var page = parseInt(input.value);
+        var total_pages = Math.ceil(objJson.length / records_per_page);
+        if (!isNaN(page) && page >= 1 && page <= total_pages) {
+            changePage(page);
+        } else {
+            input.value = '';
+            input.placeholder = 'Invalid';
+        }
+    }
 
     </script>
     
