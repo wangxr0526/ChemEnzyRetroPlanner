@@ -155,7 +155,8 @@
                         link.href = '#';
                         link.textContent = job[2];
                         link.className = 'rounded-button';
-                        link.addEventListener("click", function() {
+                        link.addEventListener("click", function(e) {
+                            e.preventDefault();
                             openModal(job[0]);
                         });
                         cell3.appendChild(link);
