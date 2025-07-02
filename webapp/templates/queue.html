@@ -40,14 +40,16 @@
             <button onclick="nextPage()" class="text-head rounded-button">Next</button>
             <button onclick="goToLastPage()" class="text-head rounded-button">Last Page</button>
             <span class="text-head" style="margin-left: 20px;">Items per page</span>
-            <select id="recordsPerPageSelect" class="select-custom" style="margin: 0 5px; min-width: 80px; height: 38px; font-size: 1em;">
+            <select id="recordsPerPageSelect" class="select-custom"
+                style="margin: 0 5px; min-width: 80px; height: 38px; font-size: 1em;">
                 <option value="5">5</option>
                 <option value="10" selected>10</option>
                 <option value="20">20</option>
                 <option value="50">50</option>
             </select>
             <span class="text-head" style="margin-left: 20px;">Jump to</span>
-            <input id="jumpToPageInput" class="select-custom" type="number" min="1" style="width: 70px; height: 38px; font-size: 1em; display: inline-block;" />
+            <input id="jumpToPageInput" class="select-custom" type="number" min="1"
+                style="width: 70px; height: 38px; font-size: 1em; display: inline-block;" />
             <button onclick="jumpToPage()" class="text-head rounded-button" style="margin-left: 5px;">Go</button>
         </div>
     </div>
@@ -58,7 +60,7 @@
             <div class="modal-header">
                 <h2 style="font-family: 'Poetsen One', sans-serif;">Upload Private Key</h2>
                 <span class="close">&times;</span>
-                
+
             </div>
             <a class="mymodal-text-title">Job ID:</a>
             <a id="taskIdShow" class="mymodal-text"></a>
@@ -72,7 +74,7 @@
             </form>
         </div>
     </div>
-    
+
 
 </body>
 {% endblock %}
@@ -200,6 +202,7 @@
 
     // Modal logic
     function openModal(jobId) {
+        console.log("Opening modal for job:", jobId);  // debug
         const modal = document.getElementById('privateKeyModal');
         modal.style.display = 'block';
         document.getElementById('taskIdShow').innerText = jobId;
@@ -214,8 +217,18 @@
                 method: 'POST',
                 body: formData
             })
-                .then(response => response.json())
+                .then(async response => {
+                    if (!response.ok) {
+                        const text = await response.text();
+                        console.error('Server Error:', text);
+                        alert('Server error: unable to validate key.');
+                        modal.style.display = 'none';
+                        return;
+                    }
+                    return response.json();
+                })
                 .then(data => {
+                    if (!data) return;  // 如果前一步失败，不继续执行
                     if (data.success) {
                         window.location.href = '/retroplanner/locked_results/' + jobId + '&resultsLimit-50';
                     } else {
@@ -223,36 +236,36 @@
                         modal.style.display = 'none';
                     }
                 });
-        };
-    }
 
-    // Modal UI interactions
-    document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('uploadBtn').addEventListener('click', function () {
-            document.getElementById('privateKeyFile').click();
+        }
+
+        // Modal UI interactions
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('uploadBtn').addEventListener('click', function () {
+                document.getElementById('privateKeyFile').click();
+            });
+
+            document.getElementById('privateKeyFile').addEventListener('change', function () {
+                const file = this.files[0];
+                document.getElementById('uploadBtn').textContent = file ? file.name : 'Choose File';
+            });
+
+            document.querySelector('.close').onclick = function () {
+                document.getElementById('privateKeyModal').style.display = 'none';
+            };
+
+            window.onclick = function (event) {
+                const modal = document.getElementById('privateKeyModal');
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            };
+
+            document.getElementById('recordsPerPageSelect').addEventListener('change', function () {
+                records_per_page = parseInt(this.value);
+                current_page = 1;
+                changePage(current_page);
+            });
         });
-
-        document.getElementById('privateKeyFile').addEventListener('change', function () {
-            const file = this.files[0];
-            document.getElementById('uploadBtn').textContent = file ? file.name : 'Choose File';
-        });
-
-        document.querySelector('.close').onclick = function () {
-            document.getElementById('privateKeyModal').style.display = 'none';
-        };
-
-        window.onclick = function (event) {
-            const modal = document.getElementById('privateKeyModal');
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
-        };
-
-        document.getElementById('recordsPerPageSelect').addEventListener('change', function () {
-            records_per_page = parseInt(this.value);
-            current_page = 1;
-            changePage(current_page);
-        });
-    });
 </script>
 {% endblock %}
