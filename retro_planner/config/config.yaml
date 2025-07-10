@@ -59,7 +59,8 @@ one_step_model_configs:
 
 # rxn filter
 use_filter: false
-filter_path: "packages/rxn_filter/rxn_filter/model/filter_train_data_random_gen_aizynth_filter_dataset_2021-12-22_12h-15m-45s.pkl"
+# filter_path: "packages/rxn_filter/rxn_filter/model/filter_train_data_random_gen_aizynth_filter_dataset_2021-12-22_12h-15m-45s.pkl"
+filter_path: "packages/rxn_filter/rxn_filter/model/filter_model_20250604_232451_state.pt"
 keep_score: true
 # value function
 use_value_fn: false
