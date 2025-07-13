@@ -28,6 +28,7 @@ one_step_model_configs:
     USPTO-full_remapped:
       graph_model_dumb: "packages/graph_retrosyn/graph_retrosyn/model/train_all_model/saved_graph_rollout_state_1_DMPNNFP_init_lr_0.001_batch_size_1024_fp_lindim_512_graph_lindim_512_use_gru_False_massage_depth_3.ckpt"
       graph_dataset_root: "packages/graph_retrosyn/graph_retrosyn/data/raw"
+      weight: 1.0
     # PaRoutes_benchmark_set-n1:
     #   graph_model_dumb: "packages/graph_retrosyn/graph_retrosyn/model_benchmark/download/saved_graph_rollout_state_1_DMPNNFP_init_lr_0.001_batch_size_1024_fp_lindim_512_graph_lindim_512_use_gru_False_massage_depth_3_data_set-n1.ckpt"
     #   graph_dataset_root: "packages/graph_retrosyn/graph_retrosyn/data_set-n1/raw"
@@ -43,18 +44,24 @@ one_step_model_configs:
       - packages/onmt/checkpoints/np-like/model_step_80000.pt
       - packages/onmt/checkpoints/np-like/model_step_100000.pt
       beam_size: 20
+      weight: 1.0
   ## MIT template relevance one step
   template_relevance:
     pistachio:
       state_name: pistachio
+      weight: 1.0
     pistachio_ringbreaker:
       state_name: pistachio_ringbreaker
+      weight: 1.0
     reaxys:
       state_name: reaxys
+      weight: 1.0
     bkms_metabolic:
       state_name: bkms_metabolic
+      weight: 1.0
     reaxys_biocatalysis:
       state_name: reaxys_biocatalysis
+      weight: 1.0
 
 
 # rxn filter

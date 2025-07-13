@@ -671,7 +671,7 @@ def prepare_single_step(
 
 def prepare_multi_single_step(model_configs, one_step_model_types,
                               expansion_topk, device, use_filter, keep_score,
-                              filter_path):
+                              filter_path, weights=None):
 
     class MultiOneStepRunWrapper():
 
@@ -682,9 +682,11 @@ def prepare_multi_single_step(model_configs, one_step_model_types,
                      device=device,
                      use_filter=use_filter,
                      keep_score=keep_score,
-                     filter_path=filter_path) -> None:
+                     filter_path=filter_path,
+                     weights=weights) -> None:
 
             self.one_step_models = dict()
+            self.weights = weights if weights is not None else [1.0] * len(singe_step_model_configs)
             for model_configs, model_type in zip(singe_step_model_configs,
                                                  one_step_model_types):
                 if model_configs['model_full_name']=='onmt_models.bionav_one_step':
@@ -707,19 +709,20 @@ def prepare_multi_single_step(model_configs, one_step_model_types,
 
         def run(self, target, topk=None, select_models=None):
             multi_one_step_results = defaultdict(list)
-            for model_full_name in self.one_step_models:
+            for model_full_name, weight in zip(self.one_step_models, self.weights):
                 if select_models is not None:
                     if model_full_name not in select_models:
                         continue
                 one_step = self.one_step_models[model_full_name]
                 results = one_step.run(target, topk=topk)
                 if model_full_name.split('.')[0] == 'onmt_models':
-                    results['costs'] = 0.0 - np.log(
-                        np.clip(np.array(results['scores']), 0, 1.0))
+                    results['costs'] = (0.0 - np.log(
+                        np.clip(np.array(results['scores']) * weight, 0, 1.0))) 
                 else:
-                    results['costs'] = 0.0 - np.log(
-                        np.clip(np.array(results['scores']), 1e-3, 1.0))
+                    results['costs'] = (0.0 - np.log(
+                        np.clip(np.array(results['scores']) * weight, 1e-3, 1.0)))
                 results['model_full_name'] = [model_full_name for _ in range(len(results['reactants']))]
+                results['weight'] = [weight for _ in range(len(results['reactants']))]
                 for k in results:
                     multi_one_step_results[k].extend(results[k])
 
@@ -733,7 +736,8 @@ def prepare_multi_single_step(model_configs, one_step_model_types,
         device=device,
         use_filter=use_filter,
         keep_score=keep_score,
-        filter_path=filter_path)
+        filter_path=filter_path,
+        weights=weights)
     return one_step
 
 

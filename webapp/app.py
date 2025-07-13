@@ -196,6 +196,7 @@ def first_request():
         use_filter=app.planner_configs["use_filter"],
         keep_score=app.planner_configs["keep_score"],
         filter_path=app.planner_configs["filter_path"],
+        weights=[float(model_configs['weight']) for model_configs in selected_one_step_model_configs]
     )
 
     app.reaction_rater = prepare_filter_policy(

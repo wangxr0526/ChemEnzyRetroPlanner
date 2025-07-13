@@ -309,6 +309,7 @@ class RSPlanner:
                 filter_path=filter_path,
                 expansion_topk=self.expansion_topk,
                 keep_score=self.keep_score,
+                weights=[float(model_configs['weight']) for model_configs in self.selected_one_step_model_configs]
             )
 
         if self.use_value_fn and self.use_depth_value_fn:
