@@ -11,8 +11,7 @@
 
 </div>
 
-![ChemEnzyRetroPlanner](./images/retroplanner-beta-overview.png)
-
+![ChemEnzyRetroPlanner](./assets/retroplanner-beta-overview.png)
 
 
 ## Contents
@@ -90,6 +89,9 @@ chmod +x ./run_container.sh
 ```
 The ChemEnzyRetroPlanner server is deployed at http://localhost:8001/retroplanner
 
+## Demo Video
+
+https://github.com/user-attachments/assets/0187adc8-2015-4b38-862c-c461292cbdff
 
 ## Agent Installation
 ```
