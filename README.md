@@ -11,7 +11,7 @@
 
 </div>
 
-![ChemEnzyRetroPlanner](./assets/retroplanner-beta-overview.png)
+![ChemEnzyRetroPlanner](./images/retroplanner-beta-overview.png)
 
 
 ## Contents
