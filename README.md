@@ -23,6 +23,7 @@
   - [OS Requirements](#os-requirements)
   - [Python Dependencies](#python-dependencies)
   - [Installation Guide](#installation-guide)
+  - [Demo Video](#demo-video)
   - [Agent Installation](#agent-installation)
   - [Related repository](#related-repository)
   - [Cite Us](#cite-us)
