@@ -591,45 +591,51 @@ def process_node():
         return jsonify({"error": "Missing JSON in request"}), 400
     node = request.get_json()
     reaction_attribute = node["reaction_attribute"]
+    print(node["reaction_smiles"])
     if reaction_attribute["organic_enzyme_rxn_classification"]["enzyme_recommend"]:
         enzyme_data = []
         idx = 0
         try:
             for ec in reaction_attribute["enzyme_assign"]["ec"]:
-                uniprot_df = app.uniprot_parser.query_enzyme_pdb_by_ec(
-                    ec_number=ec, size=1
-                )
+                try:
+                    print(f"Processing EC: {ec}")
+                    uniprot_df = app.uniprot_parser.query_enzyme_pdb_by_ec(
+                        ec_number=ec, size=1
+                    )
 
-                if uniprot_df is not None:
-                    for alphafolddb_id, ec, pdb_fpath in zip(
-                        uniprot_df["AlphaFoldDB"].tolist(),
-                        uniprot_df["EC number"].tolist(),
-                        uniprot_df["pdb_fpath"].tolist(),
-                    ):
-                        predicted_active_labels = app.easifa_annotator.inference(
-                            rxn=node["reaction_smiles"], enzyme_structure_path=pdb_fpath
-                        )
-                        structure_html, active_data_df = convert_easifa_results(
-                            pdb_fpath=pdb_fpath,
-                            site_labels=predicted_active_labels,
-                            view_size=(395, 300),
-                        )
-                        if not active_data_df.empty:
-                            enzyme_data.append(
-                                {
-                                    "id": idx + 1,
-                                    "structure_html": structure_html,
-                                    "active_data": active_data_df.to_html(
-                                        index=False, escape=False
-                                    ).replace(
-                                        '<table border="1" class="dataframe">\n',
-                                        f"<table>\n<caption>Predicted Active Sites by EasIFA</caption>\n",
-                                    ),
-                                    "ec": ec,
-                                    "alphafolddb_id": alphafolddb_id,
-                                }
+                    if uniprot_df is not None:
+                        for alphafolddb_id, ec, pdb_fpath in zip(
+                            uniprot_df["AlphaFoldDB"].tolist(),
+                            uniprot_df["EC number"].tolist(),
+                            uniprot_df["pdb_fpath"].tolist(),
+                        ):
+                            predicted_active_labels = app.easifa_annotator.inference(
+                                rxn=node["reaction_smiles"], enzyme_structure_path=pdb_fpath
                             )
-                            idx += 1
+                            structure_html, active_data_df = convert_easifa_results(
+                                pdb_fpath=pdb_fpath,
+                                site_labels=predicted_active_labels,
+                                view_size=(395, 300),
+                            )
+                            if not active_data_df.empty:
+                                enzyme_data.append(
+                                    {
+                                        "id": idx + 1,
+                                        "structure_html": structure_html,
+                                        "active_data": active_data_df.to_html(
+                                            index=False, escape=False
+                                        ).replace(
+                                            '<table border="1" class="dataframe">\n',
+                                            f"<table>\n<caption>Predicted Active Sites by EasIFA</caption>\n",
+                                        ),
+                                        "ec": ec,
+                                        "alphafolddb_id": alphafolddb_id,
+                                    }
+                                )
+                                idx += 1
+                except Exception as e:
+                    print(f"Error processing EC {ec}: {e}")
+                    pass
         except:
             pass
 

@@ -179,52 +179,47 @@
 
 
             if (node && node.type == 'reaction') {
+                reactionClicked = true;
+                // 总是更新 lastClickedNode，确保它指向当前点击的节点
+                lastClickedNode = node;
+                lastClickedNodeId = node.id;
+                
+                if (node.reaction_attribute.empty) {
+                    toggleRightColumn.style.color = '#CCCCCC';
+                    toggleRightColumn.classList.add('disabled');
+                    toggleRightColumn.disabled = true;
+                    reactionInfo.innerHTML = '<img src="' + node.image + '" width="450" height="150"><br>' +
+                        '<strong>Reaction Smiles:</strong> ' + node.reaction_smiles;
 
-                if (node.id !== lastClickedNodeId) {
-                    reactionClicked = true;
-                    if (node.reaction_attribute.empty) {
+                } else {
+                    if (node.reaction_attribute.organic_enzyme_rxn_classification.enzyme_recommend) {
+                        toggleRightColumn.style.color = '#000000';
+                        toggleRightColumn.classList.remove('disabled');
+                        toggleRightColumn.disabled = false;
+                        reactionInfo.innerHTML = '<img src="' + node.image + '" width="450" height="150"><br>' +
+                            '<strong>Reaction Smiles:</strong> ' + node.reaction_smiles + '<br><br>' +
+                            node.reaction_attribute.condition.table + '<br>' +
+                            node.reaction_attribute.organic_enzyme_rxn_classification.table + '<br>' +
+                            node.reaction_attribute.enzyme_assign.table;
+                    } else {
                         toggleRightColumn.style.color = '#CCCCCC';
                         toggleRightColumn.classList.add('disabled');
                         toggleRightColumn.disabled = true;
                         reactionInfo.innerHTML = '<img src="' + node.image + '" width="450" height="150"><br>' +
-                            '<strong>Reaction Smiles:</strong> ' + node.reaction_smiles;
-
-
-                    } else {
-                        if (node.reaction_attribute.organic_enzyme_rxn_classification.enzyme_recommend) {
-                            toggleRightColumn.style.color = '#000000';
-                            toggleRightColumn.classList.remove('disabled');
-                            toggleRightColumn.disabled = false;
-                            reactionInfo.innerHTML = '<img src="' + node.image + '" width="450" height="150"><br>' +
-                                '<strong>Reaction Smiles:</strong> ' + node.reaction_smiles + '<br><br>' +
-                                node.reaction_attribute.condition.table + '<br>' +
-                                node.reaction_attribute.organic_enzyme_rxn_classification.table + '<br>' +
-                                node.reaction_attribute.enzyme_assign.table;
-                        } else {
-                            toggleRightColumn.style.color = '#CCCCCC';
-                            toggleRightColumn.classList.add('disabled');
-                            toggleRightColumn.disabled = true;
-                            reactionInfo.innerHTML = '<img src="' + node.image + '" width="450" height="150"><br>' +
-                                '<strong>Reaction Smiles:</strong> ' + node.reaction_smiles + '<br><br>' +
-                                node.reaction_attribute.condition.table + '<br>' +
-                                node.reaction_attribute.organic_enzyme_rxn_classification.table
-
-                        }
+                            '<strong>Reaction Smiles:</strong> ' + node.reaction_smiles + '<br><br>' +
+                            node.reaction_attribute.condition.table + '<br>' +
+                            node.reaction_attribute.organic_enzyme_rxn_classification.table
 
                     }
-
-                    // reactionInfo.innerHTML = node.reaction_attribute.condition;
-
-                    reactionInfo.style.display = 'block';
-                    reactionInfo.style.color = '#000000';
-                    reactionInfo.style.lineHeight = 'normal';
-                    reactionInfo.style.fontSize = '10px';
-                    transformAndHide();
-                    lastClickedNodeId = node.id;  // 更新最后点击的节点 ID
-                    lastClickedNode = node;
-                } else {
-                    reactionClicked = false;
                 }
+
+                // reactionInfo.innerHTML = node.reaction_attribute.condition;
+
+                reactionInfo.style.display = 'block';
+                reactionInfo.style.color = '#000000';
+                reactionInfo.style.lineHeight = 'normal';
+                reactionInfo.style.fontSize = '10px';
+                transformAndHide();
             }
         }
         );
@@ -254,7 +249,7 @@
         document.getElementById('toggleRightColumn').onclick = function () {
             var node = lastClickedNode;
 
-            if (node.reaction_attribute.organic_enzyme_rxn_classification.enzyme_recommend) {
+            if (node && node.reaction_attribute.organic_enzyme_rxn_classification.enzyme_recommend) {
                 var loadingModal = document.getElementById('loadingModal');
                 loadingModal.style.display = 'block'; // 显示模态框
 
@@ -270,9 +265,8 @@
                     .then(data => {
                         loadingModal.style.display = 'none'; // 请求成功，隐藏模态框
                         enzyme_data = data.enzyme_data;
-                        if (currentEnzymeData == null) {
-                            currentEnzymeData = enzyme_data;
-                        }
+                        // 总是更新 currentEnzymeData 为最新的酶数据
+                        currentEnzymeData = enzyme_data;
                         transformAndShow();
                     })
                     .catch((error) => {
@@ -336,6 +330,9 @@
             reactionInfo.style.fontSize = '30px';
             reactionClicked = false; // 重置点击状态，防止旧状态影响新路径
             currentEnzymeData = null;
+            // 重置最后点击的节点
+            lastClickedNode = null;
+            lastClickedNodeId = null;
 
             // 使用classList添加disabled类来处理样式
             toggleRightColumn.classList.add('disabled');
@@ -399,9 +396,8 @@
                             .then(data => {
                                 modal.style.display = 'none'; // 请求成功，隐藏模态框
                                 enzyme_data = data.enzyme_data;
-                                if (currentEnzymeData == null) {
-                                    currentEnzymeData = enzyme_data;
-                                }
+                                // 总是更新 currentEnzymeData 为最新的酶数据
+                                currentEnzymeData = enzyme_data;
                                 enzymeTryAgain();
                             })
                             .catch((error) => {
