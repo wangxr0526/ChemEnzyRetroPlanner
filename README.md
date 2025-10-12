@@ -30,7 +30,7 @@
  
 
 ## Publication
-A Virtual Platform for Automated Hybrid Organic-Enzymatic Syn-thesis Planning
+A Virtual Platform for Automated Hybrid Organic-Enzymatic Synthesis Planning
 
 ## Web Server
 
