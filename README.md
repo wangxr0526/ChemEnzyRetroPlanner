@@ -2,7 +2,7 @@
 
 <div id="top" align="center">
 
-  <h3>ChemEnzRretroPlanner: An Integrated Automation Platform for Hybrid Organic-Enzymatic Synthesis Planning</h3>
+  <h3>ChemEnzRretroPlanner: A Virtual Platform for Automated Hybrid Organic-Enzymatic Synthesis Planning</h3>
   
   [![GitHub Repo stars](https://img.shields.io/github/stars/wangxr0526/ChemEnzyRetroPlanner?style=social)](https://github.com/wangxr0526/ChemEnzyRetroPlanner/stargazers)
   [![WebSite](https://img.shields.io/badge/WebSite-blue)](http://cadd.zju.edu.cn/retroplanner)
