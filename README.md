@@ -30,7 +30,7 @@
  
 
 ## Publication
-ChemEnzRretroPlanner: An Integrated Automation Platform for Hybrid Organic-Enzymatic Synthesis Planning
+A Virtual Platform for Automated Hybrid Organic-Enzymatic Syn-thesis Planning
 
 ## Web Server
 
