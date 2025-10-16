@@ -162,7 +162,7 @@ def enzyme_active_predict_placeholder(ec_fake_list, rxn_smiles):
     for idx, pdb_fname in enumerate(pdb_fnames_sample):
         pdb_fpath = os.path.abspath(os.path.join("data/test_enzyme", pdb_fname))
 
-        alphafolddb_id = pdb_fname.replace("-F1-model_v4.pdb", "").replace("AF-", "")
+        alphafolddb_id = pdb_fname.replace("-F1-model_v6.pdb", "").replace("AF-", "")
 
         active_data_placeholder = easifa_placeholder_fn(rxn_smiles, pdb_fpath)
         structure_html, active_data = get_structure_html_and_active_data(
