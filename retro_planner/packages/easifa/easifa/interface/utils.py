@@ -31,7 +31,7 @@ from easifa.model_structure.enzyme_site_model import (
     EnzymeActiveSiteClsModel,
     EnzymeActiveSiteModel,
 )
-
+AFDB_VERSION = "6"
 chebi_path = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "chebi", "structures.csv.gz")
 )
@@ -229,7 +229,7 @@ class UniProtParser:
         self.query_uniprotkb_template = '/usr/bin/curl  -o {} -H "Accept: application/json" "https://rest.uniprot.org/uniprotkb/search?query=accession:{}&fields=accession,ec,sequence,cc_catalytic_activity,xref_alphafolddb,ft_binding,ft_act_site,ft_site"'
 
         self.rhea_rxn_url_template = "/usr/bin/curl -o {} https://ftp.expasy.org/databases/rhea/ctfiles/rxn/{}.rxn"
-        self.download_alphafolddb_url_template = "/usr/bin/curl -o {} https://alphafold.ebi.ac.uk/files/AF-{}-F1-model_v6.pdb"
+        self.download_alphafolddb_url_template = "/usr/bin/curl -o {} https://alphafold.ebi.ac.uk/files/AF-{}-F1-model_v{}.pdb"
 
     def _qurey_smiles_from_chebi(self, chebi_id):
         this_id_data = self.chebi_df.loc[self.chebi_df["COMPOUND_ID"] == int(chebi_id)]
@@ -322,12 +322,12 @@ class UniProtParser:
             return None, "No Alphafolddb Structure"
         aa_length = query_data["sequence"]["length"]
         pdb_fpath = os.path.join(
-            self.alphafolddb_folder, f"AF-{alphafolddb_id}-F1-model_v4.pdb"
+            self.alphafolddb_folder, f"AF-{alphafolddb_id}-F1-model_v{AFDB_VERSION}.pdb"
         )
         if not os.path.exists(pdb_fpath):
             cmd(
                 self.download_alphafolddb_url_template.format(
-                    os.path.abspath(pdb_fpath), alphafolddb_id
+                    os.path.abspath(pdb_fpath), alphafolddb_id, AFDB_VERSION
                 )
             )
 
@@ -378,7 +378,7 @@ class UniProtParserEC:
         # self.query_uniport_template = '/usr/bin/curl -s -o {} -H \"Accept: text/plain; format=tsv\" \"https://rest.uniprot.org/uniprotkb/search?query=ec:{}+AND+existence:xref_alphafolddb&fields=accession,ec,sequence,xref_alphafolddb&size={}\"'
         self.query_uniport_template = '/usr/bin/curl -s -o {} -H "Accept: text/plain; format=tsv" "https://rest.uniprot.org/uniprotkb/stream?query=ec:{}+AND+reviewed:true+AND+database:(alphafolddb)&fields=accession,ec,sequence,xref_alphafolddb&size={}"'
         self.query_uniport_json_template = '/usr/bin/curl  -o {} -H "Accept: application/json" "https://rest.uniprot.org/uniprotkb/search?query=ec:{}+AND+reviewed:true+AND+database:(alphafolddb)&fields=accession,ec,sequence,cc_catalytic_activity,xref_alphafolddb"'
-        self.download_alphafolddb_url_template = "/usr/bin/curl -s -o {} https://alphafold.ebi.ac.uk/files/AF-{}-F1-model_v4.pdb"
+        self.download_alphafolddb_url_template = "/usr/bin/curl -s -o {} https://alphafold.ebi.ac.uk/files/AF-{}-F1-model_v{}.pdb"
         self.rhea_rxn_url_template = "/usr/bin/curl -o {} https://ftp.expasy.org/databases/rhea/ctfiles/rxn/{}.rxn"
         
     def _download_chebi_file(self, output_path):
@@ -434,7 +434,7 @@ class UniProtParserEC:
 
         for alphafolddb_id in select_data_df["AlphaFoldDB"].tolist():
             pdb_fpath = os.path.join(
-                self.alphafolddb_folder, f"AF-{alphafolddb_id}-F1-model_v4.pdb"
+                self.alphafolddb_folder, f"AF-{alphafolddb_id}-F1-model_v{AFDB_VERSION}.pdb"
             )
             if not os.path.exists(pdb_fpath):
                 cmd(
@@ -532,7 +532,7 @@ class UniProtParserEC:
                 continue
             aa_length = one_data["sequence"]["length"]
             pdb_fpath = os.path.join(
-                self.alphafolddb_folder, f"AF-{alphafolddb_id}-F1-model_v4.pdb"
+                self.alphafolddb_folder, f"AF-{alphafolddb_id}-F1-model_v{AFDB_VERSION}.pdb"
             )
             # if not os.path.exists(pdb_fpath):
             #     cmd(
