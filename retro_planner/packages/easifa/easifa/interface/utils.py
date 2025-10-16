@@ -229,7 +229,7 @@ class UniProtParser:
         self.query_uniprotkb_template = '/usr/bin/curl  -o {} -H "Accept: application/json" "https://rest.uniprot.org/uniprotkb/search?query=accession:{}&fields=accession,ec,sequence,cc_catalytic_activity,xref_alphafolddb,ft_binding,ft_act_site,ft_site"'
 
         self.rhea_rxn_url_template = "/usr/bin/curl -o {} https://ftp.expasy.org/databases/rhea/ctfiles/rxn/{}.rxn"
-        self.download_alphafolddb_url_template = "/usr/bin/curl -o {} https://alphafold.ebi.ac.uk/files/AF-{}-F1-model_v4.pdb"
+        self.download_alphafolddb_url_template = "/usr/bin/curl -o {} https://alphafold.ebi.ac.uk/files/AF-{}-F1-model_v6.pdb"
 
     def _qurey_smiles_from_chebi(self, chebi_id):
         this_id_data = self.chebi_df.loc[self.chebi_df["COMPOUND_ID"] == int(chebi_id)]
