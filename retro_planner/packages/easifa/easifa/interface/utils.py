@@ -561,7 +561,7 @@ class UniProtParserEC:
             if not os.path.exists(pdb_fpath):
                 cmd(
                     self.download_alphafolddb_url_template.format(
-                        os.path.abspath(pdb_fpath), alphafolddb_id
+                        os.path.abspath(pdb_fpath), alphafolddb_id, AFDB_VERSION
                     )
                 )
         return df_topk
