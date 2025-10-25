@@ -67,3 +67,6 @@ metadata
 singularity/singularity_images
 retro_planner/building_block_dataset
 webapp/data/saved_configs
+.github
+docker/AUTO_RESTART_README.md
+docker/QUICKSTART.md
