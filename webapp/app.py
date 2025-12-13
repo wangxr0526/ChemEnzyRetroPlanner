@@ -71,11 +71,13 @@ app = Flask(__name__,
 app.secret_key = "supersecretkey"  # 设置一个密钥，用于Flash消息
 
 CORS(app)
-app.config["CELERY_BROKER_URL"] = "redis://localhost:6379/0"
-app.config["CELERY_RESULT_BACKEND"] = "redis://localhost:6379/0"
 
-celery = Celery(app.name, broker=app.config["CELERY_BROKER_URL"])
-celery.conf.update(app.config)
+# Celery 5.x uses lowercase configuration keys
+celery = Celery(
+    app.name,
+    broker="redis://localhost:6379/0",
+    backend="redis://localhost:6379/0"
+)
 
 _celery_soft_time_limit_s = int(os.environ.get("CELERY_TASK_SOFT_TIME_LIMIT", "3600"))
 if _celery_soft_time_limit_s > 0:
