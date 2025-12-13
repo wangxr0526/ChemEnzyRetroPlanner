@@ -27,12 +27,12 @@ html {
 }
 
 .navbar ul li a {
-    color: black;
+    color: #ffffff;
     text-decoration: none;
     transition: color 0.3s;
 }
 .navbar ul li a:hover {
-    color: rgb(203, 203, 203);
+    color: #e1e1e1;
 }
 .navbar-expand-lg .navbar-nav .nav-link {
     padding-right: 1.5rem;
@@ -51,11 +51,11 @@ html {
 
     /* font-family: "Lobster", sans-serif; */
     font-family: "Poetsen One", sans-serif;
-    color: black;
+    color: #ffffff;
     transition: color 0.3s;
 }
 .navbar-brand:hover {
-    color: rgb(203, 203, 203);
+    color: #e1e1e1;
 }
 
 .navbar-shadow {
@@ -193,4 +193,3 @@ main {
 .top-row, .middle-row, .bottom-row {
     background-color: transparent; /* 行无背景色 */
 }
-

@@ -7,6 +7,7 @@
     <title>{% block title %}ChemEnzyRetroPlanner{% endblock %}</title>
     <link rel="shortcut icon" href="{{ url_for('static', filename='figure/favicon.ico') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/navbar.css') }}">
     <!-- 添加 Font Awesome 图标库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
@@ -120,7 +121,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-shadow">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-shadow">
         <div class="container">
             <a class="navbar-brand" href="/retroplanner/">ChemEnzyRetroPlanner</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
@@ -171,9 +172,6 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-</body>
-
-     
 </body>
 
 </html>

@@ -1,0 +1,63 @@
+/* Shared navbar styles + responsive collapse fixes (Bootstrap 4) */
+
+.navbar.navbar-shadow {
+  box-shadow: 0px 20px 20px 2px rgba(0, 0, 0, 0.15);
+}
+
+nav.navbar {
+  z-index: 1500;
+  background-color: #2b2b2b;
+}
+
+.navbar.navbar-dark .navbar-brand,
+.navbar.navbar-dark .navbar-nav .nav-link {
+  color: #ffffff;
+}
+
+.navbar.navbar-dark .navbar-nav .nav-link:hover,
+.navbar.navbar-dark .navbar-brand:hover {
+  color: #e1e1e1;
+}
+
+.navbar.navbar-dark .navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.navbar.navbar-dark .navbar-toggler:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.15);
+}
+
+@media (max-width: 991.98px) {
+  nav.navbar {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .navbar .navbar-collapse {
+    margin-top: 0.5rem;
+    background-color: #2b2b2b;
+    border-radius: 12px;
+    padding: 0.5rem 0.75rem;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+  }
+
+  .navbar .navbar-nav {
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .navbar .nav-item {
+    width: 100%;
+  }
+
+  .navbar .nav-link {
+    padding: 0.5rem 0;
+  }
+
+  .navbar .dropdown-menu {
+    width: 100%;
+    margin-top: 0.25rem;
+  }
+}
+

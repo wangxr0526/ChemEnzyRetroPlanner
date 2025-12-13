@@ -14,11 +14,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
     <!-- Your custom styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-shadow" style="z-index: 1000;">
+        <nav class="navbar navbar-expand-lg navbar-dark navbar-shadow" style="z-index: 1000;">
             <div class="container">
                 <a class="navbar-brand" href="/retroplanner/">ChemEnzyRetroPlanner</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

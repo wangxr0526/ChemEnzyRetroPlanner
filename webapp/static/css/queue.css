@@ -20,6 +20,70 @@
     flex: 1;
 }
 
+.queue-toolbar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0 14px;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.queue-filters {
+    width: 100%;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.queue-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1 1 220px;
+    min-width: 220px;
+}
+
+.queue-actions {
+    display: flex;
+    gap: 10px;
+    flex: 0 0 auto;
+    align-items: flex-end;
+}
+
+.queue-label {
+    font-family: 'Poetsen One', sans-serif;
+    font-size: 1.2rem;
+    color: #1e1e1e;
+}
+
+.queue-filter .select-custom {
+    width: 100%;
+    height: 38px;
+    font-size: 1em;
+}
+
+.queue-empty {
+    padding: 22px 12px;
+    text-align: center;
+    color: #666;
+    font-family: 'Poetsen One', sans-serif;
+    background-color: #fafafa;
+}
+
+@media (max-width: 576px) {
+    .queue-filter {
+        min-width: 100%;
+        flex-basis: 100%;
+    }
+    .queue-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
 table#queueTable {
     width: 100%;
     border-collapse: separate;
@@ -264,6 +328,25 @@ th {
 .select-custom:focus, .select-custom:hover {
     background-color: #000;
     color: #fff;
+}
+
+/* Make date picker icon clearly visible on dark inputs */
+.queue-filter input[type="date"].select-custom {
+    appearance: auto;
+    color-scheme: dark;
+    padding-right: 44px; /* space for calendar icon */
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    cursor: pointer;
+}
+
+.queue-filter input[type="date"].select-custom::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(1.2);
+    opacity: 0.95;
+    cursor: pointer;
+}
+
+.queue-filter input[type="date"].select-custom::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
 }
 
 /* 美化Jump to页码输入框，隐藏number箭头 */

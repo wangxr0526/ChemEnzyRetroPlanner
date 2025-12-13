@@ -17,9 +17,35 @@
 {% block content %}
 
 <body>
-    <div class="main-container">
-        <h1 class="text-head">Job Queue</h1>
-        <table id="queueTable">
+	    <div class="main-container">
+	        <h1 class="text-head">Job Queue</h1>
+	        <div class="queue-toolbar">
+	            <div class="queue-filters">
+	                <div class="queue-filter">
+	                    <label for="jobIdSearchInput" class="queue-label">Job ID</label>
+	                    <input id="jobIdSearchInput" class="select-custom" type="text" placeholder="e.g. 2f7c..." autocomplete="off" />
+	                </div>
+	                <div class="queue-filter">
+	                    <label for="statusFilterSelect" class="queue-label">Job Status</label>
+	                    <select id="statusFilterSelect" class="select-custom">
+	                        <option value="">All</option>
+	                    </select>
+	                </div>
+	                <div class="queue-filter">
+	                    <label for="dateFromInput" class="queue-label">Submitted From</label>
+	                    <input id="dateFromInput" class="select-custom" type="date" />
+	                </div>
+	                <div class="queue-filter">
+	                    <label for="dateToInput" class="queue-label">Submitted To</label>
+	                    <input id="dateToInput" class="select-custom" type="date" />
+	                </div>
+	                <div class="queue-actions">
+	                    <button id="jobFiltersApplyBtn" type="button" class="text-head rounded-button">Filter</button>
+	                    <button id="jobFiltersClearBtn" type="button" class="text-head rounded-button">Clear</button>
+	                </div>
+	            </div>
+	        </div>
+	        <table id="queueTable">
             <thead>
                 <tr>
                     <th>Job ID</th>
@@ -81,32 +107,101 @@
 
 {% block scripts %}
 <script>
-    let current_page = 1;
-    let records_per_page = 10;
-    let fullJobData = [];
+	    let current_page = 1;
+	    let records_per_page = 10;
+	    let fullJobData = [];
+	    let filteredJobData = [];
+	    let jobIdQuery = "";
+	    let statusQuery = "";
+	    let dateFromQuery = "";
+	    let dateToQuery = "";
+	    let refreshTimer = null;
 
     window.onload = function () {
         listJobs(); // 初始加载
     };
 
-    function listJobs() {
-        fetch('/retroplanner/jobs')
-            .then(response => response.json())
-            .then(data => {
-                fullJobData = data.map(job => ({
-                    job_id: job[0],
-                    status: job[1],
-                    result: job[2],
-                    date: job[3],
-                }));
-                changePage(1);
-            });
+	    function parseSubmittedDate(dateStr) {
+	        if (!dateStr) return null;
+	        const direct = new Date(dateStr);
+	        if (!isNaN(direct.getTime())) return direct;
+	        const normalized = new Date(String(dateStr).replace(' ', 'T'));
+	        if (!isNaN(normalized.getTime())) return normalized;
+	        return null;
+	    }
 
-        setTimeout(listJobs, 60000);
+	    function populateStatusOptions() {
+	        const select = document.getElementById('statusFilterSelect');
+	        if (!select) return;
+	
+	        const existingValue = select.value || "";
+	        const uniqueStatuses = Array.from(new Set(fullJobData.map(j => j.status).filter(Boolean)));
+	        const preferredOrder = ['Submitted', 'SUCCESS', 'FAILED', 'Timeout'];
+	
+	        uniqueStatuses.sort((a, b) => {
+	            const ia = preferredOrder.indexOf(a);
+	            const ib = preferredOrder.indexOf(b);
+	            if (ia === -1 && ib === -1) return String(a).localeCompare(String(b));
+	            if (ia === -1) return 1;
+	            if (ib === -1) return -1;
+	            return ia - ib;
+	        });
+	
+	        select.innerHTML = '<option value="">All</option>';
+	        uniqueStatuses.forEach(s => {
+	            const opt = document.createElement('option');
+	            opt.value = s;
+	            opt.textContent = s;
+	            select.appendChild(opt);
+	        });
+	
+	        select.value = uniqueStatuses.includes(existingValue) ? existingValue : "";
+	    }
+
+	    function listJobs() {
+	        fetch('/retroplanner/jobs')
+	            .then(response => response.json())
+	            .then(data => {
+	                fullJobData = data.map(job => ({
+	                    job_id: job[0],
+	                    status: job[1],
+	                    result: job[2],
+	                    date: job[3],
+	                }));
+	                populateStatusOptions();
+	                applyFilterAndRender(true);
+	            });
+
+        if (refreshTimer) clearTimeout(refreshTimer);
+        refreshTimer = setTimeout(listJobs, 60000);
     }
 
+	    function applyFilterAndRender(resetPage) {
+	        const idQ = (jobIdQuery || '').trim().toLowerCase();
+	        const statusQ = (statusQuery || '').trim();
+	        const fromQ = (dateFromQuery || '').trim();
+	        const toQ = (dateToQuery || '').trim();
+	
+	        const fromDate = fromQ ? new Date(`${fromQ}T00:00:00`) : null;
+	        const toDate = toQ ? new Date(`${toQ}T23:59:59`) : null;
+	
+	        filteredJobData = fullJobData.filter(j => {
+	            if (idQ && !(String(j.job_id || '').toLowerCase().includes(idQ))) return false;
+	            if (statusQ && String(j.status || '') !== statusQ) return false;
+	            if (fromDate || toDate) {
+	                const submitted = parseSubmittedDate(j.date);
+	                if (!submitted) return false;
+	                if (fromDate && submitted < fromDate) return false;
+	                if (toDate && submitted > toDate) return false;
+	            }
+	            return true;
+	        });
+	        if (resetPage) current_page = 1;
+	        changePage(current_page);
+	    }
+
     function changePage(page) {
-        const total_pages = Math.ceil(fullJobData.length / records_per_page);
+        const total_pages = Math.max(1, Math.ceil(filteredJobData.length / records_per_page));
         if (page < 1) page = 1;
         if (page > total_pages) page = total_pages;
         current_page = page;
@@ -114,11 +209,23 @@
         const tbody = document.querySelector("#queueTable tbody");
         tbody.innerHTML = '';
 
+        if (filteredJobData.length === 0) {
+            const row = document.createElement('tr');
+            const cell = document.createElement('td');
+            cell.colSpan = 4;
+            cell.className = 'queue-empty';
+            cell.textContent = jobIdQuery ? 'No jobs found for this Job ID.' : 'No jobs found.';
+            row.appendChild(cell);
+            tbody.appendChild(row);
+            updatePaginationButtons();
+            return;
+        }
+
         const start = (page - 1) * records_per_page;
-        const end = Math.min(start + records_per_page, fullJobData.length);
+        const end = Math.min(start + records_per_page, filteredJobData.length);
 
         for (let i = start; i < end; i++) {
-            const job = fullJobData[i];
+            const job = filteredJobData[i];
             const row = document.createElement('tr');
 
             const cell1 = document.createElement('td');
@@ -160,13 +267,13 @@
     }
 
     function updatePaginationButtons() {
-        const total_pages = Math.ceil(fullJobData.length / records_per_page);
+        const total_pages = Math.max(1, Math.ceil(filteredJobData.length / records_per_page));
         document.getElementById("page_number").innerText = current_page;
         document.getElementById("total_pages").innerText = total_pages;
     }
 
     function nextPage() {
-        if (current_page < Math.ceil(fullJobData.length / records_per_page)) {
+        if (current_page < Math.ceil(filteredJobData.length / records_per_page)) {
             current_page++;
             changePage(current_page);
         }
@@ -184,14 +291,14 @@
     }
 
     function goToLastPage() {
-        const total_pages = Math.ceil(fullJobData.length / records_per_page);
+        const total_pages = Math.max(1, Math.ceil(filteredJobData.length / records_per_page));
         changePage(total_pages);
     }
 
     function jumpToPage() {
         const input = document.getElementById('jumpToPageInput');
         const page = parseInt(input.value);
-        const total_pages = Math.ceil(fullJobData.length / records_per_page);
+        const total_pages = Math.max(1, Math.ceil(filteredJobData.length / records_per_page));
         if (!isNaN(page) && page >= 1 && page <= total_pages) {
             changePage(page);
         } else {
@@ -243,11 +350,61 @@
         };
     }
 
-    // ✅ 页面加载后全局只绑定一次（modal 和下拉选择事件）
-    document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('uploadBtn').addEventListener('click', function () {
-            document.getElementById('privateKeyFile').click();
-        });
+	    // ✅ 页面加载后全局只绑定一次（modal 和下拉选择事件）
+	    document.addEventListener('DOMContentLoaded', function () {
+	        const jobIdSearchInput = document.getElementById('jobIdSearchInput');
+	        const statusFilterSelect = document.getElementById('statusFilterSelect');
+	        const dateFromInput = document.getElementById('dateFromInput');
+	        const dateToInput = document.getElementById('dateToInput');
+	        const applyBtn = document.getElementById('jobFiltersApplyBtn');
+	        const clearBtn = document.getElementById('jobFiltersClearBtn');
+	
+	        const syncFiltersFromUI = () => {
+	            jobIdQuery = (jobIdSearchInput?.value || '').trim();
+	            statusQuery = (statusFilterSelect?.value || '').trim();
+	            dateFromQuery = (dateFromInput?.value || '').trim();
+	            dateToQuery = (dateToInput?.value || '').trim();
+	        };
+	
+	        const applyFilters = () => {
+	            syncFiltersFromUI();
+	            applyFilterAndRender(true);
+	        };
+	
+	        const clearFilters = () => {
+	            if (jobIdSearchInput) jobIdSearchInput.value = '';
+	            if (statusFilterSelect) statusFilterSelect.value = '';
+	            if (dateFromInput) dateFromInput.value = '';
+	            if (dateToInput) dateToInput.value = '';
+	            jobIdQuery = '';
+	            statusQuery = '';
+	            dateFromQuery = '';
+	            dateToQuery = '';
+	            applyFilterAndRender(true);
+	        };
+	
+	        applyBtn.addEventListener('click', applyFilters);
+	        clearBtn.addEventListener('click', clearFilters);
+	
+	        jobIdSearchInput.addEventListener('keydown', function (e) {
+	            if (e.key === 'Enter') applyFilters();
+	        });
+	        statusFilterSelect.addEventListener('change', applyFilters);
+	        dateFromInput.addEventListener('change', applyFilters);
+	        dateToInput.addEventListener('change', applyFilters);
+
+	        // Make the whole date input open the picker (where supported)
+	        [dateFromInput, dateToInput].forEach((el) => {
+	            if (!el) return;
+	            el.addEventListener('click', () => {
+	                if (typeof el.showPicker === 'function') el.showPicker();
+	                else el.focus();
+	            });
+	        });
+
+	        document.getElementById('uploadBtn').addEventListener('click', function () {
+	            document.getElementById('privateKeyFile').click();
+	        });
 
         document.getElementById('privateKeyFile').addEventListener('change', function () {
             const file = this.files[0];
