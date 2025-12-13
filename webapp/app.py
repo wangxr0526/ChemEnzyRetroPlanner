@@ -9,6 +9,7 @@ import requests
 import torch
 import yaml
 from celery import Celery
+from billiard.exceptions import SoftTimeLimitExceeded
 from retro_planner.api import RSPlanner, dirpath
 
 from flask import (
@@ -75,6 +76,10 @@ app.config["CELERY_RESULT_BACKEND"] = "redis://localhost:6379/0"
 
 celery = Celery(app.name, broker=app.config["CELERY_BROKER_URL"])
 celery.conf.update(app.config)
+
+_celery_soft_time_limit_s = int(os.environ.get("CELERY_TASK_SOFT_TIME_LIMIT", "3600"))
+if _celery_soft_time_limit_s > 0:
+    celery.conf.task_soft_time_limit = _celery_soft_time_limit_s
 
 
 app.synth_route = os.path.abspath(
@@ -333,7 +338,6 @@ def background_task(self, inputed_data, config:dict, input_method:str="WEB"):
         ]
     )
     try:
-
         planner = RSPlanner(config)
         planner.select_stocks(inputed_configs["selectedStocks"])
         planner.select_one_step_model(inputed_configs["selectedModels"])
@@ -341,7 +345,18 @@ def background_task(self, inputed_data, config:dict, input_method:str="WEB"):
         planner.prepare_plan(prepare_easifa=False)
 
         result = planner.plan(target_smiles)
-    except Exception as e:
+    except SoftTimeLimitExceeded:
+        succ = False
+        result = None
+        return_result = "TOO_LARGE_LOCAL"
+        c.execute(
+            "UPDATE jobs SET result = ?, status = 'Timeout' WHERE job_id = ?",
+            (return_result, self.request.id),
+        )
+        conn.commit()
+        conn.close()
+        return return_result
+    except Exception:
         succ = False
         result = None
     if result:
