@@ -1,6 +1,6 @@
-## Notice
-
-The public server is currently under heavy load. For large or long-running jobs, please deploy locally and run computations on your own machine.
+> [!IMPORTANT]
+> **Notice (2025.12.13)**  
+> The public server is currently under heavy load. For large or long-running jobs, please deploy locally and run computations on your own machine.
 --
 
 # ChemEnzyRetroPlanner
