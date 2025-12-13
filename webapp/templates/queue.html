@@ -224,35 +224,40 @@
         const start = (page - 1) * records_per_page;
         const end = Math.min(start + records_per_page, filteredJobData.length);
 
-        for (let i = start; i < end; i++) {
-            const job = filteredJobData[i];
-            const row = document.createElement('tr');
+	        for (let i = start; i < end; i++) {
+	            const job = filteredJobData[i];
+	            const row = document.createElement('tr');
 
-            const cell1 = document.createElement('td');
-            const cell2 = document.createElement('td');
-            const cell3 = document.createElement('td');
-            const cell4 = document.createElement('td');
+	            const cell1 = document.createElement('td');
+	            const cell2 = document.createElement('td');
+	            const cell3 = document.createElement('td');
+	            const cell4 = document.createElement('td');
 
-            cell1.textContent = job.job_id;
-            cell2.textContent = job.status;
+	            cell1.textContent = job.job_id;
+	            cell2.textContent = job.status;
+	            if (job.status === 'Timeout' && typeof job.result === 'string' && job.result.startsWith('TOO_LARGE_LOCAL')) {
+	                cell2.title = 'Workload too large; please run locally.';
+	            }
 
-            if (job.status === 'SUCCESS') {
-                const link = document.createElement('a');
-                link.href = '#';
-                link.textContent = job.result;
+	            if (job.status === 'SUCCESS') {
+	                const link = document.createElement('a');
+	                link.href = '#';
+	                link.textContent = job.result;
                 link.className = 'rounded-button';
                 link.addEventListener("click", function () {
                     openModal(job.job_id);
                 });
                 cell3.appendChild(link);
-            } else if (job.status === 'Submitted') {
-                const img = document.createElement('img');
-                img.src = '/retroplanner/static/gif/icons8-waiting.gif';
-                img.alt = 'Waiting...';
-                cell3.appendChild(img);
-            } else {
-                cell3.textContent = job.result;
-            }
+	            } else if (job.status === 'Submitted') {
+	                const img = document.createElement('img');
+	                img.src = '/retroplanner/static/gif/icons8-waiting.gif';
+	                img.alt = 'Waiting...';
+	                cell3.appendChild(img);
+	            } else if (job.status === 'Timeout' && typeof job.result === 'string' && job.result.startsWith('TOO_LARGE_LOCAL')) {
+	                cell3.textContent = '—';
+	            } else {
+	                cell3.textContent = job.result;
+	            }
 
             cell4.textContent = job.date;
 
