@@ -63,10 +63,11 @@ services:
     environment:
       # The packed Conda OpenSSL default still points to its original host prefix.
       SSL_CERT_FILE: /etc/ssl/certs/ca-certificates.crt
+      # Keep model cache lookup independent of the image's runtime user.
+      TORCH_HOME: /opt/torch
     volumes:
       - "${PROJECT_ROOT}:/retro_planner"
-      # The published image runs as retro_planner, whose home is /home/retro_planner.
-      - "$HOME/.cache/torch/hub/checkpoints:/home/retro_planner/.cache/torch/hub/checkpoints"
+      - "$HOME/.cache/torch/hub/checkpoints:/opt/torch/hub/checkpoints"
     ports:
       - "8001:8000"
     networks:

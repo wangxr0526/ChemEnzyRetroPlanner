@@ -303,7 +303,10 @@ class EnzymeFusionNetworkWrapper(nn.Module):
     def __init__(self, use_graph_construction_model=True) -> None:
         super(EnzymeFusionNetworkWrapper, self).__init__()
 
-        sequence_model = ESM(path='~/.cache/torch/hub/checkpoints', model='ESM-2-650M')
+        sequence_model = ESM(
+            path=os.path.join(torch.hub.get_dir(), 'checkpoints'),
+            model='ESM-2-650M',
+        )
 
         structure_model = GearNet(
         input_dim=1280,
