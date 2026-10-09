@@ -95,27 +95,6 @@ chmod +x ./run_container.sh
 ```
 The ChemEnzyRetroPlanner server is deployed at http://localhost:8001/retroplanner
 
-Compose mounts the host's `$HOME/.cache/torch/hub/checkpoints` at
-`/opt/torch/hub/checkpoints` and sets `TORCH_HOME=/opt/torch`. EASIFA uses this
-cache regardless of the container's username. Place `esm2_t33_650M_UR50D.pt`
-in that host directory to reuse the downloaded weights. After changing the
-cache mount or environment, recreate the container; a restart alone does not
-apply these changes.
-
-If CUDA reports that devices are busy or unavailable, compare `nvidia-smi` on the
-host with `docker exec retroplanner_container nvidia-smi`. If only the container
-fails with `Failed to initialize NVML: Unknown Error`, it may have lost GPU access
-after a systemd reload (see [NVIDIA's troubleshooting guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/troubleshooting.html#containers-losing-access-to-gpus-with-error-failed-to-initialize-nvml-unknown-error)).
-After pending jobs finish, recreate the service containers from the repository root:
-
-```bash
-bash docker/run_container.sh --recreate
-```
-
-The Compose configuration explicitly maps GPU 0 and its control devices to retain
-device permissions across cgroup updates. The startup script checks GPU access
-and a PyTorch CUDA allocation before launching the web services.
-
 ## Demo Video
 
 https://github.com/user-attachments/assets/0187adc8-2015-4b38-862c-c461292cbdff
