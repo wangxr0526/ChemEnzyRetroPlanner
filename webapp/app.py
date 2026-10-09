@@ -47,7 +47,6 @@ from retro_planner.common.prepare_utils import (
     prepare_enzyme_recommender,
     prepare_filter_policy,
     prepare_multi_single_step,
-    PrepareStockDatasetUsingFilter,
 )
 from retro_planner.common.utils import canonicalize_smiles, proprecess_reactions
 from retro_planner.utils.logger import setup_logger
@@ -220,9 +219,8 @@ def first_request():
     app.condition_predictor = init_rcr(
         app.planner_configs["condition_config"]["rcr"], dirpath=dirpath
     )
-    PrepareStockDatasetUsingFilter(
-        stock_config=app.planner_configs["stocks"],
-    )
+    # RSPlanner prepares stock caches in the background task. Precomputing every
+    # stock here would block all pages during the first request.
 
 
 @app.route("/retroplanner/")
@@ -1223,4 +1221,4 @@ def agent_interface():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=8000)
+    app.run(debug=False, use_reloader=False, host="0.0.0.0", port=8000)

@@ -39,7 +39,7 @@
 
 ## Web Server
 
-We have developed a [Web Server (primary domain)](http://cadd.zju.edu.cn/retroplanner) and a [mirror site (backup domain)](http://cadd.iddd.group/retroplanner/) for ChemEnzyRetroPlanner, which enables users to leverage our hybrid synthetic planning platform, integrating organic and enzymatic catalysis, to achieve more efficient and environmentally friendly synthesis planning.
+We have developed a [Web Server (primary domain)](http://cadd.zju.edu.cn/retroplanner) and a [mirror site (backup domain)](https://cadd.iddd.group/retroplanner/) for ChemEnzyRetroPlanner, which enables users to leverage our hybrid synthetic planning platform, integrating organic and enzymatic catalysis, to achieve more efficient and environmentally friendly synthesis planning.
 <br>
 
 <div id="top" align="center">
@@ -94,6 +94,20 @@ chmod +x ./run_container.sh
 ./run_container.sh
 ```
 The ChemEnzyRetroPlanner server is deployed at http://localhost:8001/retroplanner
+
+If CUDA reports that devices are busy or unavailable, compare `nvidia-smi` on the
+host with `docker exec retroplanner_container nvidia-smi`. If only the container
+fails with `Failed to initialize NVML: Unknown Error`, it may have lost GPU access
+after a systemd reload (see [NVIDIA's troubleshooting guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/troubleshooting.html#containers-losing-access-to-gpus-with-error-failed-to-initialize-nvml-unknown-error)).
+After pending jobs finish, recreate the service containers from the repository root:
+
+```bash
+bash docker/run_container.sh --recreate
+```
+
+The Compose configuration explicitly maps GPU 0 and its control devices to retain
+device permissions across cgroup updates. The startup script checks GPU access
+and a PyTorch CUDA allocation before launching the web services.
 
 ## Demo Video
 

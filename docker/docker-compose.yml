@@ -1,9 +1,18 @@
 version: '3.8'
 
+# Keep GPU device permissions in the OCI spec when systemd reloads cgroups.
+# These nodes correspond to GPU 0 in the reservations below.
+x-gpu-devices: &gpu-devices
+  - /dev/nvidia0:/dev/nvidia0
+  - /dev/nvidiactl:/dev/nvidiactl
+  - /dev/nvidia-uvm:/dev/nvidia-uvm
+  - /dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools
+
 services:
   retro_template_relevance:
     image: "${ASKCOS_REGISTRY:-registry.gitlab.com/mlpds_mit/askcosv2/askcos2_core}/retro/template_relevance:1.0-gpu"
     container_name: retro_template_relevance
+    devices: *gpu-devices
     command: >
       torchserve --start --foreground --ncs --model-store=/app/template_relevance/mars
       --models bkms_metabolic=bkms_metabolic.mar cas=cas.mar pistachio=pistachio.mar
@@ -27,6 +36,7 @@ services:
   parrot_serve_container:
     image: wangxiaorui/parrot_image:latest
     container_name: parrot_serve_container
+    devices: *gpu-devices
     command: >
       torchserve --start --foreground --ncs --model-store=/app/parrot/mars
       --models USPTO_condition=USPTO_condition.mar --ts-config ./config.properties
@@ -48,10 +58,15 @@ services:
   retroplanner_container:
     image: wangxiaorui/retroplanner_image:latest
     container_name: retroplanner_container
+    devices: *gpu-devices
     command: /bin/bash
+    environment:
+      # The packed Conda OpenSSL default still points to its original host prefix.
+      SSL_CERT_FILE: /etc/ssl/certs/ca-certificates.crt
     volumes:
       - "${PROJECT_ROOT}:/retro_planner"
-      - "$HOME/.cache/torch/hub/checkpoints:/root/.cache/torch/hub/checkpoints"
+      # The published image runs as retro_planner, whose home is /home/retro_planner.
+      - "$HOME/.cache/torch/hub/checkpoints:/home/retro_planner/.cache/torch/hub/checkpoints"
     ports:
       - "8001:8000"
     networks:
